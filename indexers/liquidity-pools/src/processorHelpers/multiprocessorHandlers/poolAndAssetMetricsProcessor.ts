@@ -2,7 +2,10 @@ import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { handleRelayChainBlocks } from '../../handlers/relayChain';
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
-import { getParsedEventsData } from '../../parsers/batchBlocksParser';
+import {
+  BatchBlocksParsedDataManager,
+  getParsedEventsData,
+} from '../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../parsers/storageResolver';
 import {
   prefetchOrInitAllBatchAccounts,
@@ -77,19 +80,22 @@ import { Between } from 'typeorm/find-options/operator/Between';
 import { PoolAndAssetMetricsProcPoolManager } from '../../utils/multiProcPoolManager/subProcessors/poolAndAssetMetricsProcPoolManager';
 import { handlePoolAndAssetMetricsOnBroadcastSwappedEvents } from './utils';
 import { fetchAndCorrelateAssetSpotPrices } from '../utils';
+import { createMetricsTracker } from '../../utils/processorMetrics';
 
 export async function poolAndAssetMetricsProcessorHandler(
   ctx: SqdProcessorContext<Store>
 ) {
-  let parsedData = null;
+  let parsedData: BatchBlocksParsedDataManager | null = null;
+  const mt = createMetricsTracker('pool_and_asset_metrics');
+  const endBatch = mt.startBatch();
 
   await MultiProcPoolManager.getInstance().start();
 
-  console.time('changeJobsStatusFromPreviousBatch');
-  await PoolAndAssetMetricsProcPoolManager.changeJobsStatusFromPreviousBatch({
-    batchStartBlockHeight: ctx.blocks[0].header.height,
-  });
-  console.timeEnd('changeJobsStatusFromPreviousBatch');
+  await mt.track('changeJobsStatusFromPreviousBatch', () =>
+    PoolAndAssetMetricsProcPoolManager.changeJobsStatusFromPreviousBatch({
+      batchStartBlockHeight: ctx.blocks[0].header.height,
+    })
+  );
 
   await PoolAndAssetMetricsProcPoolManager.waitAndGetJobsToProcess({
     fromBlock: ctx.blocks[0].header.height,
@@ -104,22 +110,22 @@ export async function poolAndAssetMetricsProcessorHandler(
     (async () => {
       await handleRelayChainBlocks(ctx);
 
-      console.time('processExtrinsics');
-      await ChainActivityTraceManager.processExtrinsics(ctx);
-      console.timeEnd('processExtrinsics');
+      await mt.track('processExtrinsics', () =>
+        ChainActivityTraceManager.processExtrinsics(ctx)
+      );
 
       // console.time('saveActivityTraceEntities');
       // await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
       // console.timeEnd('saveActivityTraceEntities');
 
-      console.time('getParsedEventsData');
       /**
        * getParsedEventsData must be executed ONLY after
        * ChainActivityTraceManager.processExtrinsics method execution, because
        * getParsedEventsData needs already compiled traceIds.
        */
-      parsedData = await getParsedEventsData(ctx);
-      console.timeEnd('getParsedEventsData');
+      parsedData = await mt.track('getParsedEventsData', () =>
+        getParsedEventsData(ctx)
+      );
 
       await StorageResolver.getInstance().init({
         ctx: ctx,
@@ -131,12 +137,12 @@ export async function poolAndAssetMetricsProcessorHandler(
       await prefetchOrInitAllAccountProcessingStatuses(ctx);
     })(),
     (async () => {
-      console.time('initContractInstances');
-      await MoneyMarketContractsManager.getInstance().initContractInstances({
-        ctx: ctx,
-        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-      });
-      console.timeEnd('initContractInstances');
+      await mt.track('initContractInstances', () =>
+        MoneyMarketContractsManager.getInstance().initContractInstances({
+          ctx: ctx,
+          blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+        })
+      );
       return null;
     })(),
     prefetchGenericPersistentDataWithLogs(ctx, false),
@@ -144,52 +150,53 @@ export async function poolAndAssetMetricsProcessorHandler(
   ]);
 
   if (!parsedData) throw new Error('parsedData is null');
+  const parsed = parsedData;
 
-  console.time('custom prefetch');
-  ctx.batchState.state.swaps = new Map(
-    (
-      await ctx.storeUtils.findWithLogs(
-        Swap,
-        {
-          where: {
-            paraBlockHeight: Between(
-              ctx.blocks[0].header.height,
-              ctx.blocks[ctx.blocks.length - 1].header.height
-            ),
-          },
-          relations: {
-            inputs: true,
-            outputs: true,
-            fees: true,
-            event: {
-              block: true,
+  await mt.track('custom prefetch', async () => {
+    ctx.batchState.state.swaps = new Map(
+      (
+        await ctx.storeUtils.findWithLogs(
+          Swap,
+          {
+            where: {
+              paraBlockHeight: Between(
+                ctx.blocks[0].header.height,
+                ctx.blocks[ctx.blocks.length - 1].header.height
+              ),
+            },
+            relations: {
+              inputs: true,
+              outputs: true,
+              fees: true,
+              event: {
+                block: true,
+              },
+            },
+            order: {
+              paraBlockHeight: 'ASC',
             },
           },
-          order: {
-            paraBlockHeight: 'ASC',
-          },
-        },
-        { className: 'AssetSpotPriceHistoricalData' }
-      )
-    ).map((p) => [p.id, p])
+          { className: 'AssetSpotPriceHistoricalData' }
+        )
+      ).map((p) => [p.id, p])
+    );
+
+    for (const swap of ctx.batchState.state.swaps.values()) {
+      const inputs = swap.inputs.filter(
+        (i) => i.assetBalanceType === SwapAssetBalanceType.Input
+      );
+      const outputs = swap.outputs.filter(
+        (i) => i.assetBalanceType === SwapAssetBalanceType.Output
+      );
+      swap.inputs = inputs;
+      swap.outputs = outputs;
+      ctx.batchState.state.swaps.set(swap.id, swap);
+    }
+  });
+
+  await mt.track('handlePoolAndAssetMetricsOnBroadcastSwappedEvents', () =>
+    handlePoolAndAssetMetricsOnBroadcastSwappedEvents(ctx, parsed)
   );
-
-  for (const swap of ctx.batchState.state.swaps.values()) {
-    const inputs = swap.inputs.filter(
-      (i) => i.assetBalanceType === SwapAssetBalanceType.Input
-    );
-    const outputs = swap.outputs.filter(
-      (i) => i.assetBalanceType === SwapAssetBalanceType.Output
-    );
-    swap.inputs = inputs;
-    swap.outputs = outputs;
-    ctx.batchState.state.swaps.set(swap.id, swap);
-  }
-  console.timeEnd('custom prefetch');
-
-  console.time('handlePoolAndAssetMetricsOnBroadcastSwappedEvents');
-  await handlePoolAndAssetMetricsOnBroadcastSwappedEvents(ctx, parsedData);
-  console.timeEnd('handlePoolAndAssetMetricsOnBroadcastSwappedEvents');
 
   // TODO solve processing vols for old swaps handleBuySellOperations
   // TODO solve processing vols for old stable liq events handleStablepoolLiquidityEvents
@@ -231,7 +238,7 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('initAllXykLiquidityMiningDeposits');
   //
   // console.time('handleAssetRegistry');
-  // await handleAssetRegistry(ctx, parsedData);
+  // await handleAssetRegistry(ctx, parsed);
   // console.timeEnd('handleAssetRegistry');
   //
   // console.time('actualizeMoneyMarketReserves');
@@ -241,20 +248,20 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('actualizeMoneyMarketReserves');
   //
   // console.time('handleMmReservesConfigsHistoricalData');
-  // await handleMmReservesConfigsHistoricalData(ctx, parsedData);
+  // await handleMmReservesConfigsHistoricalData(ctx, parsed);
   // console.timeEnd('handleMmReservesConfigsHistoricalData');
 
   // console.time('handleLbpPools');
-  // await handleLbpPools(ctx, parsedData);
+  // await handleLbpPools(ctx, parsed);
   // console.timeEnd('handleLbpPools');
   //
   // console.time('handleXykPools');
-  // await handleXykPools(ctx, parsedData);
+  // await handleXykPools(ctx, parsed);
   // console.timeEnd('handleXykPools');
   //
   // console.time('handleOmnipoolAssets');
   // await ensureOmnipool(ctx);
-  // await handleOmnipoolAssets(ctx, parsedData);
+  // await handleOmnipoolAssets(ctx, parsed);
   // console.timeEnd('handleOmnipoolAssets');
   //
   // console.time('initAllOmnipoolLiquidityPositions');
@@ -262,7 +269,7 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('initAllOmnipoolLiquidityPositions');
   //
   // console.time('handleOmnipoolLiquidityPositions');
-  // await handleOmnipoolLiquidityPositions(ctx, parsedData);
+  // await handleOmnipoolLiquidityPositions(ctx, parsed);
   // console.timeEnd('handleOmnipoolLiquidityPositions');
   //
   // console.time('initAllOmnipoolLiquidityMiningDeposits');
@@ -270,19 +277,19 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('initAllOmnipoolLiquidityMiningDeposits');
   //
   // console.time('handleOmnipoolLiquidityMiningEvents');
-  // await handleOmnipoolLiquidityMiningEvents(ctx, parsedData);
+  // await handleOmnipoolLiquidityMiningEvents(ctx, parsed);
   // console.timeEnd('handleOmnipoolLiquidityMiningEvents');
   //
   // console.time('handleXykPoolLiquidityMiningEvents');
-  // await handleXykPoolLiquidityMiningEvents(ctx, parsedData);
+  // await handleXykPoolLiquidityMiningEvents(ctx, parsed);
   // console.timeEnd('handleXykPoolLiquidityMiningEvents');
   //
   // console.time('handleUniquesEvents');
-  // await handleUniquesEvents(ctx, parsedData);
+  // await handleUniquesEvents(ctx, parsed);
   // console.timeEnd('handleUniquesEvents');
   //
   // console.time('handleStablepools');
-  // await handleStablepools(ctx, parsedData);
+  // await handleStablepools(ctx, parsed);
   // console.timeEnd('handleStablepools');
   //
   // console.time('ensureAaveFacilitators');
@@ -295,7 +302,7 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('ensureHsmpool && ensureHsmCollaterals');
   //
   // console.time('handleHsmCollateralEvents');
-  // await handleHsmCollateralEvents(ctx, parsedData);
+  // await handleHsmCollateralEvents(ctx, parsed);
   // console.timeEnd('handleHsmCollateralEvents');
 
   /**
@@ -307,23 +314,23 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('handleAssetHistoricalData');
   //
   // console.time('handleAavepoolHistoricalData');
-  // await handleAavepoolHistoricalData(ctx, parsedData);
+  // await handleAavepoolHistoricalData(ctx, parsed);
   // console.timeEnd('handleAavepoolHistoricalData');
   //
   // console.time('handleStableswapHistoricalData');
-  // await handleStableswapHistoricalData(ctx, parsedData);
+  // await handleStableswapHistoricalData(ctx, parsed);
   // console.timeEnd('handleStableswapHistoricalData');
   //
   // console.time('handleOmnipoolHistoricalData');
-  // await handleOmnipoolHistoricalData(ctx, parsedData);
+  // await handleOmnipoolHistoricalData(ctx, parsed);
   // console.timeEnd('handleOmnipoolHistoricalData');
   //
   // console.time('handleXykPoolHistoricalData');
-  // await handleXykPoolHistoricalData(ctx, parsedData);
+  // await handleXykPoolHistoricalData(ctx, parsed);
   // console.timeEnd('handleXykPoolHistoricalData');
   //
   // console.time('handleLbppoolHistoricalData');
-  // await handleLbppoolHistoricalData(ctx, parsedData);
+  // await handleLbppoolHistoricalData(ctx, parsed);
   // console.timeEnd('handleLbppoolHistoricalData');
   //
   // console.time('handleConstantsHistoricalData');
@@ -343,15 +350,15 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('handleAssetSpotPricesHistoricalData');
 
   // console.time('handleBroadcastSwappedEvents');
-  // await handleBroadcastSwappedEvents(ctx, parsedData);
+  // await handleBroadcastSwappedEvents(ctx, parsed);
   // console.timeEnd('handleBroadcastSwappedEvents');
   //
   // console.time('handleBuySellOperations');
-  // await handleBuySellOperations(ctx, parsedData);
+  // await handleBuySellOperations(ctx, parsed);
   // console.timeEnd('handleBuySellOperations');
   //
   // console.time('handleStablepoolLiquidityEvents');
-  // await handleStablepoolLiquidityEvents(ctx, parsedData);
+  // await handleStablepoolLiquidityEvents(ctx, parsed);
   // console.timeEnd('handleStablepoolLiquidityEvents');
 
   // console.time('saveSwapRelatedDataBulk');
@@ -359,7 +366,7 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('saveSwapRelatedDataBulk');
 
   // console.time('handleDcaSchedules');
-  // await handleDcaSchedules(ctx, parsedData);
+  // await handleDcaSchedules(ctx, parsed);
   // console.timeEnd('handleDcaSchedules');
   //
   // console.time('saveDcaEntities');
@@ -367,7 +374,7 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('saveDcaEntities');
   //
   // console.time('handleOtcOrders');
-  // await handleOtcOrders(ctx, parsedData);
+  // await handleOtcOrders(ctx, parsed);
   // console.timeEnd('handleOtcOrders');
 
   // console.time('createMmWithdrawalEventsFromRoutedTrades');
@@ -377,19 +384,19 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('createMmWithdrawalEventsFromRoutedTrades');
   //
   // console.time('handleEvm');
-  // await handleEvm(ctx, parsedData);
+  // await handleEvm(ctx, parsed);
   // console.timeEnd('handleEvm');
   //
   // console.time('handleLiquidationEvents');
-  // await handleLiquidationEvents(ctx, parsedData);
+  // await handleLiquidationEvents(ctx, parsed);
   // console.timeEnd('handleLiquidationEvents');
 
   // console.time('handleAccountMmPositionData');
-  // await handleAccountMmPositionData(ctx, parsedData);
+  // await handleAccountMmPositionData(ctx, parsed);
   // console.timeEnd('handleAccountMmPositionData');
   //
   // console.time('handleTransfers');
-  // await handleTransfers(ctx, parsedData);
+  // await handleTransfers(ctx, parsed);
   // console.timeEnd('handleTransfers');
   //
   // await saveAllMoneyMarketEvents(ctx);
@@ -401,7 +408,7 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('ensurePoolsDestroyedStatus');
   //
   // console.time('handleEvmAccounts');
-  // await handleEvmAccounts(ctx, parsedData);
+  // await handleEvmAccounts(ctx, parsed);
   // console.timeEnd('handleEvmAccounts');
 
   // console.time('handleAssetPairVolumesHistoricalData');
@@ -409,20 +416,20 @@ export async function poolAndAssetMetricsProcessorHandler(
   // console.timeEnd('handleAssetPairVolumesHistoricalData');
 
   // console.time('handleAssetAccountBalances');
-  // await handleAssetAccountBalances(ctx, parsedData);
+  // await handleAssetAccountBalances(ctx, parsed);
   // console.timeEnd('handleAssetAccountBalances');
 
-  console.time('processAssetNormalizedVolumes');
-  await processAssetNormalizedVolumes({ ctx });
-  console.timeEnd('processAssetNormalizedVolumes');
+  await mt.track('processAssetNormalizedVolumes', () =>
+    processAssetNormalizedVolumes({ ctx })
+  );
 
-  console.time('processPoolsNormalizedVolumes');
-  await processPoolsNormalizedVolumes({ ctx });
-  console.timeEnd('processPoolsNormalizedVolumes');
+  await mt.track('processPoolsNormalizedVolumes', () =>
+    processPoolsNormalizedVolumes({ ctx })
+  );
 
-  console.time('processHsmpoolAssetBalanceHistoricalData');
-  await processHsmpoolAssetBalanceHistoricalData({ ctx });
-  console.timeEnd('processHsmpoolAssetBalanceHistoricalData');
+  await mt.track('processHsmpoolAssetBalanceHistoricalData', () =>
+    processHsmpoolAssetBalanceHistoricalData({ ctx })
+  );
 
   // console.time('processPoolsTvlNormalized');
   // await processPoolsTvlNormalized({ ctx });
@@ -455,17 +462,17 @@ export async function poolAndAssetMetricsProcessorHandler(
   // await saveDcaEntities(ctx);
   // console.timeEnd('saveDcaEntities');
 
-  console.time('handleHistoricalVolumesBatchEntriesLists');
-  await HistoricalDataManager.handleHistoricalVolumesBatchEntriesLists(ctx);
-  console.timeEnd('handleHistoricalVolumesBatchEntriesLists');
+  await mt.track('handleHistoricalVolumesBatchEntriesLists', () =>
+    HistoricalDataManager.handleHistoricalVolumesBatchEntriesLists(ctx)
+  );
 
   // console.time('saveAccountBalancesRelatedDataBulk');
   // await HistoricalDataManager.saveAccountBalancesRelatedDataBulk(ctx);
   // console.timeEnd('saveAccountBalancesRelatedDataBulk');
 
-  console.time('updateInitialIndexingFinishedAtTime');
-  await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx);
-  console.timeEnd('updateInitialIndexingFinishedAtTime');
+  await mt.track('updateInitialIndexingFinishedAtTime', () =>
+    ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx)
+  );
 
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
@@ -474,4 +481,6 @@ export async function poolAndAssetMetricsProcessorHandler(
   await PoolAndAssetMetricsProcPoolManager.checkNextAvailableBatchToProcess({
     currentHeadBlockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  endBatch();
 }

@@ -2,7 +2,10 @@ import { SqdProcessorContext } from '../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { handleRelayChainBlocks } from '../handlers/relayChain';
 import { ChainActivityTraceManager } from '../chainActivityTracingManagers';
-import { getParsedEventsData } from '../parsers/batchBlocksParser';
+import {
+  BatchBlocksParsedDataManager,
+  getParsedEventsData,
+} from '../parsers/batchBlocksParser';
 import { StorageResolver } from '../parsers/storageResolver';
 import {
   prefetchOrInitAllBatchAccounts,
@@ -70,36 +73,39 @@ import { MultiProcPoolManager } from '../utils/multiProcPoolManager';
 import { CoreProcPoolManager } from '../utils/multiProcPoolManager/subProcessors/coreProcPoolManager';
 import { BalancesProcPoolManager } from '../utils/multiProcPoolManager/subProcessors/balancesProcPoolManager';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../handlers/pools/pools/hsmpool';
+import { createMetricsTracker } from '../utils/processorMetrics';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
 ) {
-  let parsedData = null;
+  let parsedData: BatchBlocksParsedDataManager | null = null;
+  const mt = createMetricsTracker('single_flow');
+  const endBatch = mt.startBatch();
 
-  console.time('initAllAccountsOnColdStart');
-  await initAllAccountsOnColdStart({ ctx });
-  console.timeEnd('initAllAccountsOnColdStart');
+  await mt.track('initAllAccountsOnColdStart', () =>
+    initAllAccountsOnColdStart({ ctx })
+  );
 
   await Promise.all([
     (async () => {
       await handleRelayChainBlocks(ctx);
 
-      console.time('processExtrinsics');
-      await ChainActivityTraceManager.processExtrinsics(ctx);
-      console.timeEnd('processExtrinsics');
+      await mt.track('processExtrinsics', () =>
+        ChainActivityTraceManager.processExtrinsics(ctx)
+      );
 
-      console.time('saveActivityTraceEntities');
-      await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
-      console.timeEnd('saveActivityTraceEntities');
+      await mt.track('saveActivityTraceEntities', () =>
+        ChainActivityTraceManager.saveActivityTraceEntities(ctx)
+      );
 
-      console.time('getParsedEventsData');
       /**
        * getParsedEventsData must be executed ONLY after
        * ChainActivityTraceManager.processExtrinsics method execution, because
        * getParsedEventsData needs already compiled traceIds.
        */
-      parsedData = await getParsedEventsData(ctx);
-      console.timeEnd('getParsedEventsData');
+      parsedData = await mt.track('getParsedEventsData', () =>
+        getParsedEventsData(ctx)
+      );
 
       await StorageResolver.getInstance().init({
         ctx: ctx,
@@ -111,278 +117,243 @@ export async function singleFlowAllInOneProcessor(
       await prefetchOrInitAllAccountProcessingStatuses(ctx);
     })(),
     (async () => {
-      console.time('initContractInstances');
-      await MoneyMarketContractsManager.getInstance().initContractInstances({
-        ctx: ctx,
-        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-      });
-      console.timeEnd('initContractInstances');
+      await mt.track('initContractInstances', () =>
+        MoneyMarketContractsManager.getInstance().initContractInstances({
+          ctx: ctx,
+          blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+        })
+      );
       return null;
     })(),
     prefetchGenericPersistentDataWithLogs(ctx, false),
   ]);
 
   if (!parsedData) throw new Error('parsedData is null');
+  const parsed = parsedData;
 
   await ensureNativeToken(ctx);
 
-  console.time('actualiseAssets');
-  await actualiseAssets(ctx);
-  console.timeEnd('actualiseAssets');
+  await mt.track('actualiseAssets', () => actualiseAssets(ctx));
 
-  console.time('initAllXykPools');
-  await initAllXykPools({
-    ctx,
-    blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+  await mt.track('initAllXykPools', () =>
+    initAllXykPools({
+      ctx,
+      blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
+    })
+  );
+
+  await mt.track('initAllXykLiquidityMiningDeposits', () =>
+    initAllXykLiquidityMiningDeposits(ctx)
+  );
+
+  await mt.track('handleAssetRegistry', () => handleAssetRegistry(ctx, parsed));
+
+  await mt.track('actualizeMoneyMarketReserves', () =>
+    actualizeMoneyMarketReserves({ ctx })
+  );
+
+  await mt.track('handleMmReservesConfigsHistoricalData', () =>
+    handleMmReservesConfigsHistoricalData(ctx, parsed)
+  );
+
+  await mt.track('handleLbpPools', () => handleLbpPools(ctx, parsed));
+
+  await mt.track('handleXykPools', () => handleXykPools(ctx, parsed));
+
+  await mt.track('handleOmnipoolAssets', async () => {
+    await ensureOmnipool(ctx);
+    await handleOmnipoolAssets(ctx, parsed);
   });
-  console.timeEnd('initAllXykPools');
 
-  console.time('initAllXykLiquidityMiningDeposits');
-  await initAllXykLiquidityMiningDeposits(ctx);
-  console.timeEnd('initAllXykLiquidityMiningDeposits');
+  await mt.track('initAllOmnipoolLiquidityPositions', () =>
+    initAllOmnipoolLiquidityPositions(ctx)
+  );
 
-  console.time('handleAssetRegistry');
-  await handleAssetRegistry(ctx, parsedData);
-  console.timeEnd('handleAssetRegistry');
+  await mt.track('handleOmnipoolLiquidityPositions', () =>
+    handleOmnipoolLiquidityPositions(ctx, parsed)
+  );
 
-  console.time('actualizeMoneyMarketReserves');
-  await actualizeMoneyMarketReserves({
-    ctx,
+  await mt.track('initAllOmnipoolLiquidityMiningDeposits', () =>
+    initAllOmnipoolLiquidityMiningDeposits(ctx)
+  );
+
+  await mt.track('handleOmnipoolLiquidityMiningEvents', () =>
+    handleOmnipoolLiquidityMiningEvents(ctx, parsed)
+  );
+
+  await mt.track('handleXykPoolLiquidityMiningEvents', () =>
+    handleXykPoolLiquidityMiningEvents(ctx, parsed)
+  );
+
+  await mt.track('handleUniquesEvents', () => handleUniquesEvents(ctx, parsed));
+
+  await mt.track('handleStablepools', () => handleStablepools(ctx, parsed));
+
+  await mt.track('ensureAaveFacilitators', () => ensureAaveFacilitators(ctx));
+
+  await mt.track('ensureHsmpool && ensureHsmCollaterals', async () => {
+    await ensureHsmpool(ctx);
+    await ensureHsmCollaterals(ctx);
   });
-  console.timeEnd('actualizeMoneyMarketReserves');
 
-  console.time('handleMmReservesConfigsHistoricalData');
-  await handleMmReservesConfigsHistoricalData(ctx, parsedData);
-  console.timeEnd('handleMmReservesConfigsHistoricalData');
-
-  console.time('handleLbpPools');
-  await handleLbpPools(ctx, parsedData);
-  console.timeEnd('handleLbpPools');
-
-  console.time('handleXykPools');
-  await handleXykPools(ctx, parsedData);
-  console.timeEnd('handleXykPools');
-
-  console.time('handleOmnipoolAssets');
-  await ensureOmnipool(ctx);
-  await handleOmnipoolAssets(ctx, parsedData);
-  console.timeEnd('handleOmnipoolAssets');
-
-  console.time('initAllOmnipoolLiquidityPositions');
-  await initAllOmnipoolLiquidityPositions(ctx);
-  console.timeEnd('initAllOmnipoolLiquidityPositions');
-
-  console.time('handleOmnipoolLiquidityPositions');
-  await handleOmnipoolLiquidityPositions(ctx, parsedData);
-  console.timeEnd('handleOmnipoolLiquidityPositions');
-
-  console.time('initAllOmnipoolLiquidityMiningDeposits');
-  await initAllOmnipoolLiquidityMiningDeposits(ctx);
-  console.timeEnd('initAllOmnipoolLiquidityMiningDeposits');
-
-  console.time('handleOmnipoolLiquidityMiningEvents');
-  await handleOmnipoolLiquidityMiningEvents(ctx, parsedData);
-  console.timeEnd('handleOmnipoolLiquidityMiningEvents');
-
-  console.time('handleXykPoolLiquidityMiningEvents');
-  await handleXykPoolLiquidityMiningEvents(ctx, parsedData);
-  console.timeEnd('handleXykPoolLiquidityMiningEvents');
-
-  console.time('handleUniquesEvents');
-  await handleUniquesEvents(ctx, parsedData);
-  console.timeEnd('handleUniquesEvents');
-
-  console.time('handleStablepools');
-  await handleStablepools(ctx, parsedData);
-  console.timeEnd('handleStablepools');
-
-  console.time('ensureAaveFacilitators');
-  await ensureAaveFacilitators(ctx);
-  console.timeEnd('ensureAaveFacilitators');
-
-  console.time('ensureHsmpool && ensureHsmCollaterals');
-  await ensureHsmpool(ctx);
-  await ensureHsmCollaterals(ctx);
-  console.timeEnd('ensureHsmpool && ensureHsmCollaterals');
-
-  console.time('handleHsmCollateralEvents');
-  await handleHsmCollateralEvents(ctx, parsedData);
-  console.timeEnd('handleHsmCollateralEvents');
+  await mt.track('handleHsmCollateralEvents', () =>
+    handleHsmCollateralEvents(ctx, parsed)
+  );
 
   /**
    * functions handleConstantsHistoricalData, handleAssetHistoricalData,
    * handleAssetSpotPricesHistoricalData must be executed in strict order.
    */
-  console.time('handleAssetHistoricalData');
-  await handleAssetHistoricalData({ ctx });
-  console.timeEnd('handleAssetHistoricalData');
+  await mt.track('handleAssetHistoricalData', () =>
+    handleAssetHistoricalData({ ctx })
+  );
 
-  console.time('Historical data Promise.all');
-  await Promise.all([
-    (async () => {
-      console.time('handleAavepoolHistoricalData');
-      await handleAavepoolHistoricalData(ctx, parsedData);
-      console.timeEnd('handleAavepoolHistoricalData');
+  await mt.track('Historical data Promise.all', () =>
+    Promise.all([
+      (async () => {
+        await mt.track('handleAavepoolHistoricalData', () =>
+          handleAavepoolHistoricalData(ctx, parsed)
+        );
 
-      console.time('handleOmnipoolHistoricalData');
-      await handleOmnipoolHistoricalData(ctx, parsedData);
-      console.timeEnd('handleOmnipoolHistoricalData');
+        await mt.track('handleOmnipoolHistoricalData', () =>
+          handleOmnipoolHistoricalData(ctx, parsed)
+        );
 
-      console.time('handleLbppoolHistoricalData');
-      await handleLbppoolHistoricalData(ctx, parsedData);
-      console.timeEnd('handleLbppoolHistoricalData');
+        await mt.track('handleLbppoolHistoricalData', () =>
+          handleLbppoolHistoricalData(ctx, parsed)
+        );
 
-      console.time('handleConstantsHistoricalData');
-      await handleConstantsHistoricalData(ctx);
-      console.timeEnd('handleConstantsHistoricalData');
+        await mt.track('handleConstantsHistoricalData', () =>
+          handleConstantsHistoricalData(ctx)
+        );
 
-      console.time('handleStableswapHistoricalData');
-      await handleStableswapHistoricalData(ctx, parsedData);
-      console.timeEnd('handleStableswapHistoricalData');
-    })(),
-    (async () => {
-      console.time('handleXykPoolHistoricalData');
-      await handleXykPoolHistoricalData(ctx, parsedData);
-      console.timeEnd('handleXykPoolHistoricalData');
-    })(),
-    (async () => {
-      console.time('handleOracles');
-      await handleOracles(ctx);
-      console.timeEnd('handleOracles');
-    })(),
-  ]);
-  console.timeEnd('Historical data Promise.all');
+        await mt.track('handleStableswapHistoricalData', () =>
+          handleStableswapHistoricalData(ctx, parsed)
+        );
+      })(),
+      mt.track('handleXykPoolHistoricalData', () =>
+        handleXykPoolHistoricalData(ctx, parsed)
+      ),
+      mt.track('handleOracles', () => handleOracles(ctx)),
+    ])
+  );
 
-  console.time('handleTransactionPaymentHistoricalData');
-  await handleTransactionPaymentHistoricalData(ctx);
-  console.timeEnd('handleTransactionPaymentHistoricalData');
+  await mt.track('handleTransactionPaymentHistoricalData', () =>
+    handleTransactionPaymentHistoricalData(ctx)
+  );
 
-  console.time('handleAssetSpotPricesHistoricalData');
-  await handleAssetSpotPricesHistoricalData({ ctx });
-  console.timeEnd('handleAssetSpotPricesHistoricalData');
+  await mt.track('handleAssetSpotPricesHistoricalData', () =>
+    handleAssetSpotPricesHistoricalData({ ctx })
+  );
 
-  console.time('handleBroadcastSwappedEvents');
-  await handleBroadcastSwappedEvents(ctx, parsedData);
-  console.timeEnd('handleBroadcastSwappedEvents');
+  await mt.track('handleBroadcastSwappedEvents', () =>
+    handleBroadcastSwappedEvents(ctx, parsed)
+  );
 
-  console.time('handleBuySellOperations');
-  await handleBuySellOperations(ctx, parsedData);
-  console.timeEnd('handleBuySellOperations');
+  await mt.track('handleBuySellOperations', () =>
+    handleBuySellOperations(ctx, parsed)
+  );
 
-  console.time('handleStablepoolLiquidityEvents');
-  await handleStablepoolLiquidityEvents(ctx, parsedData);
-  console.timeEnd('handleStablepoolLiquidityEvents');
+  await mt.track('handleStablepoolLiquidityEvents', () =>
+    handleStablepoolLiquidityEvents(ctx, parsed)
+  );
 
-  console.time('handleHsmAssetHistoricalDataOnAllSwaps');
-  await handleHsmAssetHistoricalDataOnAllSwaps(ctx);
-  console.timeEnd('handleHsmAssetHistoricalDataOnAllSwaps');
+  await mt.track('handleHsmAssetHistoricalDataOnAllSwaps', () =>
+    handleHsmAssetHistoricalDataOnAllSwaps(ctx)
+  );
 
-  console.time('saveSwapRelatedDataBulk');
-  await HistoricalDataManager.saveSwapRelatedDataBulk(ctx);
-  console.timeEnd('saveSwapRelatedDataBulk');
+  await mt.track('saveSwapRelatedDataBulk', () =>
+    HistoricalDataManager.saveSwapRelatedDataBulk(ctx)
+  );
 
-  console.time('handleDcaSchedules');
-  await handleDcaSchedules(ctx, parsedData);
-  console.timeEnd('handleDcaSchedules');
+  await mt.track('handleDcaSchedules', () => handleDcaSchedules(ctx, parsed));
 
-  console.time('saveDcaEntities');
-  await saveDcaEntities(ctx);
-  console.timeEnd('saveDcaEntities');
+  await mt.track('saveDcaEntities', () => saveDcaEntities(ctx));
 
-  console.time('handleOtcOrders');
-  await handleOtcOrders(ctx, parsedData);
-  console.timeEnd('handleOtcOrders');
+  await mt.track('handleOtcOrders', () => handleOtcOrders(ctx, parsed));
 
   // if (ctx.isHead)
   //   await handlePoolPrices(ctx);
 
-  console.time('createMmWithdrawalEventsFromRoutedTrades');
-  await createMoneyMarketEventsFromRoutedTrades(ctx, [
-    ...ctx.batchState.state.routeTrades.values(),
-  ]);
-  console.timeEnd('createMmWithdrawalEventsFromRoutedTrades');
+  await mt.track('createMmWithdrawalEventsFromRoutedTrades', () =>
+    createMoneyMarketEventsFromRoutedTrades(ctx, [
+      ...ctx.batchState.state.routeTrades.values(),
+    ])
+  );
 
-  console.time('handleEvm');
-  await handleEvm(ctx, parsedData);
-  console.timeEnd('handleEvm');
+  await mt.track('handleEvm', () => handleEvm(ctx, parsed));
 
-  console.time('handleLiquidationEvents');
-  await handleLiquidationEvents(ctx, parsedData);
-  console.timeEnd('handleLiquidationEvents');
+  await mt.track('handleLiquidationEvents', () =>
+    handleLiquidationEvents(ctx, parsed)
+  );
 
-  console.time('handleAccountMmPositionData');
-  await handleAccountMmPositionData(ctx, parsedData);
-  console.timeEnd('handleAccountMmPositionData');
+  await mt.track('handleAccountMmPositionData', () =>
+    handleAccountMmPositionData(ctx, parsed)
+  );
 
-  console.time('handleTransfers');
-  await handleTransfers(ctx, parsedData);
-  console.timeEnd('handleTransfers');
+  await mt.track('handleTransfers', () => handleTransfers(ctx, parsed));
 
   await saveAllMoneyMarketEvents(ctx);
 
   await HistoricalDataManager.saveAccountMoneyMarketDataBulk(ctx);
 
-  console.time('ensurePoolsDestroyedStatus');
-  await ensurePoolsDestroyedStatus(ctx);
-  console.timeEnd('ensurePoolsDestroyedStatus');
+  await mt.track('ensurePoolsDestroyedStatus', () =>
+    ensurePoolsDestroyedStatus(ctx)
+  );
 
-  console.time('handleEvmAccounts');
-  await handleEvmAccounts(ctx, parsedData);
-  console.timeEnd('handleEvmAccounts');
+  await mt.track('handleEvmAccounts', () => handleEvmAccounts(ctx, parsed));
 
-  console.time('handleAssetPairVolumesHistoricalData');
-  await handleAssetPairVolumesHistoricalData({ ctx });
-  console.timeEnd('handleAssetPairVolumesHistoricalData');
+  await mt.track('handleAssetPairVolumesHistoricalData', () =>
+    handleAssetPairVolumesHistoricalData({ ctx })
+  );
 
-  console.time('handleAssetAccountBalances');
-  await handleAssetAccountBalances(ctx, parsedData);
-  console.timeEnd('handleAssetAccountBalances');
+  await mt.track('handleAssetAccountBalances', () =>
+    handleAssetAccountBalances(ctx, parsed)
+  );
 
-  console.time('processAssetNormalizedVolumes');
-  await processAssetNormalizedVolumes({ ctx });
-  console.timeEnd('processAssetNormalizedVolumes');
+  await mt.track('processAssetNormalizedVolumes', () =>
+    processAssetNormalizedVolumes({ ctx })
+  );
 
-  console.time('processPoolsNormalizedVolumes');
-  await processPoolsNormalizedVolumes({ ctx });
-  console.timeEnd('processPoolsNormalizedVolumes');
+  await mt.track('processPoolsNormalizedVolumes', () =>
+    processPoolsNormalizedVolumes({ ctx })
+  );
 
-  console.time('processHsmpoolAssetBalanceHistoricalData');
-  await processHsmpoolAssetBalanceHistoricalData({ ctx });
-  console.timeEnd('processHsmpoolAssetBalanceHistoricalData');
+  await mt.track('processHsmpoolAssetBalanceHistoricalData', () =>
+    processHsmpoolAssetBalanceHistoricalData({ ctx })
+  );
 
-  console.time('processPoolsTvlNormalized');
-  processPoolsTvlNormalized({ ctx });
-  console.timeEnd('processPoolsTvlNormalized');
+  mt.trackSync('processPoolsTvlNormalized', () =>
+    processPoolsTvlNormalized({ ctx })
+  );
 
-  console.time('saveAllBatchAccounts');
-  await saveAllBatchAccounts(ctx);
-  console.timeEnd('saveAllBatchAccounts');
+  await mt.track('saveAllBatchAccounts', () => saveAllBatchAccounts(ctx));
 
-  console.time('saveHistoricalDataBulk');
-  await HistoricalDataManager.saveHistoricalDataBulk(ctx);
-  console.timeEnd('saveHistoricalDataBulk');
+  await mt.track('saveHistoricalDataBulk', () =>
+    HistoricalDataManager.saveHistoricalDataBulk(ctx)
+  );
 
-  console.time('saveActivityTraceEntities');
-  await ChainActivityTraceManager.saveActivityTraceEntities(ctx);
-  console.timeEnd('saveActivityTraceEntities');
+  await mt.track('saveActivityTraceEntities', () =>
+    ChainActivityTraceManager.saveActivityTraceEntities(ctx)
+  );
 
-  console.time('saveDcaEntities');
-  await saveDcaEntities(ctx);
-  console.timeEnd('saveDcaEntities');
+  await mt.track('saveDcaEntities', () => saveDcaEntities(ctx));
 
-  console.time('handleHistoricalVolumesBatchEntriesLists');
-  await HistoricalDataManager.handleHistoricalVolumesBatchEntriesLists(ctx);
-  console.timeEnd('handleHistoricalVolumesBatchEntriesLists');
+  await mt.track('handleHistoricalVolumesBatchEntriesLists', () =>
+    HistoricalDataManager.handleHistoricalVolumesBatchEntriesLists(ctx)
+  );
 
-  console.time('saveAccountBalancesRelatedDataBulk');
-  await HistoricalDataManager.saveAccountBalancesRelatedDataBulk(ctx);
-  console.timeEnd('saveAccountBalancesRelatedDataBulk');
+  await mt.track('saveAccountBalancesRelatedDataBulk', () =>
+    HistoricalDataManager.saveAccountBalancesRelatedDataBulk(ctx)
+  );
 
-  console.time('updateInitialIndexingFinishedAtTime');
-  await ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx);
-  console.timeEnd('updateInitialIndexingFinishedAtTime');
+  await mt.track('updateInitialIndexingFinishedAtTime', () =>
+    ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx)
+  );
 
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  endBatch();
 }
