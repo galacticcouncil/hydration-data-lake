@@ -366,8 +366,7 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
 
   if (
     previousItem.assetABalance !== currentRecord.assetABalance ||
-    previousItem.assetBBalance !== currentRecord.assetBBalance ||
-    previousItem.tvlInRefAssetNorm !== currentRecord.tvlInRefAssetNorm
+    previousItem.assetBBalance !== currentRecord.assetBBalance
   ) {
     isEqual = false;
   }
