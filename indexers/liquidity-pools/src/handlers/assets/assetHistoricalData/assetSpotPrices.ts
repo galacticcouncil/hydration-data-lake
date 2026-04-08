@@ -557,7 +557,13 @@ async function processXykInvolvedAssetSpotPrices({
   const xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
     `${assetXykPool.accountId}-${blockHeader.height}`
   );
-  if (!xykPoolHistData) return;
+
+  if (!xykPoolHistData) {
+    console.log(
+      `processXykInvolvedAssetSpotPrices :: xykPoolHistData is not found - ${assetXykPool.accountId}-${blockHeader.height}`
+    );
+    return;
+  }
 
   // Fetch assets from cache
   const assetA = ctx.batchState.state.assetsAll.get(xykPoolHistData.assetAId);
@@ -823,7 +829,12 @@ async function processXykShareAssetSpotPrices({
     `${originXykpool.accountId}-${blockHeader.height}`
   );
 
-  if (!xykPoolHistData) return;
+  if (!xykPoolHistData) {
+    console.log(
+      `processXykShareAssetSpotPrices :: xykPoolHistData is not found - ${originXykpool.accountId}-${blockHeader.height}`
+    );
+    return;
+  }
 
   const assetA = await getOrCreateAsset({
     id: xykPoolHistData.assetAId,
