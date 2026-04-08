@@ -1,19 +1,22 @@
-import { Histogram } from 'prom-client';
+import { Histogram, Registry } from 'prom-client';
+import { processor } from '../processor';
 
 /**
  * Custom Prometheus metrics for tracking handler function execution times.
  *
- * Metrics are registered on the default prom-client registry — the same one
- * the SQD framework uses for its built-in metrics (served on port 3030).
- * Custom metrics will appear alongside existing SQD metrics
- * (sqd_processor_last_block, sqd_rpc_request_count, etc.)
- * without any additional configuration.
+ * SQD framework uses its own private Registry (not the default global one)
+ * and serves only that registry on port 3030. We extract it from the
+ * processor instance so our custom metrics appear alongside SQD built-in
+ * metrics (sqd_processor_last_block, sqd_rpc_request_count, etc.).
  */
+
+const sqdRegistry: Registry = (processor as any).prometheus.registry;
 
 const handlerDurationHistogram = new Histogram({
   name: 'sqd_handler_duration_seconds',
   help: 'Duration of handler function execution in seconds',
   labelNames: ['function_name', 'processor_type'] as const,
+  registers: [sqdRegistry],
   buckets: [
     0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60,
   ],
@@ -23,6 +26,7 @@ const batchDurationHistogram = new Histogram({
   name: 'sqd_batch_duration_seconds',
   help: 'Total batch execution duration in seconds',
   labelNames: ['processor_type'] as const,
+  registers: [sqdRegistry],
   buckets: [0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60, 120, 300],
 });
 
