@@ -26,6 +26,7 @@ import { getOrCreatePriceRoute } from '../priceRoute/priceRoute';
 import { getOrCreateAsset } from '../asset';
 import { OfflineTradeRouterManager } from './utils';
 import { Amount, Hop, PoolBase, PoolType } from './utils/offlineSdk/sdk/src';
+import { ensureXykpoolHisDataFromLatestPersistedData } from '../../pools/pools/xykPool/historicalData';
 
 const appConfig = AppConfig.getInstance();
 
@@ -554,15 +555,22 @@ async function processXykInvolvedAssetSpotPrices({
       ? assetXykPool.assetBId
       : assetXykPool.assetAId;
 
-  const xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
+  let xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
     `${assetXykPool.accountId}-${blockHeader.height}`
   );
 
   if (!xykPoolHistData) {
-    console.log(
-      `processXykInvolvedAssetSpotPrices :: xykPoolHistData is not found - ${assetXykPool.accountId}-${blockHeader.height}`
-    );
-    return;
+    xykPoolHistData = await ensureXykpoolHisDataFromLatestPersistedData({
+      ctx,
+      poolId: assetXykPool.accountId,
+      blockNumber: blockHeader.height,
+    });
+    if (!xykPoolHistData) {
+      console.log(
+        `processXykInvolvedAssetSpotPrices :: xykPoolHistData is not found - ${assetXykPool.accountId}-${blockHeader.height}`
+      );
+      return;
+    }
   }
 
   // Fetch assets from cache
@@ -825,15 +833,22 @@ async function processXykShareAssetSpotPrices({
     return;
   }
 
-  const xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
+  let xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
     `${originXykpool.accountId}-${blockHeader.height}`
   );
 
   if (!xykPoolHistData) {
-    console.log(
-      `processXykShareAssetSpotPrices :: xykPoolHistData is not found - ${originXykpool.accountId}-${blockHeader.height}`
-    );
-    return;
+    xykPoolHistData = await ensureXykpoolHisDataFromLatestPersistedData({
+      ctx,
+      poolId: originXykpool.accountId,
+      blockNumber: blockHeader.height,
+    });
+    if (!xykPoolHistData) {
+      console.log(
+        `processXykShareAssetSpotPrices :: xykPoolHistData is not found - ${originXykpool.accountId}-${blockHeader.height}`
+      );
+      return;
+    }
   }
 
   const assetA = await getOrCreateAsset({

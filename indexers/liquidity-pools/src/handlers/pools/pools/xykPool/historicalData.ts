@@ -1,10 +1,14 @@
 import pMap from 'p-map';
-import { LessThan } from 'typeorm';
+import { In, LessThan } from 'typeorm';
 
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
 
-import { Xykpool, XykpoolHistoricalData } from '../../../../model';
+import {
+  Xykpool,
+  XykpoolHistoricalData,
+  XykpoolHistoricalDataLatest,
+} from '../../../../model';
 import parsers from '../../../../parsers';
 import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import { SqdProcessorContext } from '../../../../processor';
@@ -21,31 +25,36 @@ export async function handleXykPoolHistoricalData(
 ) {
   const predefinedEntities: XykpoolHistoricalData[] = [];
 
-  let allPoolAddresses: string[] = [];
-  let allPoolAddressesWithNativeToken: string[] = [];
-
-  const poolIdsSetToProcess =
-    await XykpoolHistoricalDataManager.getInstance().getPoolIdsSetToProcessAndPrefillHistData(
-      ctx.blocks[0].header.height,
-      ctx
-    );
-
-  const poolsToProcess = Array.from(
+  let poolsToProcess = Array.from(
     ctx.batchState.state.xykAllBatchPools.values()
-  ).filter((pool) => poolIdsSetToProcess.has(pool.id));
+  );
 
-  for (const pool of poolsToProcess) {
-    if (pool.isDestroyed) continue;
-    if (pool.assetAId === '0' || pool.assetBId === '0') {
-      allPoolAddressesWithNativeToken.push(pool.id);
-    }
-    allPoolAddresses.push(pool.id);
+  if (ctx.blocks.length === 1) {
+    const poolIdsSetToProcess =
+      await XykpoolHistoricalDataManager.getInstance().getPoolIdsSetToProcessAndPrefillHistData(
+        ctx.blocks[0].header.height,
+        ctx
+      );
+
+    poolsToProcess = poolsToProcess.filter((pool) =>
+      poolIdsSetToProcess.has(pool.id)
+    );
   }
 
   await pMap(
     ctx.blocks,
     async ({ header: blockHeader }) => {
       const poolsWithStorageDictionaryData: Map<string, Xykpool> = new Map();
+      const allPoolAddresses: string[] = [];
+      const allPoolAddressesWithNativeToken: string[] = [];
+
+      for (const pool of poolsToProcess) {
+        if (pool.isDestroyed) continue;
+        if (pool.assetAId === '0' || pool.assetBId === '0') {
+          allPoolAddressesWithNativeToken.push(pool.id);
+        }
+        allPoolAddresses.push(pool.id);
+      }
 
       for (const pool of poolsToProcess) {
         if (pool.isDestroyed) continue;
@@ -90,21 +99,22 @@ export async function handleXykPoolHistoricalData(
           poolsWithStorageDictionaryData.set(pool.id, pool);
       }
 
-      allPoolAddressesWithNativeToken = allPoolAddressesWithNativeToken.filter(
-        (id) => !poolsWithStorageDictionaryData.has(id)
-      );
+      const poolAddressesWithNativeTokenToFetch =
+        allPoolAddressesWithNativeToken.filter(
+          (id) => !poolsWithStorageDictionaryData.has(id)
+        );
 
-      allPoolAddresses = allPoolAddresses.filter(
+      const poolAddressesToFetch = allPoolAddresses.filter(
         (id) => !poolsWithStorageDictionaryData.has(id)
       );
 
       const nativeTokenBalancesMap =
-        allPoolAddressesWithNativeToken.length === 0
+        poolAddressesWithNativeTokenToFetch.length === 0
           ? new Map()
           : new Map(
               (
                 await parsers.storage.system.getNativeTokenBalanceMany({
-                  accountIds: allPoolAddressesWithNativeToken,
+                  accountIds: poolAddressesWithNativeTokenToFetch,
                   block: blockHeader,
                 })
               )
@@ -113,12 +123,12 @@ export async function handleXykPoolHistoricalData(
             );
 
       const otherTokenBalancesMap =
-        allPoolAddresses.length === 0
+        poolAddressesToFetch.length === 0
           ? new Map()
           : new Map(
               (
                 await parsers.storage.tokens.getTokenBalancesMany({
-                  accountIds: allPoolAddresses,
+                  accountIds: poolAddressesToFetch,
                   block: blockHeader,
                 })
               ).map((balance) => [
@@ -218,6 +228,41 @@ export async function handleXykPoolHistoricalData(
       histDataItem
     );
   }
+}
+
+export async function ensureXykpoolHisDataFromLatestPersistedData({
+  poolId,
+  ctx,
+  blockNumber,
+}: {
+  poolId: string;
+  blockNumber: number;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const latestHistData = await ctx.storeUtils.findOneWithLogs(
+    XykpoolHistoricalDataLatest,
+    { where: { id: poolId }, relations: { pool: true } }
+  );
+
+  if (!latestHistData) return;
+
+  const newHistData = new XykpoolHistoricalData({
+    id: `${poolId}-${blockNumber}`,
+    pool: latestHistData.pool,
+    assetAId: latestHistData.assetAId,
+    assetBId: latestHistData.assetBId,
+    assetABalance: latestHistData.assetABalance,
+    assetBBalance: latestHistData.assetBBalance,
+    tvlInRefAssetNorm: latestHistData.tvlInRefAssetNorm,
+    paraBlockHeight: blockNumber,
+  });
+
+  return newHistData;
+
+  // ctx.batchState.state.xykPoolAllHistoricalData.set(
+  //   newHistData.id,
+  //   newHistData
+  // );
 }
 
 export async function getXykpoolHistDataWithUniqueData(
