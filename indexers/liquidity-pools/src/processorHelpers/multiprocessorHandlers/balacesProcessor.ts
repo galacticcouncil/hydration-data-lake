@@ -459,9 +459,9 @@ export async function balancesProcessorHandler(
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
 
+  endBatch();
+
   await BalancesProcPoolManager.checkNextAvailableBatchToProcess({
     currentHeadBlockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
-
-  endBatch();
 }

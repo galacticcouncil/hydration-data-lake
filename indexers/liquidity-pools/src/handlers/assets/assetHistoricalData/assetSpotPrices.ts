@@ -776,8 +776,14 @@ export function getAssetsPairPrice({
   if (recursionExec && (!assetInRefPrice || !assetOutRefPrice)) return null;
 
   if (assetInRefPrice && assetOutRefPrice) {
-    const price = BigNumber(assetInRefPrice).div(assetOutRefPrice).toFixed();
-    return price;
+    const price = BigNumber(assetInRefPrice).div(assetOutRefPrice);
+    if (!price.isFinite() || price.isNaN()) {
+      console.log(
+        `Invalid pair price for ${assetInIdEnsured}/${assetOutIdEnsured} at block ${blockHeight}: ${price.toString()}. Skipping...`
+      );
+      return null;
+    }
+    return price.toFixed();
   }
 
   if (
@@ -891,7 +897,11 @@ async function processXykShareAssetSpotPrices({
           `${originXykpool.assetAId}-${assetOutId}-${blockHeader.height}`
         )?.priceNormalised;
 
-      if (!poolAssetASpotPrice) continue;
+      if (
+        !poolAssetASpotPrice ||
+        !BigNumber(poolAssetASpotPrice).isFinite()
+      )
+        continue;
 
       const originPoolTvlInRefAssetNormalised =
         fromExponentialToDecimalNotation(

@@ -511,9 +511,9 @@ export async function spotPriceProcessorHandler(
     })
   );
 
+  endBatch();
+
   await SpotPriceProcPoolManager.checkNextAvailableBatchToProcess({
     currentHeadBlockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
-
-  endBatch();
 }
