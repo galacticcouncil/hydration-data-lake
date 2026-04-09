@@ -57,7 +57,7 @@ export async function handleAssetSpotPricesHistoricalData({
   ctx: SqdProcessorContext<Store>;
 }) {
   OfflineTradeRouterManager.getInstance().wipeCache();
-  RouterCacheManager.getInstance().wipeCache();
+  RouterCacheManager.getInstance().wipeCache(ctx);
 
   const blocksNumbersToProcessSet = new Set(blockNumbersToProcess || []);
   const blocksToProcess = blockNumbersToProcess

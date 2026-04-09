@@ -328,8 +328,7 @@ class ProcessingModeConfig {
 
   @IsNumber()
   @Transform(({ value }: { value: string }) => +value)
-  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_NEXT_BATCH_OFFSET_BLOCKS: number =
-    0;
+  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_NEXT_BATCH_OFFSET_BLOCKS: number = 0;
 
   @Transform(
     ({ value }: { value: string }) =>
@@ -650,6 +649,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
   readonly ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION: boolean = false;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly CACHED_ROUTES_FOR_PRICE_CALCULATION_TTL_BLOCKS: number = 300;
 
   /**
    * Can be configured to "false" in case normal mono-processor run. In normal
