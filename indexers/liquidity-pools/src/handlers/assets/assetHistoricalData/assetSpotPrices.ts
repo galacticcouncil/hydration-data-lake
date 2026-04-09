@@ -918,6 +918,18 @@ async function processXykShareAssetSpotPrices({
           shareAssetDecimals
         )
       );
+
+      if (
+        !shareAssetPriceNormalised ||
+        !shareAssetPriceNormalised.isFinite() ||
+        shareAssetPriceNormalised.isNaN()
+      ) {
+        console.log(
+          `Invalid share price for asset ${asset.id} at block ${blockHeader.height}: ${shareAssetPriceNormalised?.toString()}. Skipping...`
+        );
+        continue;
+      }
+
       const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 
       // Empty route for XYK share assets
