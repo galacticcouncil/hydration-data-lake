@@ -743,6 +743,18 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly XYKPOOL_HIST_DATA_TRACKING_BATCH_SIZE_PER_BLOCK: number = -1;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly API_PROXY_CACHE_TTL_MS_DEFILLAMA: number = 600000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly API_PROXY_CACHE_TTL_MS_KAMINO: number = 600000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly API_PROXY_CACHE_TTL_MS_SUBSCAN: number = 600000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly API_PROXY_CACHE_TTL_MS_SUBSQUARE: number = 600000;
+
   readonly redis: RedisConfig = RedisConfig.getInstance();
 
   readonly evm: EvmConfig = EvmConfig.getInstance();
