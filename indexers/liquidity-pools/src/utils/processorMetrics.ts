@@ -22,6 +22,14 @@ const handlerDurationHistogram = new Histogram({
   ],
 });
 
+const batchDurationHistogram = new Histogram({
+  name: 'sqd_batch_duration_seconds',
+  help: 'Total batch execution duration in seconds',
+  labelNames: ['processor_type'] as const,
+  registers: [sqdRegistry],
+  buckets: [0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60, 120, 300],
+});
+
 const batchDurationGauge = new Gauge({
   name: 'sqd_batch_duration_last_seconds',
   help: 'Duration of the last batch execution in seconds',
@@ -29,12 +37,11 @@ const batchDurationGauge = new Gauge({
   registers: [sqdRegistry],
 });
 
-const batchDurationHistogram = new Histogram({
-  name: 'sqd_batch_duration_seconds',
-  help: 'Total batch execution duration in seconds',
+const handlerDurationGauge = new Gauge({
+  name: 'sqd_handler_duration_last_seconds',
+  help: 'Duration of the last handler execution in seconds',
   labelNames: ['processor_type'] as const,
   registers: [sqdRegistry],
-  buckets: [0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60, 120, 300],
 });
 
 export type ProcessorType =
@@ -61,11 +68,16 @@ export function createMetricsTracker(processorType: ProcessorType) {
         function_name: name,
         processor_type: processorType,
       });
+      const start = performance.now();
       console.time(name);
       try {
         return await fn();
       } finally {
         end();
+        handlerDurationGauge.set(
+          { processor_type: processorType },
+          (performance.now() - start) / 1000
+        );
         console.timeEnd(name);
       }
     },
@@ -75,11 +87,16 @@ export function createMetricsTracker(processorType: ProcessorType) {
         function_name: name,
         processor_type: processorType,
       });
+      const start = performance.now();
       console.time(name);
       try {
         return fn();
       } finally {
         end();
+        handlerDurationGauge.set(
+          { processor_type: processorType },
+          (performance.now() - start) / 1000
+        );
         console.timeEnd(name);
       }
     },
