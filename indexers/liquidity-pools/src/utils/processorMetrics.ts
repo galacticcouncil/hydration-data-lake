@@ -1,4 +1,4 @@
-import { Histogram, Registry } from 'prom-client';
+import { Gauge, Histogram, Registry } from 'prom-client';
 import { processor } from '../processor';
 
 /**
@@ -20,6 +20,13 @@ const handlerDurationHistogram = new Histogram({
   buckets: [
     0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60,
   ],
+});
+
+const batchDurationGauge = new Gauge({
+  name: 'sqd_batch_duration_last_seconds',
+  help: 'Duration of the last batch execution in seconds',
+  labelNames: ['processor_type'] as const,
+  registers: [sqdRegistry],
 });
 
 const batchDurationHistogram = new Histogram({
@@ -83,9 +90,17 @@ export function createMetricsTracker(processorType: ProcessorType) {
      * Returns a function to call when the batch completes.
      */
     startBatch(): () => void {
-      return batchDurationHistogram.startTimer({
+      const histEnd = batchDurationHistogram.startTimer({
         processor_type: processorType,
       });
+      const start = performance.now();
+      return () => {
+        histEnd();
+        batchDurationGauge.set(
+          { processor_type: processorType },
+          (performance.now() - start) / 1000
+        );
+      };
     },
   };
 }
