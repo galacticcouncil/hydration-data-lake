@@ -40,7 +40,7 @@ const batchDurationGauge = new Gauge({
 const handlerDurationGauge = new Gauge({
   name: 'sqd_handler_duration_last_seconds',
   help: 'Duration of the last handler execution in seconds',
-  labelNames: ['processor_type'] as const,
+  labelNames: ['function_name', 'processor_type'] as const,
   registers: [sqdRegistry],
 });
 
@@ -75,7 +75,7 @@ export function createMetricsTracker(processorType: ProcessorType) {
       } finally {
         end();
         handlerDurationGauge.set(
-          { processor_type: processorType },
+          { function_name: name, processor_type: processorType },
           (performance.now() - start) / 1000
         );
         console.timeEnd(name);
@@ -94,7 +94,7 @@ export function createMetricsTracker(processorType: ProcessorType) {
       } finally {
         end();
         handlerDurationGauge.set(
-          { processor_type: processorType },
+          { function_name: name, processor_type: processorType },
           (performance.now() - start) / 1000
         );
         console.timeEnd(name);
