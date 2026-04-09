@@ -17,7 +17,10 @@ import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/
 import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
 import { getOmnipoolLiquidityMiningDepositsForAccounts } from '../liquidity/omnipool/liquidityMining/depositUtils';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
-import { getPreviousAssetAccountBalancesSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
+import {
+  getPreviousAssetAccountBalancesForListOfAccountsSql,
+  getPreviousAssetAccountBalancesSql,
+} from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
 import {
   createAccountAssetBalancesForOutdatedBalances,
   ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData,
@@ -609,6 +612,30 @@ export async function handleUnchangedAccountAssetBalances({
       Map<AssetId, UnchangedAccountAssetBalanceHistoricalData>
     >();
 
+    const latestAccountAssetBalancesIndexedByAccount: Map<
+      string,
+      RawAccountAssetBalanceHistoricalData[]
+    > = new Map();
+
+    try {
+      const resp = (
+        await pgPool.query<RawAccountAssetBalanceHistoricalData>(
+          getPreviousAssetAccountBalancesForListOfAccountsSql,
+          [Array.from(assetBalancesByAccountAtBlock.keys())]
+        )
+      ).rows;
+
+      for (const record of resp) {
+        if (!latestAccountAssetBalancesIndexedByAccount.has(record.account_id))
+          latestAccountAssetBalancesIndexedByAccount.set(record.account_id, []);
+        latestAccountAssetBalancesIndexedByAccount
+          .get(record.account_id)!
+          .push(record);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
     /**
      * LOOP L2 :: Iterating accounts involved at specific block.
      *
@@ -679,23 +706,11 @@ export async function handleUnchangedAccountAssetBalances({
         }
       }
 
-      let persistentAssetBalances: RawAccountAssetBalanceHistoricalData[] = [];
-
-      try {
-        persistentAssetBalances = (
-          await pgPool.query<RawAccountAssetBalanceHistoricalData>(
-            getPreviousAssetAccountBalancesSql,
-            [
-              accountId,
-              Array.from(assetIdsForAccountToIgnoreInDbAggregation.values()),
-            ]
-          )
-        ).rows;
-      } catch (e) {
-        console.log(e);
-      }
-
-      for (const balance of persistentAssetBalances) {
+      for (const balance of (
+        latestAccountAssetBalancesIndexedByAccount.get(accountId) || []
+      ).filter(
+        (r) => !assetIdsForAccountToIgnoreInDbAggregation.has(r.asset_id)
+      )) {
         const unchangedAssetBalanceData =
           await getUnchangedAccountAssetBalanceFromPersistentEntity({
             previousAssetBalancePersistent: balance,
