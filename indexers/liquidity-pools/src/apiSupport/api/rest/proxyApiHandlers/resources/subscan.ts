@@ -71,7 +71,7 @@ export async function handleProxyReqSubscanAny(
       await CacheManager.getInstance().cache.set<any>(
         cacheKey,
         response.data,
-        900_000
+        appConfig.API_PROXY_CACHE_TTL_MS_SUBSCAN
       );
     }
 
