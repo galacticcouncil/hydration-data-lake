@@ -192,42 +192,4 @@ export async function handleAssetAccountBalances(
   // console.timeEnd(
   //   'handleAssetAccountBalances:: updateAccountProcessingStatusOnTotalBalanceChange'
   // );
-  /**
-   * Handle Oracle Updates.
-   */
-
-  // console.time('handleAssetAccountBalances:: Handle Oracle Updates');
-  const blocksWithOracleUpdate: Map<number, SqdBlock> = new Map();
-
-  for (const event of Array.from(
-    parsedEvents.getSectionByEventName(EventName.EVM_Log).values()
-  )) {
-    if (event.eventData.params?.eventName === EvmEventName.OracleUpdate)
-      blocksWithOracleUpdate.set(
-        event.eventData.metadata.blockHeader.height,
-        event.eventData.metadata.blockHeader
-      );
-  }
-
-  if (blocksWithOracleUpdate.size === 0) return;
-
-  const latestBlockWithOracleUpdate = Array.from(
-    blocksWithOracleUpdate.keys()
-  ).sort((a, b) => b - a)[0];
-
-  const allEvmAccounts =
-    await parsers.storage.evmAccounts.getAllAccountsExtensions({
-      block: blocksWithOracleUpdate.get(latestBlockWithOracleUpdate)!,
-    });
-
-  if (!allEvmAccounts) return;
-
-  for (const blockHeader of blocksWithOracleUpdate.values()) {
-    await handleAllAccountsMmPositionDataUpdate({
-      allEvmAccounts,
-      blockHeader,
-      ctx,
-    });
-  }
-  // console.timeEnd('handleAssetAccountBalances:: Handle Oracle Updates');
 }

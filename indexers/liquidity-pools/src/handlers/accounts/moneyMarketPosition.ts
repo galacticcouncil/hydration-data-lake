@@ -6,7 +6,10 @@ import { Store } from '@subsquid/typeorm-store';
 import { AccountMmPositionHistoricalData, EvmEventName } from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../parsers/storageResolver';
-import { EventName } from '../../parsers/types/events';
+import {
+  EventName,
+  EvmAccountsBoundEventParams,
+} from '../../parsers/types/events';
 import { EvmAccountsAccountExtensionWithEvmAddress } from '../../parsers/types/storage';
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
@@ -14,6 +17,8 @@ import {
   getOrCreateAccount,
   getOrCreateAccountByBoundEvmAddress,
 } from './index';
+import parsers from '../../parsers';
+import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
 
 const maxHealthFactor =
   '115792089237316195423570985008687907853269984665640564039457.584007913129639935';
@@ -27,11 +32,19 @@ export async function handleAccountMmPositionData(
     { blockHeader: SqdBlock; evmAddresses: Set<string> }
   > = new Map();
 
+  const blocksWithOracleUpdate: Map<number, SqdBlock> = new Map();
+
   for (const event of Array.from(
     parsedEvents.getSectionByEventName(EventName.EVM_Log).values()
   )) {
-    if (event.eventData.params?.eventName === EvmEventName.OracleUpdate)
+    if (event.eventData.params?.eventName === EvmEventName.OracleUpdate) {
+      blocksWithOracleUpdate.set(
+        event.eventData.metadata.blockHeader.height,
+        event.eventData.metadata.blockHeader
+      );
+
       continue;
+    }
 
     if (
       !accountsToProcessPerBlock.has(
@@ -70,6 +83,9 @@ export async function handleAccountMmPositionData(
     );
   }
 
+  /**
+   * Process accounts explicitly involved in EVM actions
+   */
   for (const blockSlotData of accountsToProcessPerBlock.values()) {
     await pMap(
       Array.from(blockSlotData.evmAddresses.values()),
@@ -82,6 +98,31 @@ export async function handleAccountMmPositionData(
       },
       { concurrency: 50 }
     );
+  }
+
+  /**
+   * Process accounts on Oracle update
+   */
+
+  if (blocksWithOracleUpdate.size === 0) return;
+
+  const latestBlockWithOracleUpdate = Array.from(
+    blocksWithOracleUpdate.keys()
+  ).sort((a, b) => b - a)[0];
+
+  const allEvmAccounts =
+    await AccountEvmExtensionsCacheManager.getInstance().getAllBoundedAccountsList(
+      ctx
+    );
+
+  if (!allEvmAccounts) return;
+
+  for (const blockHeader of blocksWithOracleUpdate.values()) {
+    await handleAllAccountsMmPositionDataUpdate({
+      allEvmAccounts,
+      blockHeader,
+      ctx,
+    });
   }
 }
 
@@ -162,24 +203,23 @@ export async function handleAllAccountsMmPositionDataUpdate({
   blockHeader,
   ctx,
 }: {
-  allEvmAccounts: EvmAccountsAccountExtensionWithEvmAddress[];
+  allEvmAccounts: EvmAccountsBoundEventParams[];
   blockHeader: SqdBlock;
   ctx: SqdProcessorContext<Store>;
 }) {
   await pMap(
     allEvmAccounts || [],
-    async ({ h160Address, extension }) => {
-      const accId = `${h160Address}${extension.replace(/^0x/, '')}`;
+    async ({ accountAddress, evmAddress }) => {
       await getOrCreateAccount({
-        id: accId,
+        id: accountAddress,
         ctx,
-        boundEvmAddress: h160Address,
+        boundEvmAddress: evmAddress,
       });
 
       await handleAccountMmPositionDataOnMmEvent({
         ctx,
         blockHeader,
-        accountEvmAddress: h160Address,
+        accountEvmAddress: evmAddress,
       });
     },
     {
