@@ -39,6 +39,7 @@ export async function handleAssetAccountBalances(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
+  if (!ctx.appConfig.ENABLE_ACCOUNT_BALANCES_AGGREGATION) return;
   /**
    * IMPORTANT
    * Account Asset Balances are aggregated based on the following triggers/events:

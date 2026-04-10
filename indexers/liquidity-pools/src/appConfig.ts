@@ -737,6 +737,9 @@ export class AppConfig {
   readonly ENABLE_ALL_ACCOUNT_BALANCES_INIT: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_ACCOUNT_BALANCES_AGGREGATION: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
