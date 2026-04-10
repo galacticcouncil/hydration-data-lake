@@ -897,10 +897,7 @@ async function processXykShareAssetSpotPrices({
           `${originXykpool.assetAId}-${assetOutId}-${blockHeader.height}`
         )?.priceNormalised;
 
-      if (
-        !poolAssetASpotPrice ||
-        !BigNumber(poolAssetASpotPrice).isFinite()
-      )
+      if (!poolAssetASpotPrice || !BigNumber(poolAssetASpotPrice).isFinite())
         continue;
 
       const originPoolTvlInRefAssetNormalised =
@@ -920,8 +917,18 @@ async function processXykShareAssetSpotPrices({
         console.log(e);
       }
 
-      if (!shareAssetDecimals) return;
-
+      if (!shareAssetDecimals) {
+        console.log(
+          `processXykShareAssetSpotPrices :: share asset decimals not found for pool ${originXykpool.accountId}`
+        );
+        return;
+      }
+      if (!assetHistData.totalIssuance) {
+        console.log(
+          `processXykShareAssetSpotPrices :: totalIssuance not found for asset ${assetHistData.assetId}`
+        );
+        return;
+      }
       const shareAssetPriceNormalised = originPoolTvlInRefAssetNormalised.div(
         fromExponentialToDecimalNotation(
           assetHistData.totalIssuance.toString(),
