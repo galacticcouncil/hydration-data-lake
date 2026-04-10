@@ -19,6 +19,11 @@ import {
 } from './index';
 import parsers from '../../parsers';
 import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
+import { getPreviousAssetAccountBalancesForListOfAccountsSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
+import { RawAccountAssetBalanceHistoricalData } from '../balances/accountTotalBalance';
+import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
+import { getAccountsWithMmAssetBalancesSql } from '../../utils/pgConnectionManagers/queries/getAccountsWithMmAssetBalances.sql';
+import { getAllMoneyMarketAssets } from '../assets/asset';
 
 const maxHealthFactor =
   '115792089237316195423570985008687907853269984665640564039457.584007913129639935';
@@ -106,14 +111,36 @@ export async function handleAccountMmPositionData(
 
   if (blocksWithOracleUpdate.size === 0) return;
 
-  const latestBlockWithOracleUpdate = Array.from(
-    blocksWithOracleUpdate.keys()
-  ).sort((a, b) => b - a)[0];
+  // const latestBlockWithOracleUpdate = Array.from(
+  //   blocksWithOracleUpdate.keys()
+  // ).sort((a, b) => b - a)[0];
 
-  const allEvmAccounts =
+  let allEvmAccounts =
     await AccountEvmExtensionsCacheManager.getInstance().getAllBoundedAccountsList(
       ctx
     );
+
+  const allExistingMmAssets = await getAllMoneyMarketAssets(ctx);
+
+  try {
+    const resp = (
+      await CommonPgPool.getInstance().query<{ account_id: string }>(
+        getAccountsWithMmAssetBalancesSql,
+        [
+          allEvmAccounts.map((a) => a.accountAddress),
+          allExistingMmAssets.map((a) => a.id),
+        ]
+      )
+    ).rows;
+
+    const responseSet = new Set(resp.map((r) => r.account_id));
+
+    allEvmAccounts = allEvmAccounts.filter((a) =>
+      responseSet.has(a.accountAddress)
+    );
+  } catch (e) {
+    console.log(e);
+  }
 
   if (!allEvmAccounts) return;
 
