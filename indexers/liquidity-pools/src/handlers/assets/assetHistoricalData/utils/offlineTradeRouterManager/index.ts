@@ -35,7 +35,7 @@ export class RouterCacheManager {
       return;
     }
 
-    if (ctx.blocks.length > 0) {
+    if (ctx.blocks.length > 1) {
       this.mlrCached = new Map();
       this.cacheInvalidatedAtBlock =
         ctx.blocks[ctx.blocks.length - 1].header.height;
