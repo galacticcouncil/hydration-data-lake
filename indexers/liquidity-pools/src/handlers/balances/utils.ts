@@ -18,8 +18,10 @@ import {
 } from './accountTotalBalance';
 import { BigNumber } from '@galacticcouncil/sdk';
 import {
+  AccountData,
   BalancesAccountInfoWithAccountId,
   TokenAccountBalancesWithAccountId,
+  TokenAccountBalanceWithAssetId,
 } from '../../parsers/types/storage';
 import { AssetBalancesStorageDataPerBlockPerAccountMap } from './commonAssetBalances';
 import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
@@ -187,6 +189,65 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
           new Map()
         );
 
+      const prefetchedAccountAssetBalancesWithoutCache: Map<
+        string,
+        {
+          native: AccountData | null;
+          other: Map<string, AccountData | null>;
+        }
+      > = new Map();
+
+      const nativeAssetBalances =
+        await parsers.storage.system.getNativeTokenBalanceMany({
+          block: blockHeader,
+          accountIds: Array.from(accountAssetBalancesAtBlock.keys()),
+          skipCache: true,
+        });
+      const otherTokenBalances =
+        await parsers.storage.tokens.getTokenBalancesMany({
+          block: blockHeader,
+          accountIds: Array.from(accountAssetBalancesAtBlock.keys()),
+          skipCache: true,
+        });
+
+      for (const nativeBalance of nativeAssetBalances) {
+        if (
+          !prefetchedAccountAssetBalancesWithoutCache.has(
+            nativeBalance.accountId
+          )
+        ) {
+          prefetchedAccountAssetBalancesWithoutCache.set(
+            nativeBalance.accountId,
+            {
+              native: nativeBalance.data,
+              other: new Map(),
+            }
+          );
+        }
+      }
+      for (const otherBalance of otherTokenBalances) {
+        if (
+          !prefetchedAccountAssetBalancesWithoutCache.has(
+            otherBalance.accountId
+          )
+        ) {
+          prefetchedAccountAssetBalancesWithoutCache.set(
+            otherBalance.accountId,
+            {
+              native: null,
+              other: new Map(),
+            }
+          );
+        }
+        if (otherBalance.assetBalances) {
+          for (const assetBalance of otherBalance.assetBalances) {
+            prefetchedAccountAssetBalancesWithoutCache
+              .get(otherBalance.accountId)!
+              .other.set(assetBalance.assetId, assetBalance.data);
+          }
+        }
+      }
+
       await pMap(
         Array.from(accountAssetBalancesAtBlock.entries()),
         async ([accountId, accountBalances]) => {
@@ -245,33 +306,42 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
                 }
               } else {
                 if (assetId === '0') {
-                  const balances =
-                    await parsers.storage.system.getNativeTokenBalanceMany({
-                      block: blockHeader,
-                      accountIds: [accountId],
-                      skipCache: true,
-                    });
-
-                  if (balances.length === 0 || !balances[0]?.data) {
+                  if (
+                    !prefetchedAccountAssetBalancesWithoutCache.has(
+                      accountId
+                    ) ||
+                    prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.native === null
+                  ) {
                     assetBalancesHistDataWithNoResult.set(
                       assetId,
                       assetPrevBalanceData
                     );
                     return;
                   }
-
-                  totalTransferableBalance = balances[0].data.free;
-                  totalLockedBalance = balances[0].data.reserved;
+                  totalTransferableBalance =
+                    prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.native?.free ?? 0n;
+                  totalLockedBalance =
+                    prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.native?.reserved ?? 0n;
                 } else {
-                  const balances =
-                    await parsers.storage.tokens.getTokenBalancesMany({
-                      block:
-                        ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
-                      accountIds: [accountId],
-                      skipCache: true,
-                    });
-
-                  if (balances.length === 0 || !balances[0]?.assetBalances) {
+                  if (
+                    !assetEntity.assetRegistryId ||
+                    !prefetchedAccountAssetBalancesWithoutCache.has(
+                      accountId
+                    ) ||
+                    !prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.other ||
+                    prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.other.size === 0 ||
+                    !prefetchedAccountAssetBalancesWithoutCache
+                      .get(accountId)
+                      ?.other?.has(assetEntity.assetRegistryId!) ||
+                    !prefetchedAccountAssetBalancesWithoutCache
+                      .get(accountId)
+                      ?.other?.get(assetEntity.assetRegistryId!)
+                  ) {
                     assetBalancesHistDataWithNoResult.set(
                       assetId,
                       assetPrevBalanceData
@@ -279,9 +349,11 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
                     return;
                   }
 
-                  const assetBalance = balances[0].assetBalances.find(
-                    (b) => b.assetId === assetEntity.assetRegistryId
-                  );
+                  const assetBalance =
+                    prefetchedAccountAssetBalancesWithoutCache
+                      .get(accountId)
+                      ?.other?.get(assetEntity.assetRegistryId!);
+
                   if (!assetBalance) {
                     assetBalancesHistDataWithNoResult.set(
                       assetId,
@@ -289,8 +361,8 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
                     );
                     return;
                   }
-                  totalTransferableBalance = assetBalance.data.free;
-                  totalLockedBalance = assetBalance.data.reserved;
+                  totalTransferableBalance = assetBalance.free;
+                  totalLockedBalance = assetBalance.reserved;
                 }
               }
 
