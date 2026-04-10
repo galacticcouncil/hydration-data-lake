@@ -74,6 +74,7 @@ import { CoreProcPoolManager } from '../utils/multiProcPoolManager/subProcessors
 import { BalancesProcPoolManager } from '../utils/multiProcPoolManager/subProcessors/balancesProcPoolManager';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../handlers/pools/pools/hsmpool';
 import { createMetricsTracker } from '../utils/processorMetrics';
+import { AccountEvmExtensionsCacheManager } from '../utils/accountEvmExtensionsCacheManager';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -96,6 +97,10 @@ export async function singleFlowAllInOneProcessor(
 
       await mt.track('saveActivityTraceEntities', () =>
         ChainActivityTraceManager.saveActivityTraceEntities(ctx)
+      );
+
+      await mt.track('AccountEvmExtensionsCacheManager.initCache', () =>
+        AccountEvmExtensionsCacheManager.getInstance().initCache(ctx)
       );
 
       /**

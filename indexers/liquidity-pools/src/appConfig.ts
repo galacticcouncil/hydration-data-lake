@@ -653,6 +653,8 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly CACHED_ROUTES_FOR_PRICE_CALCULATION_TTL_BLOCKS: number = 300;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly CACHED_EVM_BOUNDED_ACCOUNTS_TTL_BLOCKS: number = 100;
   /**
    * Can be configured to "false" in case normal mono-processor run. In normal
    * processing flow spot price calculation requires data which already must be

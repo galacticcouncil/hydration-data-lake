@@ -76,6 +76,7 @@ import { MultiProcPoolManager } from '../../utils/multiProcPoolManager';
 import { CoreProcPoolManager } from '../../utils/multiProcPoolManager/subProcessors/coreProcPoolManager';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/pools/hsmpool';
 import { createMetricsTracker } from '../../utils/processorMetrics';
+import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
 
 export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
   let parsedData: BatchBlocksParsedDataManager | null = null;
@@ -111,6 +112,10 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
 
   await mt.track('saveActivityTraceEntities', () =>
     ChainActivityTraceManager.saveActivityTraceEntities(ctx)
+  );
+
+  await mt.track('AccountEvmExtensionsCacheManager.initCache', () =>
+    AccountEvmExtensionsCacheManager.getInstance().initCache(ctx)
   );
 
   /**
@@ -202,9 +207,7 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
     initAllXykLiquidityMiningDeposits(ctx)
   );
 
-  await mt.track('handleAssetRegistry', () =>
-    handleAssetRegistry(ctx, parsed)
-  );
+  await mt.track('handleAssetRegistry', () => handleAssetRegistry(ctx, parsed));
 
   await mt.track('actualizeMoneyMarketReserves', () =>
     actualizeMoneyMarketReserves({ ctx })
@@ -243,13 +246,9 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
     handleXykPoolLiquidityMiningEvents(ctx, parsed)
   );
 
-  await mt.track('handleUniquesEvents', () =>
-    handleUniquesEvents(ctx, parsed)
-  );
+  await mt.track('handleUniquesEvents', () => handleUniquesEvents(ctx, parsed));
 
-  await mt.track('handleStablepools', () =>
-    handleStablepools(ctx, parsed)
-  );
+  await mt.track('handleStablepools', () => handleStablepools(ctx, parsed));
 
   await mt.track('ensureAaveFacilitators', () => ensureAaveFacilitators(ctx));
 
@@ -326,9 +325,7 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
     HistoricalDataManager.saveSwapRelatedDataBulk(ctx)
   );
 
-  await mt.track('handleDcaSchedules', () =>
-    handleDcaSchedules(ctx, parsed)
-  );
+  await mt.track('handleDcaSchedules', () => handleDcaSchedules(ctx, parsed));
 
   await mt.track('saveDcaEntities', () => saveDcaEntities(ctx));
 
@@ -363,9 +360,7 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
     ensurePoolsDestroyedStatus(ctx)
   );
 
-  await mt.track('handleEvmAccounts', () =>
-    handleEvmAccounts(ctx, parsed)
-  );
+  await mt.track('handleEvmAccounts', () => handleEvmAccounts(ctx, parsed));
 
   // console.time('handleAssetPairVolumesHistoricalData');
   // await handleAssetPairVolumesHistoricalData({ ctx });

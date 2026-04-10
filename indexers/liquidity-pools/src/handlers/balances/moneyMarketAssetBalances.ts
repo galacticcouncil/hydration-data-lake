@@ -351,6 +351,7 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
   const accountMmAssetsPerBlock = await getAccountMmAssetsPerBlock({
     ctx,
     allProcessedAccountsPerBlock,
+    allMmAssets: allExistingMmAssets,
   });
 
   await pMap(
@@ -501,12 +502,15 @@ interface RawAccountMmAssetBalances {
  */
 async function getAccountMmAssetsPerBlock({
   allProcessedAccountsPerBlock,
+  allMmAssets,
   ctx,
 }: {
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
   ctx: SqdProcessorContext<Store>;
+  allMmAssets?: Asset[];
 }): Promise<Map<number, Map<string, Set<string>>>> {
-  const allExistingMmAssets = await getAllMoneyMarketAssets(ctx);
+  const allExistingMmAssets =
+    allMmAssets ?? (await getAllMoneyMarketAssets(ctx));
   const allExistingMmAssetIdsList = allExistingMmAssets.map((a) => a.id);
   const allExistingMmAssetIdsSet = new Set(allExistingMmAssetIdsList);
   const accountsMmAssetsPerBlock: Map<

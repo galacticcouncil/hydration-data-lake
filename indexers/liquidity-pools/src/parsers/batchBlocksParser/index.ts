@@ -34,6 +34,7 @@ import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { EventDataParserHelper } from './eventDataParserHelper';
 import { ChainName } from '../../utils/types';
 import { SwapFillerType } from '../../model';
+import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
 
 export class BatchBlocksParsedDataManager {
   private scope: BatchBlocksParsedDataScope;
@@ -1480,6 +1481,9 @@ export async function getParsedEventsData(
           parserHelper.addAccountIdsForPrefetch([
             preparedData.eventData.params.accountAddress,
           ]);
+          AccountEvmExtensionsCacheManager.getInstance().addBoundedAccount(
+            preparedData.eventData.params
+          );
           break;
         }
 
