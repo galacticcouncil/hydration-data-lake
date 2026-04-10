@@ -88,6 +88,7 @@ import { BalancesProcPoolManager } from '../../utils/multiProcPoolManager/subPro
 import { fetchAndCorrelateAssetSpotPrices } from '../utils';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/pools/hsmpool';
 import { createMetricsTracker } from '../../utils/processorMetrics';
+import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
 export async function balancesProcessorHandler(
   ctx: SqdProcessorContext<Store>
@@ -157,6 +158,8 @@ export async function balancesProcessorHandler(
 
   if (!parsedData) throw new Error('parsedData is null');
   const parsed = parsedData;
+
+  PoolVolumesCacheManager.getInstance().wipeCache(ctx);
 
   await mt.track('custom prefetch', async () => {
     ctx.batchState.state.moneyMarketEvents = new Map(
@@ -458,6 +461,8 @@ export async function balancesProcessorHandler(
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  PoolVolumesCacheManager.getInstance().addLatestRecordsToCache(ctx);
 
   endBatch();
 

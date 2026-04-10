@@ -13,6 +13,7 @@ import {
   getPoolAssetPreviousVolumeFromCache,
   getPoolPreviousVolumeFromCache,
 } from '../volumes';
+import { PoolVolumesCacheManager } from '../volumes/poolVolumesCacheManager';
 
 export async function processStableswapAssetNormalizedVolumes({
   blockNumbersToProcess,
@@ -37,17 +38,26 @@ export async function processStableswapAssetNormalizedVolumes({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const currentAssetVolsHistData of stableswapAssetHistVolsByBatchList) {
-    const asset = currentAssetVolsHistData.assetId ? ctx.batchState.state.assetsAll.get(currentAssetVolsHistData.assetId) : null;
+    const asset = currentAssetVolsHistData.assetId
+      ? ctx.batchState.state.assetsAll.get(currentAssetVolsHistData.assetId)
+      : null;
     const pool = currentAssetVolsHistData.volumesCollection.pool;
 
-    if(!asset || !pool) {
-      console.warn(`Asset or Pool data not found for asset ${currentAssetVolsHistData.assetId} or pool ${currentAssetVolsHistData.volumesCollection.pool.id} while processing Stableswap pool volume normalization at para block height ${currentAssetVolsHistData.paraBlockHeight}`);
+    if (!asset || !pool) {
+      console.warn(
+        `Asset or Pool data not found for asset ${currentAssetVolsHistData.assetId} or pool ${currentAssetVolsHistData.volumesCollection.pool.id} while processing Stableswap pool volume normalization at para block height ${currentAssetVolsHistData.paraBlockHeight}`
+      );
       continue;
     }
 
     const previousAssetHistVolume =
       (getPoolAssetPreviousVolumeFromCache(
         ctx.batchState.state.stablepoolAssetVolumes,
+        `${pool.id}-${asset.id}`,
+        currentAssetVolsHistData.paraBlockHeight
+      ) as StableswapAssetVolumeHistoricalData | undefined) ||
+      (getPoolAssetPreviousVolumeFromCache(
+        PoolVolumesCacheManager.getInstance().stablswapAssetVolumesCache,
         `${pool.id}-${asset.id}`,
         currentAssetVolsHistData.paraBlockHeight
       ) as StableswapAssetVolumeHistoricalData | undefined) ||
@@ -61,6 +71,11 @@ export async function processStableswapAssetNormalizedVolumes({
     const previousPoolHistVolume =
       (getPoolPreviousVolumeFromCache(
         ctx.batchState.state.stablepoolVolumeCollections,
+        `${pool.id}`,
+        currentAssetVolsHistData.paraBlockHeight
+      ) as StableswapVolumeHistoricalData | undefined) ||
+      (getPoolPreviousVolumeFromCache(
+        PoolVolumesCacheManager.getInstance().stablswapVolumesCache,
         `${pool.id}`,
         currentAssetVolsHistData.paraBlockHeight
       ) as StableswapVolumeHistoricalData | undefined) ||
@@ -123,7 +138,6 @@ export async function processStableswapAssetNormalizedVolumes({
     )
       .plus(currentAssetVolsHistData.assetFeeVolNorm)
       .toFixed();
-
 
     /**
      * Pool normalized volumes

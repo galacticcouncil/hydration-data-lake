@@ -5,9 +5,8 @@ import { HsmpoolAssetHistoricalData } from '../../../model';
 import { SqdProcessorContext } from '../../../processor';
 import { calcPriceNormalized } from '../../../utils/helpers';
 import { getOrCreateAsset } from '../../assets/asset';
-import {
-  getOldHsmAssetHistDataEntity,
-} from '../pools/hsmpool/hsmpoolAssetHistData';
+import { getOldHsmAssetHistDataEntity } from '../pools/hsmpool/hsmpoolAssetHistData';
+import { PoolVolumesCacheManager } from '../volumes/poolVolumesCacheManager';
 
 export async function processHsmpoolAssetNormalizedVolumes({
   blockNumbersToProcess,
@@ -34,9 +33,11 @@ export async function processHsmpoolAssetNormalizedVolumes({
     const assetId = currentAssetHistData.assetId;
     const asset = assetId ? await getOrCreateAsset({ ctx, id: assetId }) : null;
     if (!asset) {
-      console.log(`processHsmpoolAssetNormalizedVolumes :: Asset with id ${assetId} cannot be found.`);
-      continue
-    };
+      console.log(
+        `processHsmpoolAssetNormalizedVolumes :: Asset with id ${assetId} cannot be found.`
+      );
+      continue;
+    }
     const decimals = asset.decimals;
 
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
@@ -51,6 +52,13 @@ export async function processHsmpoolAssetNormalizedVolumes({
     const previousAssetHistData =
       (ctx.batchState.getPreviousHistDataEntity({
         entitiesMap: ctx.batchState.state.hsmpoolAssetHistData,
+        entityId: assetId,
+        currentBlockHeight: currentAssetHistData.paraBlockHeight,
+        blockHeightValPosition: 1,
+      }) as HsmpoolAssetHistoricalData | undefined) ||
+      (ctx.batchState.getPreviousHistDataEntity({
+        entitiesMap:
+          PoolVolumesCacheManager.getInstance().hsmpoolAssetHistoricalDataCache,
         entityId: assetId,
         currentBlockHeight: currentAssetHistData.paraBlockHeight,
         blockHeightValPosition: 1,

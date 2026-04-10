@@ -5,6 +5,7 @@ import { processLbpPoolsNormalizedVolumes } from './lbpPoolVolumesNormalized';
 import { processStableswapAssetNormalizedVolumes } from './stableswapAssetVolumesNormalized';
 import { processOmnipoolAssetNormalizedVolumes } from './omnipoolAssetVolumesNormalized';
 import { processHsmpoolAssetNormalizedVolumes } from './hsmpoolAssetVolumesNormalized';
+import { PoolVolumesCacheManager } from '../volumes/poolVolumesCacheManager';
 
 export async function processPoolsNormalizedVolumes({
   blockNumbersToProcess,

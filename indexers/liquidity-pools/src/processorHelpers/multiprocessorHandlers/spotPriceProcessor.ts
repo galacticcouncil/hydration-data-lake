@@ -79,6 +79,7 @@ import { Block, RoutedTrade, Swap, SwapAssetBalanceType } from '../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/pools/hsmpool';
 import { createMetricsTracker } from '../../utils/processorMetrics';
+import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
 export async function spotPriceProcessorHandler(
   ctx: SqdProcessorContext<Store>
@@ -252,6 +253,8 @@ export async function spotPriceProcessorHandler(
 
   if (!parsedData) throw new Error('parsedData is null');
   const parsed = parsedData;
+
+  PoolVolumesCacheManager.getInstance().wipeCache(ctx);
 
   // await ensureNativeToken(ctx);
 
@@ -501,6 +504,8 @@ export async function spotPriceProcessorHandler(
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  PoolVolumesCacheManager.getInstance().addLatestRecordsToCache(ctx);
 
   await mt.track('publishPendingJobs', () =>
     SpotPriceProcPoolManager.publishPendingJobs({

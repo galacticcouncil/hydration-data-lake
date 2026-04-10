@@ -81,6 +81,7 @@ import { PoolAndAssetMetricsProcPoolManager } from '../../utils/multiProcPoolMan
 import { handlePoolAndAssetMetricsOnBroadcastSwappedEvents } from './utils';
 import { fetchAndCorrelateAssetSpotPrices } from '../utils';
 import { createMetricsTracker } from '../../utils/processorMetrics';
+import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
 export async function poolAndAssetMetricsProcessorHandler(
   ctx: SqdProcessorContext<Store>
@@ -151,6 +152,8 @@ export async function poolAndAssetMetricsProcessorHandler(
 
   if (!parsedData) throw new Error('parsedData is null');
   const parsed = parsedData;
+
+  PoolVolumesCacheManager.getInstance().wipeCache(ctx);
 
   await mt.track('custom prefetch', async () => {
     ctx.batchState.state.swaps = new Map(
@@ -477,6 +480,8 @@ export async function poolAndAssetMetricsProcessorHandler(
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  PoolVolumesCacheManager.getInstance().addLatestRecordsToCache(ctx);
 
   endBatch();
 

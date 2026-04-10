@@ -8,6 +8,7 @@ import {
   getOldOmnipoolAssetVolume,
   getPoolAssetPreviousVolumeFromCache,
 } from '../volumes';
+import { PoolVolumesCacheManager } from '../volumes/poolVolumesCacheManager';
 
 export async function processOmnipoolAssetNormalizedVolumes({
   blockNumbersToProcess,
@@ -31,9 +32,13 @@ export async function processOmnipoolAssetNormalizedVolumes({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const currentAssetVolsHistData of omnipoolAssetHistVolsByBatchList) {
-    const asset = ctx.batchState.state.assetsAll.get(currentAssetVolsHistData.omnipoolAsset.assetId);
+    const asset = ctx.batchState.state.assetsAll.get(
+      currentAssetVolsHistData.omnipoolAsset.assetId
+    );
     if (!asset) {
-      console.warn(`Asset data not found for asset ${currentAssetVolsHistData.omnipoolAsset.assetId} while processing Omnipool asset Volume normalization at para block height ${currentAssetVolsHistData.paraBlockHeight}`);
+      console.warn(
+        `Asset data not found for asset ${currentAssetVolsHistData.omnipoolAsset.assetId} while processing Omnipool asset Volume normalization at para block height ${currentAssetVolsHistData.paraBlockHeight}`
+      );
       continue;
     }
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
@@ -48,6 +53,11 @@ export async function processOmnipoolAssetNormalizedVolumes({
     const previousAssetHistVolume =
       (getPoolAssetPreviousVolumeFromCache(
         ctx.batchState.state.omnipoolAssetVolumes,
+        currentAssetVolsHistData.omnipoolAsset.id,
+        currentAssetVolsHistData.paraBlockHeight
+      ) as OmnipoolAssetVolumeHistoricalData | undefined) ||
+      (getPoolAssetPreviousVolumeFromCache(
+        PoolVolumesCacheManager.getInstance().omnipoolAssetVolumesCache,
         currentAssetVolsHistData.omnipoolAsset.id,
         currentAssetVolsHistData.paraBlockHeight
       ) as OmnipoolAssetVolumeHistoricalData | undefined) ||

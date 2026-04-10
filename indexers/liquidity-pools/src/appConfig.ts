@@ -654,6 +654,9 @@ export class AppConfig {
   readonly CACHED_ROUTES_FOR_PRICE_CALCULATION_TTL_BLOCKS: number = 300;
 
   @Transform(({ value }: { value: string }) => +value)
+  readonly CACHED_POOL_VOLUME_HIS_DATA_TTL_BLOCKS: number = 100;
+
+  @Transform(({ value }: { value: string }) => +value)
   readonly CACHED_EVM_BOUNDED_ACCOUNTS_TTL_BLOCKS: number = 100;
   /**
    * Can be configured to "false" in case normal mono-processor run. In normal

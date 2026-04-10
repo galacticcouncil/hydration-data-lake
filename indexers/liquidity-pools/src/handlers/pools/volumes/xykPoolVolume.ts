@@ -1,16 +1,10 @@
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  Swap,
-  Xykpool,
-  XykpoolVolumeHistoricalData,
-} from '../../../model';
+import { Swap, Xykpool, XykpoolVolumeHistoricalData } from '../../../model';
 import { SqdProcessorContext } from '../../../processor';
 import { calculateAveragePrice } from '../../prices/utils';
-import {
-  getLastVolumeFromCache,
-  getOldXykVolume,
-} from './index';
+import { getLastVolumeFromCache, getOldXykVolume } from './index';
+import { PoolVolumesCacheManager } from './poolVolumesCacheManager';
 
 export function initXykPoolVolume(
   swap: Swap,
@@ -105,8 +99,8 @@ export function initXykPoolVolume(
   });
 
   const assetAVolIn =
-    swap.inputs.find((input) => input.assetId === newVolume.assetAId)
-      ?.amount || BigInt(0);
+    swap.inputs.find((input) => input.assetId === newVolume.assetAId)?.amount ||
+    BigInt(0);
 
   const assetAVolOut =
     swap.outputs.find((output) => output.assetId === newVolume.assetAId)
@@ -119,8 +113,8 @@ export function initXykPoolVolume(
   }, 0n);
 
   const assetBVolIn =
-    swap.inputs.find((input) => input.assetId === newVolume.assetBId)
-      ?.amount || BigInt(0);
+    swap.inputs.find((input) => input.assetId === newVolume.assetBId)?.amount ||
+    BigInt(0);
 
   const assetBVolOut =
     swap.outputs.find((output) => output.assetId === newVolume.assetBId)
@@ -179,6 +173,10 @@ export async function handleXykPoolVolumeUpdates({
     currentVolume ||
     (getLastVolumeFromCache(
       ctx.batchState.state.xykPoolVolumes,
+      swap.fillerId
+    ) as XykpoolVolumeHistoricalData | undefined) ||
+    (getLastVolumeFromCache(
+      PoolVolumesCacheManager.getInstance().xykPoolVolumesCache,
       swap.fillerId
     ) as XykpoolVolumeHistoricalData | undefined) ||
     (await getOldXykVolume({

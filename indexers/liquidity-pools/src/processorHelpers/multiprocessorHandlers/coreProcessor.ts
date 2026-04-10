@@ -77,6 +77,7 @@ import { CoreProcPoolManager } from '../../utils/multiProcPoolManager/subProcess
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/pools/hsmpool';
 import { createMetricsTracker } from '../../utils/processorMetrics';
 import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
+import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
 export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
   let parsedData: BatchBlocksParsedDataManager | null = null;
@@ -191,6 +192,8 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
 
   if (!parsedData) throw new Error('parsedData is null');
   const parsed = parsedData;
+
+  PoolVolumesCacheManager.getInstance().wipeCache(ctx);
 
   await ensureNativeToken(ctx);
 
@@ -429,6 +432,8 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
   await ProcessorStatusManager.getInstance(ctx).updateProcessorStatus({
     latestProcessedBlock: ctx.blocks[ctx.blocks.length - 1].header.height,
   });
+
+  PoolVolumesCacheManager.getInstance().addLatestRecordsToCache(ctx);
 
   await mt.track('publishPendingJobs', () =>
     CoreProcPoolManager.publishPendingJobs({

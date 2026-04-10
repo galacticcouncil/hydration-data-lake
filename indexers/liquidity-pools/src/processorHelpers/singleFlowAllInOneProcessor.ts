@@ -75,6 +75,7 @@ import { BalancesProcPoolManager } from '../utils/multiProcPoolManager/subProces
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../handlers/pools/pools/hsmpool';
 import { createMetricsTracker } from '../utils/processorMetrics';
 import { AccountEvmExtensionsCacheManager } from '../utils/accountEvmExtensionsCacheManager';
+import { PoolVolumesCacheManager } from '../handlers/pools/volumes/poolVolumesCacheManager';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -135,6 +136,8 @@ export async function singleFlowAllInOneProcessor(
 
   if (!parsedData) throw new Error('parsedData is null');
   const parsed = parsedData;
+
+  PoolVolumesCacheManager.getInstance().wipeCache(ctx);
 
   await ensureNativeToken(ctx);
 
@@ -351,6 +354,8 @@ export async function singleFlowAllInOneProcessor(
   await mt.track('saveAccountBalancesRelatedDataBulk', () =>
     HistoricalDataManager.saveAccountBalancesRelatedDataBulk(ctx)
   );
+
+  PoolVolumesCacheManager.getInstance().addLatestRecordsToCache(ctx);
 
   await mt.track('updateInitialIndexingFinishedAtTime', () =>
     ProcessorStatusManager.updateInitialIndexingFinishedAtTime(ctx)
