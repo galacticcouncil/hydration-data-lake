@@ -726,6 +726,14 @@ export async function handleUnchangedAccountAssetBalances({
       }
     }
 
+    for (const [
+      key,
+      value,
+    ] of unchangedAssetBalancesFromPrevBlockIndexedByAccount.entries()) {
+      if (value.size === 0)
+        unchangedAssetBalancesFromPrevBlockIndexedByAccount.delete(key);
+    }
+
     unchangedAccountAssetBalancesPerBlock.set(
       blockHeight,
       unchangedAssetBalancesFromPrevBlockIndexedByAccount

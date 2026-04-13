@@ -183,6 +183,7 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
     async ([blockNumber, accountAssetBalancesAtBlock]) => {
       const blockHeader =
         ctx.batchState.getBlockHeaderByBlockHeight(blockNumber);
+
       if (!ensuredUnchangedAccountAssetBalancesByOnChainData.has(blockNumber))
         ensuredUnchangedAccountAssetBalancesByOnChainData.set(
           blockNumber,
@@ -288,7 +289,8 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
               let totalTransferableBalance = 0n;
               let totalLockedBalance = 0n;
 
-              if (assetEntity.assetType === AssetType.Erc20) {
+              // if (assetEntity.assetType === AssetType.Erc20) {
+              if (assetEntity.resourceType === AssetResourceType.Debt) {
                 totalTransferableBalance =
                   (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
                     {
@@ -577,6 +579,9 @@ export function indexAccountAssetBalancesAccumulators({
   }
 }
 
+/**
+ * Function returns balances indexed by asstRegistryId but not by assetId
+ */
 export function addAssetBalancesToAccumulator({
   commonTokenBalances,
   nativeTokenBalances,
@@ -633,12 +638,12 @@ export async function fetchBalancesForAccountsPerBlock({
     async ([blockNumber, accountsSetPerBlock]) => {
       if (accountsSetPerBlock.size === 0) return;
 
-      const accountsInBlockList: string[] = [];
+      const accountsToFetchInBlockList: string[] = [];
 
       for (const accountId of Array.from(accountsSetPerBlock.keys())) {
         const cachedAccountBalance = cache?.get(blockNumber)?.get(accountId);
         if (!cachedAccountBalance) {
-          accountsInBlockList.push(accountId);
+          accountsToFetchInBlockList.push(accountId);
           continue;
         }
         if (!assetBalancesStorageDataPerBlockPerAccountMap.has(blockNumber))
@@ -655,12 +660,12 @@ export async function fetchBalancesForAccountsPerBlock({
       const [nativeTokenBalances, commonTokenBalances] = await Promise.all([
         parsers.storage.system.getNativeTokenBalanceMany({
           block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
-          accountIds: accountsInBlockList,
+          accountIds: accountsToFetchInBlockList,
           skipCache: skipStorageReadCache,
         }),
         parsers.storage.tokens.getTokenBalancesMany({
           block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
-          accountIds: accountsInBlockList,
+          accountIds: accountsToFetchInBlockList,
           skipCache: skipStorageReadCache,
         }),
       ]);
