@@ -124,13 +124,12 @@ export async function handleAccountMmPositionData(
 
   try {
     const resp = (
-      await CommonPgPool.getInstance().query<{ account_id: string }>(
-        getAccountsWithMmAssetBalancesSql,
-        [
-          allEvmAccounts.map((a) => a.accountAddress),
-          allExistingMmAssets.map((a) => a.id),
-        ]
-      )
+      await CommonPgPool.getInstance().query<{
+        account_id: string;
+      }>(getAccountsWithMmAssetBalancesSql, [
+        allEvmAccounts.map((a) => a.accountAddress),
+        allExistingMmAssets.map((a) => a.id),
+      ])
     ).rows;
 
     const responseSet = new Set(resp.map((r) => r.account_id));
