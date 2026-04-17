@@ -486,7 +486,8 @@ function findLatestBalanceState({
  */
 export async function processBalanceEventsSequentially(
   ctx: SqdProcessorContext<Store>,
-  balanceEvents: BalanceEvent[]
+  balanceEvents: BalanceEvent[],
+  preProcessedTotalBalancesOnGlobalInit?: Set<string> | null
 ): Promise<{
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }> {
@@ -558,6 +559,18 @@ export async function processBalanceEventsSequentially(
     number,
     Set<string>
   > = new Map();
+
+  // In case of indexer cold start, includes all initialized accounts to ignore
+  // them in delta-based calculations.
+  if (
+    preProcessedTotalBalancesOnGlobalInit &&
+    preProcessedTotalBalancesOnGlobalInit.size > 0
+  ) {
+    accountsWithFirstBalancesInitPerBlock.set(
+      ctx.blocks[0].header.height,
+      preProcessedTotalBalancesOnGlobalInit
+    );
+  }
 
   if (firstEncounterAccountIds.length > 0) {
     const accountsByBlock = new Map<number, string[]>();

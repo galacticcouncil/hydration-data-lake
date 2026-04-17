@@ -84,7 +84,11 @@ export async function handleAssetAccountBalances(
     console.timeEnd('handleAssetAccountBalances:: eventsDriven:: collect');
 
     console.time('handleAssetAccountBalances:: eventsDriven:: process');
-    const result = await processBalanceEventsSequentially(ctx, balanceEvents);
+    const result = await processBalanceEventsSequentially(
+      ctx,
+      balanceEvents,
+      preProcessedTotalBalances
+    );
     allProcessedAccountsPerBlock = result.allProcessedAccountsPerBlock;
     console.timeEnd('handleAssetAccountBalances:: eventsDriven:: process');
 
