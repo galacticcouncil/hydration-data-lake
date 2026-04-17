@@ -90,6 +90,11 @@ export async function updateAccountProcessingStatusOnTotalBalanceChange({
   );
 }
 
+/**
+ * Mutates accountsFromSubstrateEventsPerBlock and allProcessedAccountsPerBlock
+ * maps provided as arguments.
+ */
+// TODO refactor - remove redundancy
 export async function addAccountsToPeriodicalBalancesAggregation({
   involvedAccountsAccumulators: {
     accountsFromSubstrateEventsPerBlock,
@@ -194,9 +199,12 @@ export async function addAccountsToPeriodicalBalancesAggregation({
   )
     return;
 
+  const accountsToProcessInSchedule: Set<string> = new Set();
+
   for (const accStatus of accountStatusesToProcess) {
     blockSlotToReaggregateBalances.add(accStatus.id);
     substrateEventsBlockSlotToReaggregateBalances.add(accStatus.id);
+    accountsToProcessInSchedule.add(accStatus.id);
 
     const accountProcessingStatus = await getOrCreateAccountProcessingStatus({
       id: accStatus.id,
@@ -214,15 +222,96 @@ export async function addAccountsToPeriodicalBalancesAggregation({
     accountProcessingStatusesToSave.push(accountProcessingStatus);
   }
 
-  allProcessedAccountsPerBlock.set(
-    lowestBlockToProcess,
-    blockSlotToReaggregateBalances
-  );
+  /**
+   * Update aggregation status BEFORE performing the actual balance aggregation.
+   *
+   * This prevents infinite reaggregation loops for accounts with zero balances:
+   * - Accounts with no balances don't generate assetBalanceHistoricalData records
+   * - Without balance data, no totalBalance snapshot is created
+   * - If we don't update the status here, these accounts would be reselected
+   *   for reaggregation in every subsequent batch iteration
+   *
+   * By updating the status upfront, we ensure all accounts are marked as processed,
+   * regardless of whether they have balances or not.
+   */
+  await ctx.storeUtils.upsertWithBatches(accountProcessingStatusesToSave);
 
-  accountsFromSubstrateEventsPerBlock.set(
-    lowestBlockToProcess,
-    blockSlotToReaggregateBalances
-  );
+  return accountsToProcessInSchedule;
+}
+
+export async function addAccountsToPeriodicalBalancesAggregationInDeltaFlow({
+  involvedAccountsInBatch,
+  whitelistedAccountIds,
+  ctx,
+}: {
+  involvedAccountsInBatch: Set<string>;
+  whitelistedAccountIds?: string[];
+  ctx: SqdProcessorContext<Store>;
+}) {
+  if (!ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_ENABLED) {
+    console.log(`Periodical balances aggregation is disabled.`);
+    return;
+  }
+
+  const pgPool = CommonPgPool.getInstance();
+
+  let accountStatusesToProcess: RawAccountProcessingStatus[] = [];
+
+  try {
+    if (whitelistedAccountIds && whitelistedAccountIds.length > 0) {
+      accountStatusesToProcess = (
+        await pgPool.query<RawAccountProcessingStatus>(
+          getWhitelistedAccountProcessingStatusesToProcess,
+          [
+            whitelistedAccountIds,
+            ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS,
+            ctx.blocks[0].header.height,
+          ]
+        )
+      ).rows;
+    } else {
+      accountStatusesToProcess = (
+        await pgPool.query<RawAccountProcessingStatus>(
+          getAccountProcessingStatusesToProcess,
+          [
+            Array.from(involvedAccountsInBatch.values()),
+            ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE,
+            ctx.appConfig.ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS,
+            ctx.blocks[0].header.height,
+          ]
+        )
+      ).rows;
+    }
+  } catch (e) {
+    console.log(e);
+  }
+
+  if (accountStatusesToProcess.length === 0) return new Set<string>();
+
+  const accountsToProcessInSchedule: Set<string> = new Set();
+
+  const blockNumberOfStatusUpdate = ctx.blocks[0].header.height;
+
+  const accountProcessingStatusesToSave: AccountProcessingStatus[] = [];
+
+  for (const accStatus of accountStatusesToProcess) {
+    accountsToProcessInSchedule.add(accStatus.id);
+
+    const accountProcessingStatus = await getOrCreateAccountProcessingStatus({
+      id: accStatus.id,
+      ctx,
+    });
+
+    accountProcessingStatus.balancesAggregatedAtParaBlock =
+      blockNumberOfStatusUpdate;
+
+    ctx.batchState.state.accountProcessingStatuses.set(
+      accountProcessingStatus.id,
+      accountProcessingStatus
+    );
+
+    accountProcessingStatusesToSave.push(accountProcessingStatus);
+  }
 
   /**
    * Update aggregation status BEFORE performing the actual balance aggregation.
@@ -237,6 +326,8 @@ export async function addAccountsToPeriodicalBalancesAggregation({
    * regardless of whether they have balances or not.
    */
   await ctx.storeUtils.upsertWithBatches(accountProcessingStatusesToSave);
+
+  return accountsToProcessInSchedule;
 }
 
 export async function prefetchOrInitAllAccountProcessingStatuses(

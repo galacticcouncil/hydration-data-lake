@@ -21,6 +21,7 @@ import {
 } from './accountTotalBalance';
 import {
   addAccountsToPeriodicalBalancesAggregation,
+  addAccountsToPeriodicalBalancesAggregationInDeltaFlow,
   updateAccountProcessingStatusOnTotalBalanceChange,
 } from '../accounts/accountProcessingStatus';
 import { prefetchBalancesForAccountsInvolvedToMmEvents } from './utils';
@@ -29,9 +30,7 @@ import {
   collectBalanceEvents,
   processBalanceEventsSequentially,
 } from './eventsDrivenBalances';
-import {
-  handleAccountTotalBalanceEventsDriven,
-} from './eventsDrivenTotalBalance';
+import { handleAccountTotalBalanceEventsDriven } from './eventsDrivenTotalBalance';
 
 /**
  * This function requires the following data, so it should be executed only after
@@ -83,12 +82,21 @@ export async function handleAssetAccountBalances(
     const balanceEvents = await collectBalanceEvents(ctx, parsedEvents);
     console.timeEnd('handleAssetAccountBalances:: eventsDriven:: collect');
 
+    const accountsForScheduledReaggregation =
+      await addAccountsToPeriodicalBalancesAggregationInDeltaFlow({
+        ctx,
+        involvedAccountsInBatch: new Set(
+          balanceEvents.map((e) => e.accountId) || []
+        ),
+      });
+
     console.time('handleAssetAccountBalances:: eventsDriven:: process');
-    const result = await processBalanceEventsSequentially(
+    const result = await processBalanceEventsSequentially({
       ctx,
       balanceEvents,
-      preProcessedTotalBalances
-    );
+      preProcessedTotalBalancesOnGlobalInit: preProcessedTotalBalances,
+      accountsForScheduledReaggregation,
+    });
     allProcessedAccountsPerBlock = result.allProcessedAccountsPerBlock;
     console.timeEnd('handleAssetAccountBalances:: eventsDriven:: process');
 

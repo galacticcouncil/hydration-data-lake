@@ -484,11 +484,17 @@ function findLatestBalanceState({
  * 4. Process events: skip delta at first-activity block, apply delta otherwise
  * 5. For balance lookup: check both batchState and cacheManager, prefer newer
  */
-export async function processBalanceEventsSequentially(
-  ctx: SqdProcessorContext<Store>,
-  balanceEvents: BalanceEvent[],
-  preProcessedTotalBalancesOnGlobalInit?: Set<string> | null
-): Promise<{
+export async function processBalanceEventsSequentially({
+  ctx,
+  balanceEvents,
+  preProcessedTotalBalancesOnGlobalInit,
+  accountsForScheduledReaggregation = new Set(),
+}: {
+  ctx: SqdProcessorContext<Store>;
+  balanceEvents: BalanceEvent[];
+  preProcessedTotalBalancesOnGlobalInit?: Set<string> | null;
+  accountsForScheduledReaggregation?: Set<string>;
+}): Promise<{
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }> {
   if (balanceEvents.length === 0) {
@@ -505,6 +511,11 @@ export async function processBalanceEventsSequentially(
   // accountsFirstActivityAtBlock: Map<AccountId, BlockNumber> - earliest block where account has activity
   const accountsFirstActivityAtBlock = new Map<string, number>();
 
+  const firstBatchBlockHeight = ctx.blocks[0].header.height;
+  for (const accountId of accountsForScheduledReaggregation.values()) {
+    accountsFirstActivityAtBlock.set(accountId, firstBatchBlockHeight);
+  }
+
   for (const event of balanceEvents) {
     if (
       !accountsFirstActivityAtBlock.has(event.accountId) ||
@@ -517,7 +528,9 @@ export async function processBalanceEventsSequentially(
 
   // Step 3: Identify accounts with NO prior DB history (check cache manager)
   // These need full RPC init via handleManyAccountBalancesInitCore
-  const firstEncounterAccountIds: string[] = [];
+  const firstEncounterAccountIds: string[] = Array.from(
+    accountsForScheduledReaggregation
+  );
 
   for (const [
     accountId,
@@ -560,18 +573,6 @@ export async function processBalanceEventsSequentially(
     Set<string>
   > = new Map();
 
-  // In case of indexer cold start, includes all initialized accounts to ignore
-  // them in delta-based calculations.
-  if (
-    preProcessedTotalBalancesOnGlobalInit &&
-    preProcessedTotalBalancesOnGlobalInit.size > 0
-  ) {
-    accountsWithFirstBalancesInitPerBlock.set(
-      ctx.blocks[0].header.height,
-      preProcessedTotalBalancesOnGlobalInit
-    );
-  }
-
   if (firstEncounterAccountIds.length > 0) {
     const accountsByBlock = new Map<number, string[]>();
     for (const accountId of firstEncounterAccountIds) {
@@ -605,21 +606,27 @@ export async function processBalanceEventsSequentially(
         concurrency: ctx.appConfig.concurrency.RUNTIME_API_CALLS_CONCURRENCY,
       }
     );
-    // for (const [blockHeight, accountIds] of accountsByBlock.entries()) {
-    //   const processedAccountsToIgnoreInDeltaCalcFlow =
-    //     await initManyAccountAssetBalancesFromOnChainData({
-    //       ctx,
-    //       blockHeight,
-    //       whitelistedAccountIds: accountIds,
-    //       forceFetch: true,
-    //     });
-    //   accountsWithFirstBalancesInitPerBlock.set(
-    //     blockHeight,
-    //     processedAccountsToIgnoreInDeltaCalcFlow?.get(blockHeight) || new Set()
-    //   );
-    // }
     console.timeEnd(
       'handleAssetAccountBalances:: eventsDriven:: initFirstEncounterAccounts'
+    );
+  }
+
+  // In case of indexer cold start, includes all initialized accounts to ignore
+  // them in delta-based calculations.
+  if (
+    preProcessedTotalBalancesOnGlobalInit &&
+    preProcessedTotalBalancesOnGlobalInit.size > 0
+  ) {
+    const accumulator =
+      accountsWithFirstBalancesInitPerBlock.get(ctx.blocks[0].header.height) ||
+      new Set();
+
+    accountsWithFirstBalancesInitPerBlock.set(
+      ctx.blocks[0].header.height,
+      new Set([
+        ...Array.from(accumulator.values()),
+        ...Array.from(preProcessedTotalBalancesOnGlobalInit.values()),
+      ])
     );
   }
 
