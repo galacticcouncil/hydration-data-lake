@@ -10,6 +10,10 @@ import {
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
   BalancesTransferEventParams,
+  BalancesDepositEventParams,
+  BalancesWithdrawEventParams,
+  BalancesReservedEventParams,
+  BalancesUnreservedEventParams,
   DcaCompletedEventParams,
   DcaExecutionPlannedEventParams,
   DcaRandomnessGenerationFailedEventParams,
@@ -35,6 +39,10 @@ import {
   StableswapPoolCreatedEventParams,
   StableswapSellExecutedEventParams,
   TokensTransferEventParams,
+  TokensDepositedEventParams,
+  TokensWithdrawnEventParams,
+  TokensReservedEventParams,
+  TokensUnreservedEventParams,
   XykBuyExecutedEventParams,
   XykPoolCreatedEventParams,
   XykPoolDestroyedEventParams,
@@ -396,9 +404,17 @@ export type EventParserMethods = {
   };
   tokens: {
     parseTransferParams: (event: SqdEvent) => TokensTransferEventParams;
+    parseDepositedParams: (event: SqdEvent) => TokensDepositedEventParams;
+    parseWithdrawnParams: (event: SqdEvent) => TokensWithdrawnEventParams;
+    parseReservedParams: (event: SqdEvent) => TokensReservedEventParams;
+    parseUnreservedParams: (event: SqdEvent) => TokensUnreservedEventParams;
   };
   balances: {
     parseTransferParams: (event: SqdEvent) => BalancesTransferEventParams;
+    parseDepositParams: (event: SqdEvent) => BalancesDepositEventParams;
+    parseWithdrawParams: (event: SqdEvent) => BalancesWithdrawEventParams;
+    parseReservedParams: (event: SqdEvent) => BalancesReservedEventParams;
+    parseUnreservedParams: (event: SqdEvent) => BalancesUnreservedEventParams;
   };
   currencies: {
     parseTransferredParams: (

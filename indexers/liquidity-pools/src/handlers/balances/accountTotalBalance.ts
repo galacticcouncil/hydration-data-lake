@@ -751,9 +751,6 @@ export async function handleUnchangedAccountAssetBalances({
       unchangedAccountAssetBalancesPerBlock,
       ctx,
     });
-  // console.timeEnd(
-  //   'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData'
-  // );
   await createAccountAssetBalancesForOutdatedBalances({
     unchangedAccountAssetBalancesPerBlock:
       ensuredUnchangedAccountAssetBalancesPerBlock,

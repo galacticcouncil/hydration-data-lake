@@ -25,6 +25,13 @@ import {
 } from '../accounts/accountProcessingStatus';
 import { prefetchBalancesForAccountsInvolvedToMmEvents } from './utils';
 import { handleAllAccountBalancesInit } from './allAccountBalancesInit';
+import {
+  collectBalanceEvents,
+  processBalanceEventsSequentially,
+} from './eventsDrivenBalances';
+import {
+  handleAccountTotalBalanceEventsDriven,
+} from './eventsDrivenTotalBalance';
 
 /**
  * This function requires the following data, so it should be executed only after
@@ -58,6 +65,7 @@ export async function handleAssetAccountBalances(
    */
 
   let preProcessedTotalBalances = null;
+  let allProcessedAccountsPerBlock: Map<number, Set<string>> = new Map();
 
   if (ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_INIT) {
     console.time('handleAllAccountBalancesInit');
@@ -65,126 +73,160 @@ export async function handleAssetAccountBalances(
     console.timeEnd('handleAllAccountBalancesInit');
   }
 
-  /**
-   * Aggregate accounts and assets involved to Money Market and Substrate events.
-   */
-  console.time('handleAssetAccountBalances:: collect');
-  const mmEventsInvolvedAccountsAndAssets =
-    await collectAccountsAndAssetsInvolvedToMmEvents(ctx);
+  if (ctx.appConfig.USE_EVENTS_DRIVEN_BALANCE_TRACKING) {
+    /**
+     * NEW: Events-driven delta-based balance tracking.
+     * Uses Tokens/Balances events to compute balance changes instead of
+     * fetching all balances from RPC.
+     */
+    console.time('handleAssetAccountBalances:: eventsDriven:: collect');
+    const balanceEvents = await collectBalanceEvents(ctx, parsedEvents);
+    console.timeEnd('handleAssetAccountBalances:: eventsDriven:: collect');
 
-  const involvedAccountsAccumulators =
-    await collectAccountsAndAssetsInvolvedToSubstrateEvents({
+    console.time('handleAssetAccountBalances:: eventsDriven:: process');
+    const result = await processBalanceEventsSequentially(ctx, balanceEvents);
+    allProcessedAccountsPerBlock = result.allProcessedAccountsPerBlock;
+    console.timeEnd('handleAssetAccountBalances:: eventsDriven:: process');
+
+    /**
+     * handleMoneyMarketAssetBalancesForAccounts is still needed because it
+     * tracks balances for MM-related assets (underlying tokens like EWT)
+     * that may not appear in Tokens pallet storage via getPairsPaged but
+     * are accessible via MM contract calls. It skips pairs already processed
+     * by the delta flow (checks batchState cache at line 426).
+     */
+    console.time(
+      'handleAssetAccountBalances:: eventsDriven:: handleMoneyMarketAssetBalancesForAccounts'
+    );
+    // await handleMoneyMarketAssetBalancesForAccounts({
+    //   allProcessedAccountsPerBlock,
+    //   ctx,
+    // });
+    console.timeEnd(
+      'handleAssetAccountBalances:: eventsDriven:: handleMoneyMarketAssetBalancesForAccounts'
+    );
+  } else {
+    /**
+     * OLD: RPC-based balance tracking flow (unchanged).
+     */
+    console.time('handleAssetAccountBalances:: collect');
+    const mmEventsInvolvedAccountsAndAssets =
+      await collectAccountsAndAssetsInvolvedToMmEvents(ctx);
+
+    const involvedAccountsAccumulators =
+      await collectAccountsAndAssetsInvolvedToSubstrateEvents({
+        ctx,
+        ...mmEventsInvolvedAccountsAndAssets,
+      });
+    console.timeEnd('handleAssetAccountBalances:: collect');
+
+    allProcessedAccountsPerBlock =
+      involvedAccountsAccumulators.allProcessedAccountsPerBlock;
+
+    await addAccountsToPeriodicalBalancesAggregation({
+      involvedAccountsAccumulators,
       ctx,
-      ...mmEventsInvolvedAccountsAndAssets,
     });
-  console.timeEnd('handleAssetAccountBalances:: collect');
 
-  /**
-   * Add accounts to periodical balances aggregation.
-   */
-  await addAccountsToPeriodicalBalancesAggregation({
-    involvedAccountsAccumulators,
-    ctx,
-  });
+    console.time(
+      'handleAssetAccountBalances:: prefetchBalancesForAccountsInvolvedToMmEvents'
+    );
+    const prefetchedBalancesForAccountsInvolvedToMmEvents =
+      await prefetchBalancesForAccountsInvolvedToMmEvents({
+        ctx,
+        involvedAccountsAndAssetsInMmEventsPerBlockMap:
+          mmEventsInvolvedAccountsAndAssets.involvedAccountsAndAssetsInMmEventsPerBlockMap,
+      });
+    console.timeEnd(
+      'handleAssetAccountBalances:: prefetchBalancesForAccountsInvolvedToMmEvents'
+    );
 
-  console.time(
-    'handleAssetAccountBalances:: prefetchBalancesForAccountsInvolvedToMmEvents'
-  );
-  const prefetchedBalancesForAccountsInvolvedToMmEvents =
-    await prefetchBalancesForAccountsInvolvedToMmEvents({
+    console.time(
+      'handleAssetAccountBalances:: handleMmAssetAccountBalancesPerBlock'
+    );
+    await handleMmAssetAccountBalancesPerBlock({
       ctx,
-      involvedAccountsAndAssetsInMmEventsPerBlockMap:
+      involvedAccountsAssetsPerBlockMap:
         mmEventsInvolvedAccountsAndAssets.involvedAccountsAndAssetsInMmEventsPerBlockMap,
+      prefetchedBalancesForAccountsInvolvedToMmEvents,
     });
-  console.timeEnd(
-    'handleAssetAccountBalances:: prefetchBalancesForAccountsInvolvedToMmEvents'
-  );
+    console.timeEnd(
+      'handleAssetAccountBalances:: handleMmAssetAccountBalancesPerBlock'
+    );
 
-  /**
-   * Handle Money Market events.
-   *
-   * Aggregate balances only for involved accounts and only for involved assets.
-   */
-  console.time(
-    'handleAssetAccountBalances:: handleMmAssetAccountBalancesPerBlock'
-  );
-  await handleMmAssetAccountBalancesPerBlock({
-    ctx,
-    involvedAccountsAssetsPerBlockMap:
-      mmEventsInvolvedAccountsAndAssets.involvedAccountsAndAssetsInMmEventsPerBlockMap,
-    prefetchedBalancesForAccountsInvolvedToMmEvents,
-  });
-  console.timeEnd(
-    'handleAssetAccountBalances:: handleMmAssetAccountBalancesPerBlock'
-  );
+    console.time(
+      'handleAssetAccountBalances:: handleCommonAssetAccountBalances'
+    );
+    await handleCommonAssetAccountBalances({
+      accountIdsToProcess: { ...involvedAccountsAccumulators },
+      prefetchedBalancesForAccountsInvolvedToMmEvents,
+      ctx,
+    });
+    console.timeEnd(
+      'handleAssetAccountBalances:: handleCommonAssetAccountBalances'
+    );
 
-  /**
-   * Handle All Substrate events.
-   *
-   * Aggregate balances for all involved accounts and all account's assets.
-   */
-  console.time('handleAssetAccountBalances:: handleCommonAssetAccountBalances');
-  await handleCommonAssetAccountBalances({
-    accountIdsToProcess: { ...involvedAccountsAccumulators },
-    prefetchedBalancesForAccountsInvolvedToMmEvents,
-    ctx,
-  });
-  console.timeEnd(
-    'handleAssetAccountBalances:: handleCommonAssetAccountBalances'
-  );
+    console.time(
+      'handleAssetAccountBalances:: handleMoneyMarketAssetBalancesForAccounts'
+    );
+    await handleMoneyMarketAssetBalancesForAccounts({
+      allProcessedAccountsPerBlock,
+      ctx,
+    });
+    console.timeEnd(
+      'handleAssetAccountBalances:: handleMoneyMarketAssetBalancesForAccounts'
+    );
+  }
 
-  /**
-   * Handle Money Market Assets balances
-   */
-  console.time(
-    'handleAssetAccountBalances:: handleMoneyMarketAssetBalancesForAccounts'
-  );
-  await handleMoneyMarketAssetBalancesForAccounts({
-    allProcessedAccountsPerBlock:
-      involvedAccountsAccumulators.allProcessedAccountsPerBlock,
-    ctx,
-  });
-  console.timeEnd(
-    'handleAssetAccountBalances:: handleMoneyMarketAssetBalancesForAccounts'
-  );
+  if (ctx.appConfig.USE_EVENTS_DRIVEN_BALANCE_TRACKING) {
+    /**
+     * Events-driven flow: new total balance aggregation that includes
+     * unchanged assets from cacheManager/DB in one pass.
+     * Replaces both handleAccountTotalBalance and handleUnchangedAccountAssetBalances.
+     */
+    console.time(
+      'handleAssetAccountBalances:: eventsDriven:: handleAccountTotalBalance'
+    );
+    await handleAccountTotalBalanceEventsDriven({
+      ctx,
+      preProcessedTotalBalances,
+    });
+    console.timeEnd(
+      'handleAssetAccountBalances:: eventsDriven:: handleAccountTotalBalance'
+    );
+  } else {
+    /**
+     * OLD flow: original total balance + unchanged balances backfill.
+     */
+    console.time('handleAssetAccountBalances:: handleAccountTotalBalance');
+    await handleAccountTotalBalance({
+      ctx,
+      preProcessedTotalBalances,
+    });
+    console.timeEnd('handleAssetAccountBalances:: handleAccountTotalBalance');
+  }
 
-  /**
-   * Aggregate Account Total Balances
-   */
-  console.time('handleAssetAccountBalances:: handleAccountTotalBalance');
-  await handleAccountTotalBalance({
-    ctx,
-    preProcessedTotalBalances,
-  });
-  console.timeEnd('handleAssetAccountBalances:: handleAccountTotalBalance');
-
-  /**
-   * Include Liquidity Balances in Total Balances.
-   */
   console.time(
     'handleAssetAccountBalances:: handleLiquidityBalancesInTotalBalances'
   );
   await handleLiquidityBalancesInTotalBalances({
     ctx,
-    allProcessedAccountsPerBlock:
-      involvedAccountsAccumulators.allProcessedAccountsPerBlock,
+    allProcessedAccountsPerBlock,
     preProcessedTotalBalances,
   });
   console.timeEnd(
     'handleAssetAccountBalances:: handleLiquidityBalancesInTotalBalances'
   );
-  /**
-   * Includes Asset Balances unchanged in the current block but existing in the
-   * previous block.
-   * IMPORTANT: Can mutate AccountTotalBalanceHistoricalData
-   */
-  console.time(
-    'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances'
-  );
-  await handleUnchangedAccountAssetBalances({ ctx });
-  console.timeEnd(
-    'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances'
-  );
+
+  if (!ctx.appConfig.USE_EVENTS_DRIVEN_BALANCE_TRACKING) {
+    console.time(
+      'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances'
+    );
+    await handleUnchangedAccountAssetBalances({ ctx });
+    console.timeEnd(
+      'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances'
+    );
+  }
 
   console.time(
     'handleAssetAccountBalances:: updateAccountProcessingStatusOnTotalBalanceChange'

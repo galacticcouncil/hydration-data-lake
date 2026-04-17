@@ -2,6 +2,7 @@ import { Store } from '@subsquid/typeorm-store';
 
 import { getOrCreateXykPool } from '../handlers/pools/pools/xykPool/xykPool';
 import {
+  AccountAssetBalanceHistoricalData,
   Asset,
   AssetHistoricalData,
   AssetSpotPriceHistoricalData,
@@ -66,6 +67,12 @@ export class LatestProcessedDataCacheManager {
 
   private xykpoolHistoricalDataItemsCache: Map<string, XykpoolHistoricalData> =
     new Map();
+
+  // Key: `${accountId}-${assetId}`
+  private accountAssetBalanceCache: Map<
+    string,
+    AccountAssetBalanceHistoricalData
+  > = new Map();
 
   static getInstance(): LatestProcessedDataCacheManager {
     if (!LatestProcessedDataCacheManager.instance) {
@@ -652,6 +659,225 @@ export class LatestProcessedDataCacheManager {
     poolId: string
   ): XykpoolHistoricalData | undefined {
     return this.xykpoolHistoricalDataItemsCache.get(poolId);
+  }
+
+  /**
+   * ======================  Account Asset Balance Historical Data =============================
+   */
+
+  async prefetchLastAccountAssetBalances({
+    ctx,
+    accountAssetPairs,
+    maxBlockHeight,
+  }: {
+    ctx: SqdProcessorContext<Store>;
+    accountAssetPairs: { accountId: string; assetId: string }[];
+    maxBlockHeight: number;
+  }) {
+    if (accountAssetPairs.length === 0) return;
+
+    const pgPool = CommonPgPool.getInstance();
+
+    const accountIds = accountAssetPairs.map((p) => p.accountId);
+    const assetIds = accountAssetPairs.map((p) => p.assetId);
+
+    // Use LATERAL join to get the latest balance for each (account, asset) pair
+    // before the batch start block
+    const result = await pgPool.query<{
+      id: string;
+      account_id: string;
+      asset_id: string;
+      transferable: string;
+      total_locked: string;
+      transferable_in_ref_asset_norm: string;
+      total_locked_in_ref_asset_norm: string;
+      para_block_height: number;
+    }>(
+      `
+      SELECT
+        lateral_data.id,
+        lateral_data.account_id,
+        lateral_data.asset_id,
+        lateral_data.transferable,
+        lateral_data.total_locked,
+        lateral_data.transferable_in_ref_asset_norm,
+        lateral_data.total_locked_in_ref_asset_norm,
+        lateral_data.para_block_height
+      FROM (
+        SELECT DISTINCT ON (account_id, asset_id)
+          account_id, asset_id
+        FROM unnest($1::text[], $2::text[]) AS pairs(account_id, asset_id)
+      ) AS unique_pairs
+      CROSS JOIN LATERAL (
+        SELECT
+          id, account_id, asset_id, transferable, total_locked,
+          transferable_in_ref_asset_norm, total_locked_in_ref_asset_norm,
+          para_block_height
+        FROM account_asset_balance_historical_data
+        WHERE account_id = unique_pairs.account_id
+          AND asset_id = unique_pairs.asset_id
+          AND para_block_height < $3
+        ORDER BY para_block_height DESC
+        LIMIT 1
+      ) AS lateral_data;
+      `,
+      [accountIds, assetIds, maxBlockHeight]
+    );
+
+    for (const row of result.rows) {
+      const entity = new AccountAssetBalanceHistoricalData({
+        id: row.id,
+        accountId: row.account_id,
+        assetId: row.asset_id,
+        transferable: BigInt(row.transferable),
+        totalLocked: BigInt(row.total_locked),
+        transferableInRefAssetNorm: row.transferable_in_ref_asset_norm,
+        totalLockedInRefAssetNorm: row.total_locked_in_ref_asset_norm,
+        paraBlockHeight: row.para_block_height,
+      });
+
+      const cacheKey = `${row.account_id}-${row.asset_id}`;
+      const existing = this.accountAssetBalanceCache.get(cacheKey);
+
+      // Keep the most recent entry
+      if (!existing || existing.paraBlockHeight < entity.paraBlockHeight) {
+        this.accountAssetBalanceCache.set(cacheKey, entity);
+      }
+    }
+  }
+
+  getLastAccountAssetBalance(
+    accountId: string,
+    assetId: string
+  ): AccountAssetBalanceHistoricalData | undefined {
+    return this.accountAssetBalanceCache.get(`${accountId}-${assetId}`);
+  }
+
+  /**
+   * Prefetch ALL latest balances for a list of accounts from
+   * account_asset_balance_historical_data table.
+   * Used to discover all assets an account holds (not just event-involved ones).
+   * Skips accounts that already have entries in cache (fully loaded from previous batch).
+   */
+  async prefetchAllAccountAssetBalances({
+    ctx,
+    accountIds,
+    maxBlockHeight,
+  }: {
+    ctx: SqdProcessorContext<Store>;
+    accountIds: string[];
+    maxBlockHeight: number;
+  }) {
+    if (accountIds.length === 0) return;
+
+    // Filter out accounts already in cache
+    const accountsToFetch = accountIds.filter(
+      (id) => !this.hasAccountBalances(id)
+    );
+
+    if (accountsToFetch.length === 0) return;
+
+    const pgPool = CommonPgPool.getInstance();
+
+    const result = await pgPool.query<{
+      id: string;
+      account_id: string;
+      asset_id: string;
+      transferable: string;
+      total_locked: string;
+      transferable_in_ref_asset_norm: string;
+      total_locked_in_ref_asset_norm: string;
+      para_block_height: number;
+    }>(
+      `
+      SELECT
+        lateral_data.id,
+        lateral_data.account_id,
+        lateral_data.asset_id,
+        lateral_data.transferable,
+        lateral_data.total_locked,
+        lateral_data.transferable_in_ref_asset_norm,
+        lateral_data.total_locked_in_ref_asset_norm,
+        lateral_data.para_block_height
+      FROM (
+        SELECT DISTINCT account_id, asset_id
+        FROM account_asset_balance_historical_data
+        WHERE account_id = ANY($1::text[])
+          AND para_block_height < $2
+      ) AS known_pairs
+      CROSS JOIN LATERAL (
+        SELECT
+          id, account_id, asset_id, transferable, total_locked,
+          transferable_in_ref_asset_norm, total_locked_in_ref_asset_norm,
+          para_block_height
+        FROM account_asset_balance_historical_data
+        WHERE account_id = known_pairs.account_id
+          AND asset_id = known_pairs.asset_id
+          AND para_block_height < $2
+        ORDER BY para_block_height DESC
+        LIMIT 1
+      ) AS lateral_data;
+      `,
+      [accountsToFetch, maxBlockHeight]
+    );
+
+    for (const row of result.rows) {
+      const entity = new AccountAssetBalanceHistoricalData({
+        id: row.id,
+        accountId: row.account_id,
+        assetId: row.asset_id,
+        transferable: BigInt(row.transferable),
+        totalLocked: BigInt(row.total_locked),
+        transferableInRefAssetNorm: row.transferable_in_ref_asset_norm,
+        totalLockedInRefAssetNorm: row.total_locked_in_ref_asset_norm,
+        paraBlockHeight: row.para_block_height,
+      });
+
+      const cacheKey = `${row.account_id}-${row.asset_id}`;
+      const existing = this.accountAssetBalanceCache.get(cacheKey);
+
+      // Only add if not already cached with a newer entry
+      if (!existing || existing.paraBlockHeight < entity.paraBlockHeight) {
+        this.accountAssetBalanceCache.set(cacheKey, entity);
+      }
+    }
+  }
+
+  /**
+   * Check if an account has any cached balance entries.
+   */
+  hasAccountBalances(accountId: string): boolean {
+    const prefix = `${accountId}-`;
+    for (const key of this.accountAssetBalanceCache.keys()) {
+      if (key.startsWith(prefix)) return true;
+    }
+    return false;
+  }
+
+  getAllAccountAssetBalances(
+    accountId: string
+  ): Map<string, AccountAssetBalanceHistoricalData> {
+    const result = new Map<string, AccountAssetBalanceHistoricalData>();
+    const prefix = `${accountId}-`;
+    for (const [key, value] of this.accountAssetBalanceCache.entries()) {
+      if (key.startsWith(prefix)) {
+        result.set(value.assetId, value);
+      }
+    }
+    return result;
+  }
+
+  setLastAccountAssetBalance(items: AccountAssetBalanceHistoricalData[]) {
+    if (!items) return;
+
+    for (const item of items) {
+      const cacheKey = `${item.accountId}-${item.assetId}`;
+      const existing = this.accountAssetBalanceCache.get(cacheKey);
+
+      if (!existing || existing.paraBlockHeight <= item.paraBlockHeight) {
+        this.accountAssetBalanceCache.set(cacheKey, item);
+      }
+    }
   }
 
   /**

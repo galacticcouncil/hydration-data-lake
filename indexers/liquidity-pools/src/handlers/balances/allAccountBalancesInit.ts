@@ -37,6 +37,10 @@ export async function handleAllAccountBalancesInit({
     `[ allAccountBalancesInit ] :: Initializing all account balances.`
   );
 
+  console.log(
+    `[ allAccountBalancesInit ] :: Initializing all account balances.`
+  );
+
   const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
     AccountAssetBalanceHistoricalData,
     {
@@ -52,6 +56,64 @@ export async function handleAllAccountBalancesInit({
     return;
   }
 
+  return handleManyAccountBalancesInitCore({
+    ctx,
+    blockHeight,
+    whitelistedAccountIds,
+  });
+}
+
+export async function handleManyAccountBalancesInitCore({
+  ctx,
+  blockHeight,
+  whitelistedAccountIds,
+  forceFetch = false,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  blockHeight?: number;
+  whitelistedAccountIds?: string[];
+  forceFetch?: boolean;
+}) {
+  const accountsPerBlock = await initManyAccountAssetBalancesFromOnChainData({
+    ctx,
+    blockHeight,
+    whitelistedAccountIds,
+    forceFetch,
+  });
+
+  /**
+   * Aggregate Account Total Balances
+   */
+  await handleAccountTotalBalance({ ctx });
+
+  /**
+   * Include Liquidity Balances in Total Balances.
+   */
+  await handleLiquidityBalancesInTotalBalances({
+    ctx,
+    allProcessedAccountsPerBlock: accountsPerBlock ?? new Map(),
+  });
+
+  await updateAccountProcessingStatusOnTotalBalanceChange({ ctx });
+
+  const processedTotalBalances: Set<string> = new Set(
+    Array.from(ctx.batchState.state.accountTotalBalanceHistoricalData.keys())
+  );
+
+  return processedTotalBalances;
+}
+
+export async function initManyAccountAssetBalancesFromOnChainData({
+  ctx,
+  blockHeight,
+  whitelistedAccountIds,
+  forceFetch = false,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  blockHeight?: number;
+  whitelistedAccountIds?: string[];
+  forceFetch?: boolean;
+}) {
   const hasAnyAccountRecord = await ctx.storeUtils.findOneWithLogs(
     Account,
     {
@@ -84,6 +146,7 @@ export async function handleAllAccountBalancesInit({
   console.log(
     `handleAssetAccountBalances :: total initialized accounts: ${allInitializedAccounts.length}`
   );
+  // console.dir(accountIdsList, { depth: null });
 
   if (!allInitializedAccounts || allInitializedAccounts.length === 0) {
     console.log(
@@ -408,27 +471,7 @@ export async function handleAllAccountBalancesInit({
       );
     }
   }
-
-  /**
-   * Aggregate Account Total Balances
-   */
-  await handleAccountTotalBalance({ ctx });
-
-  /**
-   * Include Liquidity Balances in Total Balances.
-   */
-  await handleLiquidityBalancesInTotalBalances({
-    ctx,
-    allProcessedAccountsPerBlock: accountsPerBlock,
-  });
-
-  await updateAccountProcessingStatusOnTotalBalanceChange({ ctx });
-
-  const processedTotalBalances: Set<string> = new Set(
-    Array.from(ctx.batchState.state.accountTotalBalanceHistoricalData.keys())
-  );
-
   clearInterval(keepDbConnectionAliveInterval);
 
-  return processedTotalBalances;
+  return accountsPerBlock;
 }

@@ -401,6 +401,11 @@ export class HistoricalDataManager {
     const accountAssetBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountAssetBalanceHistoricalData.values()
     );
+
+    LatestProcessedDataCacheManager.getInstance().setLastAccountAssetBalance(
+      accountAssetBalanceHistoricalDataList
+    );
+
     const accountAssetBalancesLatest = getAccountAssetBalancesLatest({
       balances: accountAssetBalanceHistoricalDataList,
       ctx,

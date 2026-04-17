@@ -743,6 +743,9 @@ export class AppConfig {
   readonly ENABLE_ACCOUNT_BALANCES_AGGREGATION: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
+  readonly USE_EVENTS_DRIVEN_BALANCE_TRACKING: boolean = false;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
