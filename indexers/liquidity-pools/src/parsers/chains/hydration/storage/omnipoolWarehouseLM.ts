@@ -22,7 +22,7 @@ async function getOmnipoolLMGlobalFarms({
   OmnipoolLMGlobalFarmDataWithId[] | null
 > {
   return measureStorageFetch({
-    storageName: 'omnipoolWarehouseLm.globalFarm',
+    storageName: 'omnipoolWarehouseLm.globalFarm.getMany',
     originFn: 'getOmnipoolLMGlobalFarms',
     blockHeight: block.height,
     fn: async () => {
@@ -72,7 +72,7 @@ async function getAllDepositsData({
   block,
 }: GetDataAtBlockInput): Promise<OmnipoolYieldFarmDepositDataWithId[] | null> {
   return measureStorageFetch({
-    storageName: 'omnipoolWarehouseLm.deposit',
+    storageName: 'omnipoolWarehouseLm.deposit.getPairsPaged',
     originFn: 'getAllDepositsData',
     blockHeight: block.height,
     fn: async () => {
@@ -117,7 +117,7 @@ async function getLMDepositsData({
   OmnipoolYieldFarmDepositDataWithId[] | null
 > {
   return measureStorageFetch({
-    storageName: 'omnipoolWarehouseLm.deposit',
+    storageName: 'omnipoolWarehouseLm.deposit.getMany',
     originFn: 'getLMDepositsData',
     blockHeight: block.height,
     fn: async () => {

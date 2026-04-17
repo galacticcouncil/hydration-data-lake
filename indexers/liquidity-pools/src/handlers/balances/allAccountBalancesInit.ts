@@ -37,10 +37,6 @@ export async function handleAllAccountBalancesInit({
     `[ allAccountBalancesInit ] :: Initializing all account balances.`
   );
 
-  console.log(
-    `[ allAccountBalancesInit ] :: Initializing all account balances.`
-  );
-
   const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
     AccountAssetBalanceHistoricalData,
     {

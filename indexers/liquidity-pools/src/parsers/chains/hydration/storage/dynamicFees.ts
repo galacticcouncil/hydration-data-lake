@@ -34,7 +34,7 @@ async function getAssetFeesAll({
   block,
 }: GetAssetsDynamicFeesAllInput): Promise<Array<AssetDynamicFeeData>> {
   return measureStorageFetch({
-    storageName: 'dynamicFees.assetFee',
+    storageName: 'dynamicFees.assetFee.getPairsPaged',
     originFn: 'getAssetFeesAll',
     blockHeight: block.height,
     fn: async () => {

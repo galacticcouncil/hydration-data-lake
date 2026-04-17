@@ -51,7 +51,7 @@ async function getPoolData({
   block,
 }: StablepoolGetPoolDataInput): Promise<StablepoolInfo | null> {
   return measureStorageFetch({
-    storageName: 'stableswap.pools',
+    storageName: 'stableswap.pools.get',
     originFn: 'getPoolData',
     blockHeight: block.height,
     args: { poolId },
@@ -74,7 +74,7 @@ async function getAllPoolsData({
   block,
 }: GetDataAtBlockInput): Promise<StablepoolAllPoolsInfoWithPoolId[] | null> {
   return measureStorageFetch({
-    storageName: 'stableswap.pools',
+    storageName: 'stableswap.pools.getPairsPaged',
     originFn: 'getAllPoolsData',
     blockHeight: block.height,
     fn: async () => {
@@ -116,7 +116,7 @@ async function getPoolAssetStorageData({
   assetId,
 }: GetPoolAssetInfoInput): Promise<StablepoolAssetState | null> {
   return measureStorageFetch({
-    storageName: 'stableswap.assetTradability',
+    storageName: 'stableswap.assetTradability.get',
     originFn: 'getPoolAssetStorageData',
     blockHeight: block.height,
     args: { poolId, assetId },
@@ -154,7 +154,7 @@ async function getAllPoolIds({
   block,
 }: StablepoolGetAllPoolIdsInput): Promise<number[]> {
   return measureStorageFetch({
-    storageName: 'stableswap.pools',
+    storageName: 'stableswap.pools.getKeys',
     originFn: 'getAllPoolIds',
     blockHeight: block.height,
     fn: async () => {
@@ -178,7 +178,7 @@ async function getPoolPegs({
   block,
 }: StablepoolGetPoolPegsInput): Promise<StablepoolPoolPegsInfo | null> {
   return measureStorageFetch({
-    storageName: 'stableswap.poolPegs',
+    storageName: 'stableswap.poolPegs.get',
     originFn: 'getPoolPegs',
     blockHeight: block.height,
     args: { poolId },
@@ -255,7 +255,7 @@ async function getAllPoolsPegs({
   StablepoolManyPoolsPegsInfoWithPoolId[] | null
 > {
   return measureStorageFetch({
-    storageName: 'stableswap.poolPegs',
+    storageName: 'stableswap.poolPegs.getPairsPaged',
     originFn: 'getAllPoolsPegs',
     blockHeight: block.height,
     fn: async () => {

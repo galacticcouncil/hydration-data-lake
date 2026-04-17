@@ -16,7 +16,7 @@ async function getAccountExtension({
   block,
 }: EvmAccountsGetAccountExtensionInput): Promise<EvmAccountsAccountExtension | null> {
   return measureStorageFetch({
-    storageName: 'evmAccounts.accountExtension',
+    storageName: 'evmAccounts.accountExtension.get',
     originFn: 'getAccountExtension',
     blockHeight: block.height,
     args: { evmAddress },
@@ -49,7 +49,7 @@ async function getAllAccountsExtensions({
   EvmAccountsAccountExtensionWithEvmAddress[] | null
 > {
   return measureStorageFetch({
-    storageName: 'evmAccounts.accountExtension',
+    storageName: 'evmAccounts.accountExtension.getPairsPaged',
     originFn: 'getAllAccountsExtensions',
     blockHeight: block.height,
     fn: async () => {
@@ -97,7 +97,7 @@ async function getAccountExtensionsMany({
   EvmAccountsAccountExtensionWithEvmAddress[] | null
 > {
   return measureStorageFetch({
-    storageName: 'evmAccounts.accountExtension',
+    storageName: 'evmAccounts.accountExtension.get',
     originFn: 'getAccountExtensionsMany',
     blockHeight: block.height,
     args: { evmAddresses },

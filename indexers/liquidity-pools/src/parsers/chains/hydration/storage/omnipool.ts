@@ -96,7 +96,7 @@ async function getOmnipoolAssetData({
   block,
 }: OmnipoolGetAssetDataInput): Promise<OmnipoolAssetData | null> {
   return measureStorageFetch({
-    storageName: 'omnipool.assets',
+    storageName: 'omnipool.assets.get',
     originFn: 'getOmnipoolAssetData',
     blockHeight: block.height,
     args: { assetId },
@@ -119,7 +119,7 @@ async function getOmnipoolAllAssetIds({
   block,
 }: OmnipoolGetAllAssetIdsInput): Promise<number[]> {
   return measureStorageFetch({
-    storageName: 'omnipool.assets',
+    storageName: 'omnipool.assets.getKeys',
     originFn: 'getOmnipoolAllAssetIds',
     blockHeight: block.height,
     fn: async () => {
@@ -152,7 +152,7 @@ async function getOmnipoolHubAssetTradability({
   block,
 }: OmnipoolGetHubAssetTradabilityInput): Promise<OmnipoolAssetTradability | null> {
   return measureStorageFetch({
-    storageName: 'omnipool.assets',
+    storageName: 'omnipool.hubAssetTradability.get',
     originFn: 'getOmnipoolHubAssetTradability',
     blockHeight: block.height,
     fn: async () => {
@@ -179,7 +179,7 @@ async function getOmnipoolLiquidityPositions({
   OmnipoolLiquidityPositionDataWithId[] | null
 > {
   return measureStorageFetch({
-    storageName: 'omnipool.positions',
+    storageName: 'omnipool.positions.getMany',
     originFn: 'getOmnipoolLiquidityPositions',
     blockHeight: block.height,
     fn: async () => {
@@ -260,8 +260,8 @@ async function getAllOmnipoolLiquidityPositions({
   block,
 }: GetDataAtBlockInput): Promise<OmnipoolLiquidityPositionDataWithId[] | null> {
   return measureStorageFetch({
-    storageName: 'storage.omnipool.positions',
-    originFn: 'getAllPositionsData',
+    storageName: 'omnipool.positions.getPairsPaged',
+    originFn: 'getAllOmnipoolLiquidityPositions',
     blockHeight: block.height,
     fn: async () => {
       if (block.specVersion < 115) return null;

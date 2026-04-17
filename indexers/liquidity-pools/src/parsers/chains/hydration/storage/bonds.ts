@@ -13,7 +13,7 @@ async function getBond({
   block,
 }: GetBondByIdInput): Promise<BondDetails | null> {
   return measureStorageFetch({
-    storageName: 'bonds.bonds',
+    storageName: 'bonds.bonds.get',
     originFn: 'getBond',
     blockHeight: block.height,
     args: { bondId },
@@ -38,7 +38,7 @@ async function getBondsAll({
   block,
 }: GetBondsAllInput): Promise<BondDetails[]> {
   return measureStorageFetch({
-    storageName: 'bonds.bonds',
+    storageName: 'bonds.bonds.getPairsPaged',
     originFn: 'getBondsAll',
     blockHeight: block.height,
     fn: async () => {

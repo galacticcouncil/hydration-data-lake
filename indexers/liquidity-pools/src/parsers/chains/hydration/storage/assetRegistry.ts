@@ -29,7 +29,7 @@ async function getAsset(
   block: BlockHeader
 ): Promise<AssetDetails | null> {
   return measureStorageFetch({
-    storageName: 'assetRegistry.assets',
+    storageName: 'assetRegistry.assets.get',
     originFn: 'getAsset',
     blockHeight: block.height,
     args: { assetId },
@@ -129,7 +129,7 @@ async function getAssetMany(
   block: BlockHeader
 ): Promise<Array<AssetDetailsWithId>> {
   return measureStorageFetch({
-    storageName: 'assetRegistry.assets',
+    storageName: 'assetRegistry.assets.getMany',
     originFn: 'getAssetMany',
     blockHeight: block.height,
     args: { assetIds },
@@ -283,7 +283,7 @@ async function getAssetsExistentialDepositAll({
   block,
 }: GetDataAtBlockInput): Promise<Array<AssetExistentialDeposit>> {
   return measureStorageFetch({
-    storageName: 'assetRegistry.assets',
+    storageName: 'assetRegistry.assets.getPairsPaged',
     originFn: 'getAssetsExistentialDepositAll',
     blockHeight: block.height,
     fn: async () => {
@@ -303,7 +303,7 @@ async function getAssetAll(
   block: BlockHeader
 ): Promise<Array<AssetDetailsWithId>> {
   return measureStorageFetch({
-    storageName: 'assetRegistry.assets',
+    storageName: 'assetRegistry.assets.getPairsPaged',
     originFn: 'getAssetAll',
     blockHeight: block.height,
     fn: async () => {
@@ -444,7 +444,7 @@ async function getErc20AssetContractAddress(
   block: BlockHeader
 ): Promise<Erc20AssetContractDetails | null> {
   return measureStorageFetch({
-    storageName: 'assetRegistry.assets',
+    storageName: 'assetRegistry.assetLocations.get',
     originFn: 'getErc20AssetContractAddress',
     blockHeight: block.height,
     args: { assetId },
@@ -494,7 +494,7 @@ async function getAssetLocation({
   block,
 }: GetAssetLocationDataInput): Promise<AssetRegistryAssetLocation | null> {
   return measureStorageFetch({
-    storageName: 'assetRegistry.assets',
+    storageName: 'assetRegistry.assetLocations.get',
     originFn: 'getAssetLocation',
     blockHeight: block.height,
     args: { assetId },
@@ -544,7 +544,7 @@ async function getAssetLocationsMany({
   AssetRegistryLocationWithAssetId[] | null
 > {
   return measureStorageFetch({
-    storageName: 'assetRegistry.assetLocations',
+    storageName: 'assetRegistry.assetLocations.getMany',
     originFn: 'getAssetLocationsMany',
     blockHeight: block.height,
     args: { assetIds },
