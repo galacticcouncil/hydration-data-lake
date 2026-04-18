@@ -34,6 +34,7 @@ import {
   initManyAccountAssetBalancesFromOnChainData,
 } from './allAccountBalancesInit';
 import pMap from 'p-map';
+import { ZERO_ADDRESS_PK } from '../../utils/types';
 
 export type BalanceEvent = {
   blockHeight: number;
@@ -342,11 +343,7 @@ export async function collectBalanceEvents(
 
   // Sort by block height, then indexInBlock (same as getOrderedListByBlockNumber)
   events = events
-    .filter(
-      (e) =>
-        e.accountId !==
-        '0x0000000000000000000000000000000000000000000000000000000000000000'
-    )
+    .filter((e) => e.accountId !== ZERO_ADDRESS_PK)
     .sort((a, b) => {
       if (a.blockHeight !== b.blockHeight) return a.blockHeight - b.blockHeight;
       return a.indexInBlock - b.indexInBlock;
@@ -634,29 +631,14 @@ export async function processBalanceEventsSequentially({
   // Track snapshots to create: key = `${accountId}-${assetId}-${blockHeight}`
   const snapshotsToCreate = new Map<string, AccountBalanceBlockSnapshot>();
 
-  const firstEncounterSet = new Set(firstEncounterAccountIds);
-
   for (const event of balanceEvents) {
-    if (
-      event.accountId ===
-      '0x0000000000000000000000000000000000000000000000000000000000000000'
-    )
-      continue;
+    if (event.accountId === ZERO_ADDRESS_PK) continue;
 
     if (!allProcessedAccountsPerBlock.has(event.blockHeight)) {
       allProcessedAccountsPerBlock.set(event.blockHeight, new Set());
     }
     allProcessedAccountsPerBlock.get(event.blockHeight)!.add(event.accountId);
 
-    const firstActivityBlock = accountsFirstActivityAtBlock.get(
-      event.accountId
-    );
-    // const isFirstActivityBlock =
-    //   firstEncounterSet.has(event.accountId) &&
-    //   firstActivityBlock !== undefined &&
-    //   event.blockHeight === firstActivityBlock;
-
-    // if (isFirstActivityBlock) {
     if (
       accountsWithFirstBalancesInitPerBlock.has(event.blockHeight) &&
       accountsWithFirstBalancesInitPerBlock

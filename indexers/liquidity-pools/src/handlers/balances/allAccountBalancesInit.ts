@@ -22,6 +22,7 @@ import { initAllAccountsOnColdStart } from '../accounts/allAccountsInit';
 import parsers from '../../parsers';
 import { updateAccountProcessingStatusOnTotalBalanceChange } from '../accounts/accountProcessingStatus';
 import { getOrCreateAccount } from '../accounts';
+import { ZERO_ADDRESS_PK } from '../../utils/types';
 
 export async function handleAllAccountBalancesInit({
   ctx,
@@ -124,9 +125,11 @@ export async function initManyAccountAssetBalancesFromOnChainData({
     console.timeEnd('initAllAccountsOnColdStart');
   }
 
-  let allInitializedAccounts = await ctx.storeUtils.findWithLogs(Account, {
-    where: {},
-  });
+  let allInitializedAccounts = (
+    await ctx.storeUtils.findWithLogs(Account, {
+      where: {},
+    })
+  ).filter((acc) => acc.id !== ZERO_ADDRESS_PK);
 
   if (whitelistedAccountIds && whitelistedAccountIds.length > 0) {
     allInitializedAccounts = [];
