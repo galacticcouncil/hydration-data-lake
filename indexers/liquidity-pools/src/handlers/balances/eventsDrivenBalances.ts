@@ -732,7 +732,6 @@ export async function processBalanceEventsSequentially({
         isEvmAsset: event.isEvmAsset,
         blockHeader: event.blockHeader,
       });
-      console.log('rpcBalance - ', rpcBalance);
       currentBalance.transferable = rpcBalance.transferable;
       currentBalance.totalLocked = rpcBalance.totalLocked;
     }
@@ -769,9 +768,6 @@ export async function processBalanceEventsSequentially({
       assetInId: assetId,
       blockHeight: snapshot.blockHeight,
     });
-
-    // console.log(`assetSpotPrice ${snapshot.blockHeight} | ${assetId}`);
-    // console.dir(assetSpotPrice, { depth: null });
 
     entity.transferableInRefAssetNorm =
       assetSpotPrice && asset?.decimals
