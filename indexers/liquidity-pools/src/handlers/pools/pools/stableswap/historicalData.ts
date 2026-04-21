@@ -11,9 +11,7 @@ import {
   StableswapPegsSource,
 } from '../../../../model';
 import parsers from '../../../../parsers';
-import {
-  BatchBlocksParsedDataManager,
-} from '../../../../parsers/batchBlocksParser';
+import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import {
   StablepoolAllPoolsInfoWithPoolId,
   StablepoolInfo,
@@ -51,12 +49,14 @@ async function getStableswapDataPromise({
 
   if (!poolStorageData) return null;
 
-  const poolPegsData =
-    poolPegs ??
-    (await parsers.storage.stableswap.getPoolPegs({
-      poolId,
-      block: blockHeader,
-    }));
+  // const poolPegsData =
+  //   poolPegs ??
+  //   (await parsers.storage.stableswap.getPoolPegs({
+  //     poolId,
+  //     block: blockHeader,
+  //   }));
+
+  const poolPegsData = poolPegs;
 
   const assetsData = await pMap(
     poolStorageData.assets,
@@ -138,9 +138,13 @@ async function getStableswapDataPromise({
     poolEntity.assets.map((sAsset) => [sAsset.assetId, sAsset])
   );
 
-  const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  const block = ctx.batchState.getParaBlockFromCacheByHeight(
+    blockHeader.height
+  );
   if (!block) {
-    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+    throw new Error(
+      `Block not found in cache for height ${blockHeader.height}`
+    );
   }
 
   const poolHistoricalDataEntity = new StableswapHistoricalData({

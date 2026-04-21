@@ -159,6 +159,7 @@ import {
   OmnipoolYieldFarmDepositDataWithId,
   OmnipoolLMGetDepositsInput,
   DcaGetSchedulesManyInput,
+  OmnipoolAssetDataWithId,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -575,6 +576,9 @@ export type StorageParserMethods = {
     getOmnipoolAssetData: (
       args: OmnipoolGetAssetDataInput
     ) => Promise<OmnipoolAssetData | null>;
+    getOmnipoolAllAssetsData: (
+      args: GetDataAtBlockInput
+    ) => Promise<OmnipoolAssetDataWithId[] | null>;
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;

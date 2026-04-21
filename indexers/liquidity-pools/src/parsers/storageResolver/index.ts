@@ -74,6 +74,7 @@ export class StorageResolver extends StorageResolverHelpersManager {
       | 'getPoolAssetInfo'
       | 'getPoolAssetStorageData'
       | 'getAssetData'
+      | 'getAllAssetsData'
       | 'getPoolAssets'
       | 'getPoolPegs'
       | 'getAllPoolsPegs'
@@ -181,11 +182,16 @@ export class StorageResolver extends StorageResolverHelpersManager {
             if (resp) return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getOmnipoolAssetState(
-            //     args as unknown as OmnipoolGetAssetDataInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
+          }
+          if (method === 'getAllAssetsData') {
+            const resp =
+              this.storageDictionaryManager.getOmnipoolAllAssetsState(
+                args as unknown as GetDataAtBlockInput // TODO fix types
+              ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
           }
 
           if (method === 'getPoolAssetInfo') {

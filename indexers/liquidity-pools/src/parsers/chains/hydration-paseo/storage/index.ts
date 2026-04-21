@@ -150,6 +150,7 @@ export default {
     getOmnipoolHubAssetTradability: omnipool.getOmnipoolHubAssetTradability,
     getAllOmnipoolLiquidityPositions: omnipool.getAllOmnipoolLiquidityPositions,
     getPoolData: omnipool.getPoolData,
+    getOmnipoolAllAssetsData: omnipool.getOmnipoolAllAssetsData,
     getOmnipoolAssetData: (
       args: OmnipoolGetAssetDataInput
     ): Promise<OmnipoolAssetData | null> =>

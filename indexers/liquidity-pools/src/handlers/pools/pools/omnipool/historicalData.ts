@@ -9,13 +9,12 @@ import {
   OmnipoolHistoricalData,
 } from '../../../../model';
 import parsers from '../../../../parsers';
-import {
-  BatchBlocksParsedDataManager,
-} from '../../../../parsers/batchBlocksParser';
+import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import { SqdProcessorContext } from '../../../../processor';
 import { splitIntoBatches } from '../../../../utils/helpers';
 import { getOrCreateAsset } from '../../../assets/asset';
 import { getOrCreateOmnipoolAsset } from './omnipoolAssets';
+import { OmnipoolAssetData } from '../../../../parsers/types/storage';
 
 export async function handleOmnipoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -32,6 +31,7 @@ export async function handleOmnipoolHistoricalData(
     const allPoolAssetsPerBlock: Array<{
       blockHeader: BlockHeader;
       assetRegistryIds: number[];
+      assetsData: Map<number, OmnipoolAssetData>;
     }> = await pMap(
       blocksSubBatch,
       async ({ header: blockHeader }) => {
@@ -39,14 +39,26 @@ export async function handleOmnipoolHistoricalData(
           await parsers.storage.omnipool.getOmnipoolAllAssetIds({
             block: blockHeader,
           });
+        const allAssetsDataPerBlock =
+          (await parsers.storage.omnipool.getOmnipoolAllAssetsData({
+            block: blockHeader,
+          })) || [];
+
         /**
          * We need add H2O asset manually as it's not presented in storage
          */
         assetRegistryIds.push(1);
+        const assetsDataMap: Map<number, OmnipoolAssetData> = new Map();
+
+        assetsDataLoop: for (const assetData of allAssetsDataPerBlock) {
+          if (!assetData.data) continue assetsDataLoop;
+          assetsDataMap.set(assetData.assetId, assetData.data);
+        }
 
         return {
           blockHeader,
           assetRegistryIds,
+          assetsData: assetsDataMap,
         };
       },
       {
@@ -58,22 +70,27 @@ export async function handleOmnipoolHistoricalData(
     predefinedEntities.push(
       await pMap(
         allPoolAssetsPerBlock
-          .map(({ blockHeader, assetRegistryIds }) =>
+          .map(({ blockHeader, assetRegistryIds, assetsData }) =>
             assetRegistryIds.map((arAssetId) => ({
               blockHeader: blockHeader,
               arAssetId,
+              assetData: assetsData.get(arAssetId),
             }))
           )
           .flat(),
-        async ({ arAssetId, blockHeader }) => {
+        async ({ arAssetId, assetData, blockHeader }) => {
           if (
             !ctx.batchState.state.omnipoolAllHistoricalData.has(
               `${ctx.appConfig.OMNIPOOL_ADDRESS}-${blockHeader.height}`
             )
           ) {
-            const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+            const block = ctx.batchState.getParaBlockFromCacheByHeight(
+              blockHeader.height
+            );
             if (!block) {
-              throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+              throw new Error(
+                `Block not found in cache for height ${blockHeader.height}`
+              );
             }
 
             ctx.batchState.state.omnipoolAllHistoricalData.set(
@@ -89,10 +106,11 @@ export async function handleOmnipoolHistoricalData(
           }
 
           const assetStateStorageData =
-            await parsers.storage.omnipool.getOmnipoolAssetData({
+            assetData ??
+            (await parsers.storage.omnipool.getOmnipoolAssetData({
               assetId: arAssetId,
               block: blockHeader,
-            });
+            }));
 
           let hubAssetTradeability = null;
 
@@ -138,9 +156,13 @@ export async function handleOmnipoolHistoricalData(
 
           if (!omnipoolAsset) return null;
 
-          const assetBlock = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+          const assetBlock = ctx.batchState.getParaBlockFromCacheByHeight(
+            blockHeader.height
+          );
           if (!assetBlock) {
-            throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+            throw new Error(
+              `Block not found in cache for height ${blockHeader.height}`
+            );
           }
 
           const newEntity = new OmnipoolAssetHistoricalData({
@@ -369,15 +391,19 @@ export async function isOmnipoolAssetHistoricalDataUniqueRegardingPreviousRecord
   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
 
   if (!previousItem) {
-    previousItem = await ctx.storeUtils.findOneWithLogs(OmnipoolAssetHistoricalData, {
-      where: {
-        assetId: currentRecord.assetId,
-        paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+    previousItem = await ctx.storeUtils.findOneWithLogs(
+      OmnipoolAssetHistoricalData,
+      {
+        where: {
+          assetId: currentRecord.assetId,
+          paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
+        },
+        order: {
+          paraBlockHeight: 'DESC',
+        },
       },
-      order: {
-        paraBlockHeight: 'DESC',
-      },
-    }, { className: 'OmnipoolAssetHistoricalData' });
+      { className: 'OmnipoolAssetHistoricalData' }
+    );
   }
 
   if (!previousItem) {
