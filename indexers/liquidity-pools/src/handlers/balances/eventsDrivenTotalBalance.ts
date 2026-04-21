@@ -9,7 +9,7 @@ import { getOrCreateAccountTotalBalanceHistoricalData } from './accountTotalBala
 import { getOrCreateAsset } from '../assets/asset';
 import { calcPriceNormalized } from '../../utils/helpers';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../utils/bignumber';
 import {
   BalanceLogInput,
   BalancesLoggerManager,
@@ -244,26 +244,26 @@ export async function handleAccountTotalBalanceEventsDriven({
             accountTotalBalance.totalTransferableNorm
           )
             .minus(transferableNorm || '0')
-            .toFixed();
+            .toFixed(18, BigNumber.ROUND_HALF_UP);
 
           accountTotalBalance.totalDebtNorm = BigNumber(
             accountTotalBalance.totalDebtNorm ?? '0'
           )
             .plus(transferableNorm || '0')
-            .toFixed();
+            .toFixed(18, BigNumber.ROUND_HALF_UP);
         } else {
           accountTotalBalance.totalTransferableNorm = BigNumber(
             accountTotalBalance.totalTransferableNorm
           )
             .plus(transferableNorm || '0')
-            .toFixed();
+            .toFixed(18, BigNumber.ROUND_HALF_UP);
         }
 
         accountTotalBalance.totalLockedNorm = BigNumber(
           accountTotalBalance.totalLockedNorm
         )
           .plus(totalLockedNorm || '0')
-          .toFixed();
+          .toFixed(18, BigNumber.ROUND_HALF_UP);
 
         BalancesLoggerManager.getInstance().addLog({
           accountId,

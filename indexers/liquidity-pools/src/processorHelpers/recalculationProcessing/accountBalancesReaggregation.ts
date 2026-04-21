@@ -26,22 +26,6 @@ import {
   prefetchGenericPersistentData,
   prefetchGenericPersistentDataWithLogs,
 } from '../prefetchHelpers';
-import {
-  getOldAssetVolume,
-  handleAssetVolumeUpdates,
-  processAssetNormalizedVolumes,
-} from '../../handlers/assets/volume';
-import { BigNumber } from '@galacticcouncil/sdk';
-import {
-  getOldLbpVolume,
-  getOldOmnipoolAssetVolume,
-  getOldStablepoolAssetVolume,
-  getOldStablepoolVolume,
-  getOldXykVolume,
-  getPoolAssetPreviousVolumeFromCache,
-  getPoolPreviousVolumeFromCache,
-} from '../../handlers/pools/volumes';
-import { getOldHsmAssetHistDataEntity } from '../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { HistoricalDataManager } from '../../handlers/historicalData';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 import { handleRelayChainBlocks } from '../../handlers/relayChain';

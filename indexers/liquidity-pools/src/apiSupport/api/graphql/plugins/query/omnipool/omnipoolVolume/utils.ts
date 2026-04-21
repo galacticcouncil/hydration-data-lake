@@ -7,7 +7,7 @@ import {
 } from '../../../../../../sql/omnipool/omnipoolAssets.sql';
 import { aggregateOmnipoolAssetsVolumesByBlocksRange } from '../../../../../../sql/omnipool/omnipoolAssetsVolume.sql';
 import { OmnipoolAssetHistoricalVolumeRaw } from '../../../../../../types';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../../../../../utils/bignumber';
 import { AppConfig } from '../../../../../../../appConfig';
 
 const appConfig = AppConfig.getInstance();

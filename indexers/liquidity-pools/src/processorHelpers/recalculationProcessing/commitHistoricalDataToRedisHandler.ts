@@ -14,7 +14,7 @@ import {
 } from '../../utils/redisTimeSeriesSupport/timeSeriesApiSupportManager';
 import { ApiSupportPgClient } from '../../utils/redisTimeSeriesSupport/apiSupportPgClient';
 import { getAssetPairVolumesByBlocksRange } from '../../utils/redisTimeSeriesSupport/sql/assetPairVolumes.sql';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../utils/bignumber';
 import { splitIntoBatches } from '../../utils/helpers';
 import { getAccTotalBalancesByBlocksRange } from '../../utils/redisTimeSeriesSupport/sql/accTotalBalanceHistData.sql';
 

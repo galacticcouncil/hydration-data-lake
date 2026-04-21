@@ -1,4 +1,4 @@
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { OmnipoolAssetVolumeHistoricalData } from '../../../model';

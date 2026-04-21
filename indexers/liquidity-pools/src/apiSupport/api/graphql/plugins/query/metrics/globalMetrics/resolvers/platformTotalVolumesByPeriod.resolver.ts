@@ -11,7 +11,7 @@ import {
   PlatformTotalVolumesByPeriodResponse,
 } from './types';
 import { CacheManager } from '../../../../../../../utils/cacheManager';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../../../../../../utils/bignumber';
 import crypto from 'node:crypto';
 import { getStartStopBlocksFromInput } from '../../../../../../../utils/aggregationUtils';
 import { handleOmnipoolAssetHistoricalVolumesByPeriodAggregation } from '../../../omnipool/omnipoolVolume/utils';

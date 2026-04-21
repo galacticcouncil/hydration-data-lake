@@ -76,6 +76,7 @@ import { handleHsmAssetHistoricalDataOnAllSwaps } from '../handlers/pools/pools/
 import { createMetricsTracker } from '../utils/processorMetrics';
 import { AccountEvmExtensionsCacheManager } from '../utils/accountEvmExtensionsCacheManager';
 import { PoolVolumesCacheManager } from '../handlers/pools/volumes/poolVolumesCacheManager';
+import { LatestProcessedDataCacheManager } from '../utils/latestProcessedDataCacheManager';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -142,6 +143,28 @@ export async function singleFlowAllInOneProcessor(
   await ensureNativeToken(ctx);
 
   await mt.track('actualiseAssets', () => actualiseAssets(ctx));
+
+  await mt.track(
+    'LatestProcessedDataCacheManager.prefetchLastAssetHistDataItem',
+    () =>
+      LatestProcessedDataCacheManager.getInstance().prefetchLastAssetHistDataItem(
+        ctx
+      )
+  );
+  await mt.track(
+    'LatestProcessedDataCacheManager.prefetchLastAssetSpotPriceHistDataItem',
+    () =>
+      LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
+        { ctx }
+      )
+  );
+  await mt.track(
+    'LatestProcessedDataCacheManager.prefetchLastXykpoolHistDataItem',
+    () =>
+      LatestProcessedDataCacheManager.getInstance().prefetchLastXykpoolHistDataItem(
+        ctx
+      )
+  );
 
   await mt.track('initAllXykPools', () =>
     initAllXykPools({

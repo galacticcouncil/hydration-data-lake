@@ -30,7 +30,7 @@ import {
   handleAssetVolumeUpdates,
   processAssetNormalizedVolumes,
 } from '../../../handlers/assets/volume';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../utils/bignumber';
 import {
   getOldLbpVolume,
   getOldOmnipoolAssetVolume,

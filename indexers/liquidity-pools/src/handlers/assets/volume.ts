@@ -1,6 +1,6 @@
 import { LessThan } from 'typeorm';
 
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { AssetVolumeHistoricalData } from '../../model';
@@ -208,13 +208,13 @@ export async function processAssetNormalizedVolumes({
       previousAssetVolume?.totalVolumeInNorm ?? '0'
     )
       .plus(currentAssetVolHistData.volumeInNorm)
-      .toFixed();
+      .toFixed(18, BigNumber.ROUND_HALF_UP);
 
     currentAssetVolHistData.totalVolumeOutNorm = BigNumber(
       previousAssetVolume?.totalVolumeOutNorm ?? '0'
     )
       .plus(currentAssetVolHistData.volumeOutNorm)
-      .toFixed();
+      .toFixed(18, BigNumber.ROUND_HALF_UP);
 
     ctx.batchState.state.assetVolumes.set(
       currentAssetVolHistData.id,

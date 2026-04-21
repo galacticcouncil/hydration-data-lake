@@ -12,7 +12,7 @@ import {
   AccountMmPositionDataContractData,
   UserReserveDataContractData,
 } from './types';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from './../bignumber';
 import pMap from 'p-map';
 import { retryAsync } from '../helpers';
 import { measureEvmContractCall } from '../hydratedLogger/utils';
@@ -353,13 +353,13 @@ export class MoneyMarketContractsManager {
     if (!contract) return null;
 
     try {
-        response.value = await retryAsync({
-          // passThrough: true,
-          fn: async () =>
-            (await contract.totalSupply({ blockTag: blockNumber })).toString(),
-          fallbackResponse: '0',
-          tag: `${address}.totalSupply.at(${blockNumber})`,
-        });
+      response.value = await retryAsync({
+        // passThrough: true,
+        fn: async () =>
+          (await contract.totalSupply({ blockTag: blockNumber })).toString(),
+        fallbackResponse: '0',
+        tag: `${address}.totalSupply.at(${blockNumber})`,
+      });
     } catch (e) {
       console.log(e);
     }
@@ -510,8 +510,10 @@ export class MoneyMarketContractsManager {
           data.currentLiquidationThreshold.toString()
         )
           .div(100)
-          .toFixed(), // Convert to percentage
-        ltv: BigNumber(data.ltv.toString()).div(100).toFixed(), // Convert to percentage
+          .toFixed(18, BigNumber.ROUND_HALF_UP), // Convert to percentage
+        ltv: BigNumber(data.ltv.toString())
+          .div(100)
+          .toFixed(18, BigNumber.ROUND_HALF_UP), // Convert to percentage
         healthFactor: ethers.utils.formatUnits(data.healthFactor, 18),
         pool: appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS,
       };

@@ -1,4 +1,4 @@
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { HsmpoolAssetHistoricalData } from '../../../model';
@@ -79,7 +79,7 @@ export async function processHsmpoolAssetNormalizedVolumes({
       previousAssetHistData?.assetTotalFeesVolNorm ?? '0'
     )
       .plus(currentAssetHistData.assetFeeVolNorm)
-      .toFixed();
+      .toFixed(18, BigNumber.ROUND_HALF_UP);
 
     currentAssetHistData.assetVolInNorm = calcPriceNormalized({
       amount: currentAssetHistData.assetVolIn,

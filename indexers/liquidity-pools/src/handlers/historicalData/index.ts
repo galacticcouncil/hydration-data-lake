@@ -29,7 +29,7 @@ import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/histori
 import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
 import { ApiSupportPgClient } from '../../utils/redisTimeSeriesSupport/apiSupportPgClient';
 import { getXykpoolHistDataWithUniqueData } from '../pools/pools/xykPool/historicalData';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../utils/bignumber';
 import { getXykpoolsHistDataLatest } from '../pools/pools/xykPool/historicalDataLatest';
 import { TimeSeriesDataCommitManager } from '../../utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
 import { DataCommitterJobName } from '../../utils/redisTimeSeriesSupport/queueClient';
@@ -229,9 +229,9 @@ export class HistoricalDataManager {
       const latestProcessedDataCacheManagerInstance =
         LatestProcessedDataCacheManager.getInstance();
 
-      await latestProcessedDataCacheManagerInstance.prefetchLastXykpoolHistDataItem(
-        ctx
-      );
+      // await latestProcessedDataCacheManagerInstance.prefetchLastXykpoolHistDataItem(
+      //   ctx
+      // );
 
       xykpoolHistDataToSaveList = Array.from(
         (
@@ -337,12 +337,6 @@ export class HistoricalDataManager {
       return;
     }
 
-    await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetHistDataItem(
-      ctx
-    );
-    await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
-      { ctx }
-    );
     const assetHistDataToSaveMap = await getAssetHistDataWithUniqueData(
       ctx.batchState.state.assetsHistoricalDataBatch,
       ctx

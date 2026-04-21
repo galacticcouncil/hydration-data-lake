@@ -16,7 +16,7 @@ import {
   UnchangedAccountAssetBalanceHistoricalData,
   UnchangedAccountAssetBalancesPerBlockMap,
 } from './accountTotalBalance';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../utils/bignumber';
 import {
   AccountData,
   BalancesAccountInfoWithAccountId,

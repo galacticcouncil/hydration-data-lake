@@ -14,7 +14,11 @@ import {
   BalancesReservedEventParams,
   BalancesUnreservedEventParams,
 } from '../../parsers/types/events';
-import { AccountAssetBalanceHistoricalData, EvmEventName } from '../../model';
+import {
+  AccountAssetBalanceHistoricalData,
+  AssetResourceType,
+  EvmEventName,
+} from '../../model';
 import { EvmLogEventParams } from '../../parsers/types/events/evm';
 import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
 import {
@@ -79,13 +83,22 @@ export async function collectBalanceEvents(
     eventData.eventData.metadata.blockHeader.height;
   const getIndexInBlock = (eventData: ParsedEventsCallsData): number =>
     eventData.eventData.metadata.indexInBlock;
+  const getAssetEntityFromEventAssetId = async (eventAssetId: number) => {
+    const asset = await getOrCreateAsset({
+      ctx,
+      assetRegistryId: String(eventAssetId),
+    });
+    if (!asset)
+      throw new Error(`Unable to find asset with eventAssetId ${eventAssetId}`);
+    return asset.id;
+  };
 
   // Tokens.Transfer: sender -amount, receiver +amount
   for (const eventData of parsedEvents
     .getSectionByEventName(EventName.Tokens_Transfer)
     .values()) {
     const params = eventData.eventData.params as TokensTransferEventParams;
-    const assetId = String(params.currencyId);
+    const assetId = await getAssetEntityFromEventAssetId(params.currencyId);
     events.push(
       {
         blockHeight: getBlockHeight(eventData),
@@ -115,11 +128,12 @@ export async function collectBalanceEvents(
     .getSectionByEventName(EventName.Tokens_Deposited)
     .values()) {
     const params = eventData.eventData.params as TokensDepositedEventParams;
+    const assetId = await getAssetEntityFromEventAssetId(params.currencyId);
     events.push({
       blockHeight: getBlockHeight(eventData),
       indexInBlock: getIndexInBlock(eventData),
       accountId: params.who,
-      assetId: String(params.currencyId),
+      assetId,
       isEvmAsset: false,
       transferableDelta: toBigInt(params.amount),
       totalLockedDelta: 0n,
@@ -132,11 +146,13 @@ export async function collectBalanceEvents(
     .getSectionByEventName(EventName.Tokens_Withdrawn)
     .values()) {
     const params = eventData.eventData.params as TokensWithdrawnEventParams;
+    const assetId = await getAssetEntityFromEventAssetId(params.currencyId);
+
     events.push({
       blockHeight: getBlockHeight(eventData),
       indexInBlock: getIndexInBlock(eventData),
       accountId: params.who,
-      assetId: String(params.currencyId),
+      assetId,
       isEvmAsset: false,
       transferableDelta: -toBigInt(params.amount),
       totalLockedDelta: 0n,
@@ -150,11 +166,13 @@ export async function collectBalanceEvents(
     .values()) {
     const params = eventData.eventData.params as TokensReservedEventParams;
     const amount = toBigInt(params.amount);
+    const assetId = await getAssetEntityFromEventAssetId(params.currencyId);
+
     events.push({
       blockHeight: getBlockHeight(eventData),
       indexInBlock: getIndexInBlock(eventData),
       accountId: params.who,
-      assetId: String(params.currencyId),
+      assetId,
       isEvmAsset: false,
       transferableDelta: -amount,
       totalLockedDelta: amount,
@@ -168,11 +186,13 @@ export async function collectBalanceEvents(
     .values()) {
     const params = eventData.eventData.params as TokensUnreservedEventParams;
     const amount = toBigInt(params.amount);
+    const assetId = await getAssetEntityFromEventAssetId(params.currencyId);
+
     events.push({
       blockHeight: getBlockHeight(eventData),
       indexInBlock: getIndexInBlock(eventData),
       accountId: params.who,
-      assetId: String(params.currencyId),
+      assetId,
       isEvmAsset: false,
       transferableDelta: amount,
       totalLockedDelta: -amount,
@@ -186,6 +206,7 @@ export async function collectBalanceEvents(
     .values()) {
     const params = eventData.eventData.params as BalancesTransferEventParams;
     const amount = toBigInt(params.amount);
+
     events.push(
       {
         blockHeight: getBlockHeight(eventData),
@@ -701,6 +722,7 @@ export async function processBalanceEventsSequentially({
         `[events-driven-balances] Negative balance detected for ` +
           `${event.accountId}-${event.assetId} at block ${event.blockHeight}. ` +
           `transferable=${currentBalance.transferable}, totalLocked=${currentBalance.totalLocked}. ` +
+          `event.transferableDelta=${event.transferableDelta.toString()}, event.totalLockedDelta=${event.totalLockedDelta}. ` +
           `Falling back to RPC.`
       );
       const rpcBalance = await fetchSingleBalanceFromRpc({
@@ -710,7 +732,7 @@ export async function processBalanceEventsSequentially({
         isEvmAsset: event.isEvmAsset,
         blockHeader: event.blockHeader,
       });
-      // console.log('rpcBalance - ', rpcBalance);
+      console.log('rpcBalance - ', rpcBalance);
       currentBalance.transferable = rpcBalance.transferable;
       currentBalance.totalLocked = rpcBalance.totalLocked;
     }
@@ -723,13 +745,11 @@ export async function processBalanceEventsSequentially({
       id: snapshot.accountId,
     });
 
-    const asset = snapshot.isEvmAsset
-      ? await getOrCreateAsset({ id: snapshot.assetId, ctx, ensure: false })
-      : await getOrCreateAsset({
-          assetRegistryId: snapshot.assetId,
-          ctx,
-          ensure: false,
-        });
+    const asset = await getOrCreateAsset({
+      id: snapshot.assetId,
+      ctx,
+      ensure: false,
+    });
 
     const assetId = asset?.id ?? snapshot.assetId;
 
@@ -749,6 +769,9 @@ export async function processBalanceEventsSequentially({
       assetInId: assetId,
       blockHeight: snapshot.blockHeight,
     });
+
+    // console.log(`assetSpotPrice ${snapshot.blockHeight} | ${assetId}`);
+    // console.dir(assetSpotPrice, { depth: null });
 
     entity.transferableInRefAssetNorm =
       assetSpotPrice && asset?.decimals
@@ -794,25 +817,6 @@ async function fetchSingleBalanceFromRpc({
   isEvmAsset: boolean;
   blockHeader: SqdBlock;
 }): Promise<{ transferable: bigint; totalLocked: bigint }> {
-  if (isEvmAsset) {
-    const account = await getOrCreateAccount({ ctx, id: accountId });
-    if (!account.boundEvmAddress) return { transferable: 0n, totalLocked: 0n };
-
-    const asset = await getOrCreateAsset({ id: assetId, ctx, ensure: false });
-    if (!asset?.evmAddress) return { transferable: 0n, totalLocked: 0n };
-
-    const balance =
-      await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
-        {
-          contractAddress: asset.evmAddress,
-          accountAddress: account.boundEvmAddress,
-          blockNumber: blockHeader.height,
-        }
-      );
-
-    return { transferable: balance ?? 0n, totalLocked: 0n };
-  }
-
   if (assetId === '0') {
     const nativeBalance = await parsers.storage.system.getSystemAccount(
       accountId,
@@ -824,19 +828,47 @@ async function fetchSingleBalanceFromRpc({
     };
   }
 
-  const assetIdNum = parseInt(assetId);
-  if (isNaN(assetIdNum)) {
-    return { transferable: 0n, totalLocked: 0n };
+  const asset = await getOrCreateAsset({ id: assetId, ctx, ensure: false });
+
+  if (!asset) throw new Error(`Asset with id ${assetId} not found`);
+  if (!asset?.evmAddress)
+    throw new Error(`Asset with id ${assetId} doesn't have evmAddress`);
+
+  const account = await getOrCreateAccount({ ctx, id: accountId });
+
+  if (asset.resourceType === AssetResourceType.Debt || !asset.assetRegistryId) {
+    const balance =
+      await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+        {
+          contractAddress: asset.evmAddress,
+          accountAddress: account.boundEvmAddress!,
+          blockNumber: blockHeader.height,
+        }
+      );
+    return { transferable: balance ?? 0n, totalLocked: 0n };
   }
 
   const tokenBalance =
     await parsers.storage.tokens.getTokensAccountsAssetBalances(
       accountId,
-      assetIdNum,
+      +asset.assetRegistryId,
       blockHeader
     );
-  return {
-    transferable: tokenBalance?.free ?? 0n,
-    totalLocked: tokenBalance?.reserved ?? 0n,
-  };
+
+  if (tokenBalance)
+    return {
+      transferable: tokenBalance?.free ?? 0n,
+      totalLocked: tokenBalance?.reserved ?? 0n,
+    };
+
+  const balance =
+    await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+      {
+        contractAddress: asset.evmAddress,
+        accountAddress: account.boundEvmAddress!,
+        blockNumber: blockHeader.height,
+      }
+    );
+
+  return { transferable: balance ?? 0n, totalLocked: 0n };
 }

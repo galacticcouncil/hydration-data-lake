@@ -20,7 +20,7 @@ import {
   getAccTotalBalancesByBlocksRange,
   getFirstAvailableAccTotalBalanceEntity,
 } from './sql/accTotalBalanceHistData.sql';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from './../bignumber';
 import { splitIntoBatches } from '../helpers';
 
 export interface AssetSpotPriceHistDataResponse {

@@ -14,7 +14,7 @@ import {
 import { AppConfig } from '../../../../../../../../appConfig';
 import { RedisTimeSeriesManager } from '../../../../../../../../utils/redisTimeSeriesManager';
 import { getBucketSizeMsFromAssetsPairPriceTimeRange } from '../../../../../../../utils/aggregationUtils';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from '../../../../../../../../utils/bignumber';
 import {
   getAssetsByAssetRegistryIds,
   getAssetsByIds,

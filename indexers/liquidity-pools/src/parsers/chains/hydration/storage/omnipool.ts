@@ -13,14 +13,10 @@ import {
   OmnipoolGetLiquidityPositionsInput,
   OmnipoolGetPoolDataInput,
   OmnipoolLiquidityPositionDataWithId,
-  OmnipoolLMGlobalFarmData,
-  OmnipoolLMGlobalFarmDataWithId,
   OmnipoolNftCollectionId,
-  OmnipoolYieldFarmDepositDataWithId,
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
-import BigNumber from 'bignumber.js';
 import { getOmnipoolLiquidityPositionPriceDecorated } from '../../../../utils/helpers';
 
 function getConstants({ block }: GetConstantsInput): OmnipoolConstants {

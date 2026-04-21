@@ -12,7 +12,7 @@ import {
   Asset,
   AssetResourceType,
 } from '../../model';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../utils/bignumber';
 import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
 import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
 import { getOmnipoolLiquidityMiningDepositsForAccounts } from '../liquidity/omnipool/liquidityMining/depositUtils';
@@ -279,27 +279,29 @@ export async function addAssetBalanceToAccountTotalBalance({
     //     ? BigNumber(0)
     //     : totalBalanceWithoutDebt
     // ).toFixed();
-    accountTotalBalance.totalTransferableNorm =
-      totalBalanceWithoutDebt.toFixed();
+    accountTotalBalance.totalTransferableNorm = totalBalanceWithoutDebt.toFixed(
+      18,
+      BigNumber.ROUND_HALF_UP
+    );
 
     accountTotalBalance.totalDebtNorm = BigNumber(
       accountTotalBalance.totalDebtNorm ?? '0'
     )
       .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-      .toFixed();
+      .toFixed(18, BigNumber.ROUND_HALF_UP);
   } else {
     accountTotalBalance.totalTransferableNorm = BigNumber(
       accountTotalBalance.totalTransferableNorm
     )
       .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-      .toFixed();
+      .toFixed(18, BigNumber.ROUND_HALF_UP);
   }
 
   accountTotalBalance.totalLockedNorm = BigNumber(
     accountTotalBalance.totalLockedNorm
   )
     .plus(assetBalanceHistData.totalLockedInRefAssetNorm || '0')
-    .toFixed();
+    .toFixed(18, BigNumber.ROUND_HALF_UP);
 
   BalancesLoggerManager.getInstance().addLog({
     accountId: accountTotalBalance.accountId,

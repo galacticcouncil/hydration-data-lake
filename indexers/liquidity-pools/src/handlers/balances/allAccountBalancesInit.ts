@@ -145,8 +145,6 @@ export async function initManyAccountAssetBalancesFromOnChainData({
   console.log(
     `handleAssetAccountBalances :: total initialized accounts: ${allInitializedAccounts.length}`
   );
-  // console.dir(accountIdsList, { depth: null });
-
   if (!allInitializedAccounts || allInitializedAccounts.length === 0) {
     console.log(
       `handleAssetAccountBalances :: no initialized accounts found. Skipping.`

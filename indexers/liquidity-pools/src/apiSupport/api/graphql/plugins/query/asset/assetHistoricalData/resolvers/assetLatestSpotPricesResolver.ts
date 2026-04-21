@@ -11,7 +11,7 @@ import {
 import { AppConfig } from '../../../../../../../../appConfig';
 import { getAssetsByAssetRegistryIds } from '../../../../../../../sql/asset.sql';
 import { getAssetSpotPriceHistDataByIds } from '../../../../../../../sql/assetHistData.sql';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from '../../../../../../../../utils/bignumber';
 
 const appConfig = AppConfig.getInstance();
 
