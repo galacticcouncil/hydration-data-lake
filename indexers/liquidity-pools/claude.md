@@ -33,15 +33,19 @@ Substrate blockchain indexer for **Hydration** (Polkadot parachain, 6s block tim
      - Storage data: Blockchain RPC -> Indexer, or Storage Dictionary -> Indexer (if dictionary has current block)
    - **Head (latest block)**:
      - Blockchain RPC -> Indexer, or Storage Dictionary -> Indexer (if dictionary has current block)
-       No newline at end of file
-6. ctx.batchState.state is a working cache with TTL of 1 processing blocks batch. It inits on the beginning of processing of
-   each batch. Used for collecting entities which will be saved in the end of the batch.
-   Usage flow: init ctx.batchState.state in the beginning of blocks batch processing handler ->
-   create new entity || prefetch required data from DB (e.g. Asset, Xykpool, etc) -> add entity to ctx.batchState.state ->
-   use new unsaved entity in the code from ctx.batchState.state -> save entity to DB
+6. **`ctx.batchState.state`** — per-batch working cache (reset on each new batch). Collects entities to be saved at batch end.
+   Flow: init at batch start → create/prefetch entities → store in `batchState` → reference unsaved entities from `batchState` → save to DB at batch end.
+7. **`LatestProcessedDataCacheManager`** — app-lifecycle cache holding the latest records of historical data to avoid expensive DB reads. Only populate this cache right before saving `batchState` data to DB — never elsewhere.
+   Flow: prefetch from DB once (if cache is empty) → use cached latest data during processing → update cache just before DB save.
+8. **Prices in batch**: During batch processing, `ctx.batchState` contains prices for all blocks in the batch — they are always calculated regardless. At DB save time, prices are deduped so only blocks where a price actually changed are persisted.
+9. **`correlateAssetSpotPrices`**: Not used in the normal processing flow. Only needed in reaggregation flows where prices are fetched from DB instead of being calculated during block processing.
+10. **Money market asset pricing**: Within the same money market reserve, the underlying asset, aToken, and Debt token all share the same spot price. Debt tokens (`resourceType = Debt`) cannot be priced by the Router — their price is always taken from the underlying asset. aTokens (`resourceType = aToken`) can be priced by the Router, but if the Router doesn't return a price, the underlying asset's price is used as fallback.
 
-7. LatestProcessedDataCacheManager manages cache within application lifecycle (from start to shutdown). Main goal -
-   to collect latest records of different historical data which saved in DB to avoid an expencive reading from DB.
-   Records to this cache should not be added in any place except before saving data from ctx.batchState.state to DB.
-   Usage flow: prefetch data from DB once, if cache accumulator for specific entity is empty -> use latest historical
-   data within the codebase -> set fresh latest hist data entities to cache accumulator just before saving data to DB.
+## Asset IDs
+
+Assets tracked from Asset Registry use their registry ID as the DB primary key (`id`). ERC20 assets use their H160 contract address instead. The `assetRegistryId` field stores the registry ID when one exists.
+
+- `id` (required) — DB primary key. Numeric (registry ID) or H160 hex address (ERC20/debt tokens).
+- `assetRegistryId` (nullable) — Asset Registry ID. Null for unregistered assets (e.g. AAVE debt tokens).
+
+Debt tokens (AAVE) are not in Asset Registry but still have contract addresses, so they fit the same schema — they just lack an `assetRegistryId`.

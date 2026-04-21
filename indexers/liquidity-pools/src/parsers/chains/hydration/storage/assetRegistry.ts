@@ -564,93 +564,84 @@ async function getAssetLocationsMany({
           ])
         );
 
-      for (const subBatch of splitIntoBatches(
-        Array.from(responseMap.keys()),
-        200
-      )) {
-        if (storage.assetRegistry.assetLocations.v394.is(block)) {
-          await tryExecOrReturnFallback(async () => {
-            const resp =
-              await storage.assetRegistry.assetLocations.v394.getMany(
-                block,
-                idsDecorated
-              );
-            subBatch.forEach((assetId, index) => {
-              if (resp[index]) {
-                responseMap.set(assetId, {
-                  assetId: assetId,
-                  location: resp[index] as AssetRegistryAssetLocation,
-                });
-              }
-            });
-          }, null);
-          continue;
-        }
-
-        if (storage.assetRegistry.assetLocations.v244.is(block)) {
-          await tryExecOrReturnFallback(async () => {
-            const resp =
-              await storage.assetRegistry.assetLocations.v244.getMany(
-                block,
-                idsDecorated
-              );
-
-            subBatch.forEach((assetId, index) => {
-              if (resp[index]) {
-                responseMap.set(assetId, {
-                  assetId: assetId,
-                  location: resp[index],
-                });
-              }
-            });
-          }, null);
-          continue;
-        }
-
-        if (storage.assetRegistry.assetLocations.v160.is(block)) {
-          await tryExecOrReturnFallback(async () => {
-            const resp =
-              await storage.assetRegistry.assetLocations.v160.getMany(
-                block,
-                idsDecorated
-              );
-
-            subBatch.forEach((assetId, index) => {
-              if (resp[index]) {
-                responseMap.set(assetId, {
-                  assetId: assetId,
-                  location: resp[index],
-                });
-              }
-            });
-          }, null);
-          continue;
-        }
-
-        if (storage.assetRegistry.assetLocations.v108.is(block)) {
-          await tryExecOrReturnFallback(async () => {
-            const resp =
-              await storage.assetRegistry.assetLocations.v108.getMany(
-                block,
-                idsDecorated
-              );
-
-            subBatch.forEach((assetId, index) => {
-              if (resp[index]) {
-                responseMap.set(assetId, {
-                  assetId: assetId,
-                  location: resp[index],
-                });
-              }
-            });
-          }, null);
-          continue;
-        }
-
-        throw new UnknownVersionError('storage.assetRegistry.assetLocations');
+      if (storage.assetRegistry.assetLocations.v394.is(block)) {
+        return tryExecOrReturnFallback(async () => {
+          for await (const page of storage.assetRegistry.assetLocations.v394.getPairsPaged(
+            500,
+            block
+          )) {
+            pageItemsLoop: for (const [
+              assetRegistryId,
+              location,
+            ] of page.filter((p) => !!p && !!p[1])) {
+              if (!responseMap.has(assetRegistryId) || !location)
+                continue pageItemsLoop;
+              // @ts-ignore
+              responseMap.get(assetRegistryId)!.location = location;
+            }
+          }
+          return Array.from(responseMap.values());
+        }, null);
       }
 
-      return Array.from(responseMap.values());
+      if (storage.assetRegistry.assetLocations.v244.is(block)) {
+        return tryExecOrReturnFallback(async () => {
+          for await (const page of storage.assetRegistry.assetLocations.v244.getPairsPaged(
+            500,
+            block
+          )) {
+            pageItemsLoop: for (const [
+              assetRegistryId,
+              location,
+            ] of page.filter((p) => !!p && !!p[1])) {
+              if (!responseMap.has(assetRegistryId) || !location)
+                continue pageItemsLoop;
+              responseMap.get(assetRegistryId)!.location = location;
+            }
+          }
+          return Array.from(responseMap.values());
+        }, null);
+      }
+
+      if (storage.assetRegistry.assetLocations.v160.is(block)) {
+        return tryExecOrReturnFallback(async () => {
+          for await (const page of storage.assetRegistry.assetLocations.v160.getPairsPaged(
+            500,
+            block
+          )) {
+            pageItemsLoop: for (const [
+              assetRegistryId,
+              location,
+            ] of page.filter((p) => !!p && !!p[1])) {
+              if (!responseMap.has(assetRegistryId) || !location)
+                continue pageItemsLoop;
+              responseMap.get(assetRegistryId)!.location = location;
+            }
+          }
+          return Array.from(responseMap.values());
+        }, null);
+      }
+
+      if (storage.assetRegistry.assetLocations.v108.is(block)) {
+        return tryExecOrReturnFallback(async () => {
+          for await (const page of storage.assetRegistry.assetLocations.v108.getPairsPaged(
+            500,
+            block
+          )) {
+            pageItemsLoop: for (const [
+              assetRegistryId,
+              location,
+            ] of page.filter((p) => !!p && !!p[1])) {
+              if (!responseMap.has(assetRegistryId) || !location)
+                continue pageItemsLoop;
+              responseMap.get(assetRegistryId)!.location = location;
+            }
+          }
+          return Array.from(responseMap.values());
+        }, null);
+      }
+
+      throw new UnknownVersionError('storage.assetRegistry.assetLocations');
     },
   });
 }

@@ -182,8 +182,6 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
     await AssetHubManager.getInstance().prefetchAllAssetsMetadata();
 
-    // for (const { assetId, data } of storageData)
-
     await pMap(
       storageData,
       async ({ assetId, data }) => {
@@ -526,7 +524,9 @@ export async function getNewAssetMultiLocationFromStorageData({
       block: blockHeader,
     }));
 
-  if (!storageData) return null;
+  if (!storageData) {
+    return null;
+  }
 
   const tpl = new AssetMultiLocation({
     parents: storageData.parents,
@@ -550,7 +550,6 @@ export async function getNewAssetMultiLocationFromStorageData({
     .value as AssetLocationJunction[]) {
     tpl.interior.push(getNewAssetMultiLocationsInterior(interiorValue));
   }
-
   return tpl;
 }
 

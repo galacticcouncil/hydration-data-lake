@@ -5,6 +5,7 @@ import * as v160 from '../v160'
 import * as v170 from '../v170'
 import * as v205 from '../v205'
 import * as v394 from '../v394'
+import * as v405 from '../v405'
 
 export const proxyExecuted =  {
     name: 'Proxy.ProxyExecuted',
@@ -185,6 +186,22 @@ export const depositPoked =  {
             kind: v394.DepositKind,
             oldDeposit: sts.bigint(),
             newDeposit: sts.bigint(),
+        })
+    ),
+}
+
+export const pureKilled =  {
+    name: 'Proxy.PureKilled',
+    /**
+     * A pure proxy was killed by its spawner.
+     */
+    v405: new EventType(
+        'Proxy.PureKilled',
+        sts.struct({
+            pure: v405.AccountId32,
+            spawner: v405.AccountId32,
+            proxyType: v405.ProxyType,
+            disambiguationIndex: sts.number(),
         })
     ),
 }

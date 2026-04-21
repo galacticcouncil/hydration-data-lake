@@ -4,6 +4,7 @@ import * as v148 from '../v148'
 import * as v170 from '../v170'
 import * as v185 from '../v185'
 import * as v201 from '../v201'
+import * as v398 from '../v398'
 
 export const tokenAdded =  {
     name: 'Omnipool.TokenAdded',
@@ -297,6 +298,19 @@ export const protocolLiquidityRemoved =  {
             amount: sts.bigint(),
             hubAmount: sts.bigint(),
             sharesRemoved: sts.bigint(),
+        })
+    ),
+}
+
+export const slipFeeSet =  {
+    name: 'Omnipool.SlipFeeSet',
+    /**
+     * Slip fee configuration was updated.
+     */
+    v398: new EventType(
+        'Omnipool.SlipFeeSet',
+        sts.struct({
+            slipFee: sts.option(() => v398.SlipFeeConfig),
         })
     ),
 }
