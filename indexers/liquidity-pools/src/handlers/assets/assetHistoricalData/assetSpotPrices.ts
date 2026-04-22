@@ -732,14 +732,6 @@ export function getAssetsPairPrice({
       `${assetInIdEnsured}-${assetOutIdEnsured}-${blockHeight}`
     )?.priceNormalised;
 
-    if (!price)
-      price = getPreviousProtPriceFromCache({
-        ctx,
-        assetInId: assetInIdEnsured,
-        assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
-        currentBlockHeight: blockHeight,
-      })?.priceNormalised;
-
     if (price) return price;
 
     if (
@@ -753,7 +745,14 @@ export function getAssetsPairPrice({
           assetInEntity.resourceType === AssetResourceType.Debt) &&
         !assetInEntity.underlyingAssetId)
     ) {
-      return null;
+      const lastPrice = getPreviousProtPriceFromCache({
+        ctx,
+        assetInId: assetInIdEnsured,
+        assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+        currentBlockHeight: blockHeight,
+      })?.priceNormalised;
+
+      return lastPrice ?? null;
     }
 
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
@@ -857,31 +856,34 @@ function getPreviousProtPriceFromCache({
   assetInId,
   assetOutId,
   currentBlockHeight,
+  checkBatchCache = false,
 }: {
   assetInId: string;
   assetOutId: string;
   currentBlockHeight: number;
+  checkBatchCache?: boolean;
   ctx: SqdProcessorContext<Store>;
 }) {
   let batchStatePrevEntity: AssetSpotPriceHistoricalData | null = null;
 
-  for (const entity of Array.from(
-    ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
-  )) {
-    if (
-      entity.paraBlockHeight >= currentBlockHeight ||
-      entity.assetInId !== assetInId ||
-      entity.assetOutId !== assetOutId
-    )
-      continue;
+  if (checkBatchCache)
+    for (const entity of Array.from(
+      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+    )) {
+      if (
+        entity.paraBlockHeight >= currentBlockHeight ||
+        entity.assetInId !== assetInId ||
+        entity.assetOutId !== assetOutId
+      )
+        continue;
 
-    if (!batchStatePrevEntity) {
-      batchStatePrevEntity = entity;
-      continue;
+      if (!batchStatePrevEntity) {
+        batchStatePrevEntity = entity;
+        continue;
+      }
+      if (batchStatePrevEntity.paraBlockHeight < entity.paraBlockHeight)
+        batchStatePrevEntity = entity;
     }
-    if (batchStatePrevEntity.paraBlockHeight < entity.paraBlockHeight)
-      batchStatePrevEntity = entity;
-  }
 
   return (
     batchStatePrevEntity ??
