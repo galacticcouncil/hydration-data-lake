@@ -76,6 +76,15 @@ export interface StablepoolAllPoolsInfoWithPoolId {
 export interface StablepoolAssetState {
   tradable: OmnipoolAssetTradability;
 }
+export interface StablepoolAssetStateWithId {
+  assetId: number;
+  data: StablepoolAssetState | null;
+}
+
+export interface StablepoolAssetStatesWithId {
+  poolId: number;
+  assetStates: StablepoolAssetStateWithId[];
+}
 
 export type StableswapPegSource = {
   sourceKind: 'Oracle' | 'Value' | 'MMOracle';

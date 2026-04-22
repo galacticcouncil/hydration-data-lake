@@ -96,6 +96,7 @@ export default {
   otc,
   evmAccounts,
   stableswap: {
+    getAllPoolsAssetsStorageData: stableswap.getAllPoolsAssetsStorageData,
     getConstants: stableswap.getConstants,
     getPoolPegs: stableswap.getPoolPegs,
     getAllPoolIds: stableswap.getAllPoolIds,

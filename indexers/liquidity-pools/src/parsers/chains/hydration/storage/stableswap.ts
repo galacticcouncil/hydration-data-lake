@@ -3,9 +3,11 @@ import {
   GetConstantsInput,
   GetDataAtBlockInput,
   GetPoolAssetInfoInput,
+  OmnipoolAssetDataWithId,
   OmnipoolAssetTradability,
   StablepoolAllPoolsInfoWithPoolId,
   StablepoolAssetState,
+  StablepoolAssetStatesWithId,
   StablepoolGetAllPoolIdsInput,
   StablepoolGetPoolDataInput,
   StablepoolGetPoolPegsInput,
@@ -146,6 +148,47 @@ async function getPoolAssetStorageData({
       return {
         tradable,
       };
+    },
+  });
+}
+
+async function getAllPoolsAssetsStorageData({
+  block,
+}: GetDataAtBlockInput): Promise<StablepoolAssetStatesWithId[] | null> {
+  return measureStorageFetch({
+    storageName: 'stableswap.assetTradability.getPairsPaged',
+    originFn: 'getAllPoolsAssetsStorageData',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 183) return null;
+
+      if (
+        storage.stableswap.assetTradability.v183.is(block) ||
+        block.specVersion >= 183
+      ) {
+        const pairsPageMap: Map<number, StablepoolAssetStatesWithId> =
+          new Map();
+
+        for await (const page of storage.stableswap.assetTradability.v183.getPairsPaged(
+          500,
+          block
+        )) {
+          for (const [[poolId, assetId], data] of page.filter(
+            (p) => !!p && !!p[1]
+          )) {
+            if (!pairsPageMap.has(poolId))
+              pairsPageMap.set(poolId, { poolId, assetStates: [] });
+
+            pairsPageMap.get(poolId)!.assetStates.push({
+              assetId: assetId,
+              data: { tradable: { bits: data?.bits ?? 15 } },
+            });
+          }
+        }
+
+        return Array.from(pairsPageMap.values());
+      }
+      throw new UnknownVersionError('storage.stableswap.assetTradability');
     },
   });
 }
@@ -353,6 +396,7 @@ async function getAllPoolsPegs({
 export default {
   getPoolData,
   getPoolAssetStorageData,
+  getAllPoolsAssetsStorageData,
   getAllPoolIds,
   getConstants,
   getPoolPegs,

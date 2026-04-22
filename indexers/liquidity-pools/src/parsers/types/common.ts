@@ -160,6 +160,7 @@ import {
   OmnipoolLMGetDepositsInput,
   DcaGetSchedulesManyInput,
   OmnipoolAssetDataWithId,
+  StablepoolAssetStatesWithId,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -558,6 +559,9 @@ export type StorageParserMethods = {
     getPoolAssetStorageData: (
       args: GetPoolAssetInfoInput
     ) => Promise<StablepoolAssetState | null>;
+    getAllPoolsAssetsStorageData: (
+      args: GetDataAtBlockInput
+    ) => Promise<StablepoolAssetStatesWithId[] | null>;
   };
   omnipool: {
     getConstants: (args: GetConstantsInput) => OmnipoolConstants;

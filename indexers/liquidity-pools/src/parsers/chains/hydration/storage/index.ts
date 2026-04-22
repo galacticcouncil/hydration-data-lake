@@ -186,6 +186,7 @@ export default {
   stableswap: {
     getAllPoolIds: stableswap.getAllPoolIds,
     getConstants: stableswap.getConstants,
+    getAllPoolsAssetsStorageData: stableswap.getAllPoolsAssetsStorageData,
     getPoolPegs: (
       args: StablepoolGetPoolPegsInput
     ): Promise<StablepoolPoolPegsInfo | null> =>

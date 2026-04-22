@@ -18,6 +18,10 @@ import { LatestProcessedDataCacheManager } from '../../../../utils/latestProcess
 import { StorageResolver } from '../../../../parsers/storageResolver';
 import { getOrCreateAsset } from '../../../assets/asset';
 import { XykpoolHistoricalDataManager } from './historicalDataManager';
+import {
+  AccountData,
+  TokenAccountBalancesWithAccountId,
+} from '../../../../parsers/types/storage';
 
 export async function handleXykPoolHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -122,16 +126,88 @@ export async function handleXykPoolHistoricalData(
                 .map((balance) => [balance.accountId, balance.data])
             );
 
+      let tokenBalancesManyResponse: TokenAccountBalancesWithAccountId[] = [];
+
+      /**
+       * For small batches of accounts it's more efficient to make separate calls
+       * getTokensAccountsAssetBalances than one getTokenBalancesMany;
+       */
+      if (poolAddressesToFetch.length > 5) {
+        tokenBalancesManyResponse =
+          await parsers.storage.tokens.getTokenBalancesMany({
+            accountIds: poolAddressesToFetch,
+            block: blockHeader,
+          });
+      } else {
+        tokenBalancesManyResponse = (
+          await pMap(
+            poolAddressesToFetch,
+            async (
+              poolAddress
+            ): Promise<TokenAccountBalancesWithAccountId | null> => {
+              const pool =
+                ctx.batchState.state.xykAllBatchPools.get(poolAddress);
+              if (!pool) return null;
+              const assetA = await getOrCreateAsset({
+                id: pool.assetAId,
+                ctx,
+                ensure: false,
+              });
+              const assetB = await getOrCreateAsset({
+                id: pool.assetAId,
+                ctx,
+                ensure: false,
+              });
+              if (
+                !assetA ||
+                assetA.assetRegistryId === null ||
+                assetA.assetRegistryId === undefined ||
+                !assetB ||
+                assetB.assetRegistryId === null ||
+                assetB.assetRegistryId === undefined
+              )
+                return null;
+
+              const assetABalance =
+                await parsers.storage.tokens.getTokensAccountsAssetBalances(
+                  poolAddress,
+                  +assetA.assetRegistryId,
+                  blockHeader
+                );
+              const assetBBalance =
+                await parsers.storage.tokens.getTokensAccountsAssetBalances(
+                  poolAddress,
+                  +assetB.assetRegistryId,
+                  blockHeader
+                );
+
+              return {
+                accountId: poolAddress,
+                assetBalances: [
+                  {
+                    assetId: assetA.assetRegistryId,
+                    data: assetABalance as AccountData,
+                  },
+                  {
+                    assetId: assetB.assetRegistryId,
+                    data: assetBBalance as AccountData,
+                  },
+                ],
+              };
+            },
+            {
+              concurrency:
+                ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
+            }
+          )
+        ).filter((item) => !!item);
+      }
+
       const otherTokenBalancesMap =
         poolAddressesToFetch.length === 0
           ? new Map()
           : new Map(
-              (
-                await parsers.storage.tokens.getTokenBalancesMany({
-                  accountIds: poolAddressesToFetch,
-                  block: blockHeader,
-                })
-              ).map((balance) => [
+              tokenBalancesManyResponse.map((balance) => [
                 balance.accountId,
                 new Map(
                   balance.assetBalances.map((assetBal) => [
