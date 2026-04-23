@@ -1,4 +1,4 @@
-import { BigNumber } from '../../../utils/bignumber';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { SqdProcessorContext } from '../../../processor';
@@ -95,41 +95,41 @@ export async function processLbpPoolsNormalizedVolumes({
       assetDecimals: assetB.decimals,
     });
 
-    poolVolsHistData.assetATotalVolInNorm = BigNumber(
-      poolVolsHistData.assetATotalVolInNorm ?? '0'
-    )
-      .plus(poolVolsHistData.assetAVolInNorm)
-      .toFixed();
+    poolVolsHistData.assetATotalVolInNorm = toFixedTrimmed(
+      BigNumber(poolVolsHistData.assetATotalVolInNorm ?? '0').plus(
+        poolVolsHistData.assetAVolInNorm
+      )
+    );
 
-    poolVolsHistData.assetATotalVolOutNorm = BigNumber(
-      poolVolsHistData.assetATotalVolOutNorm ?? '0'
-    )
-      .plus(poolVolsHistData.assetAVolOutNorm)
-      .toFixed();
+    poolVolsHistData.assetATotalVolOutNorm = toFixedTrimmed(
+      BigNumber(poolVolsHistData.assetATotalVolOutNorm ?? '0').plus(
+        poolVolsHistData.assetAVolOutNorm
+      )
+    );
 
-    poolVolsHistData.assetBTotalVolInNorm = BigNumber(
-      poolVolsHistData.assetBTotalVolInNorm ?? '0'
-    )
-      .plus(poolVolsHistData.assetBVolInNorm)
-      .toFixed();
+    poolVolsHistData.assetBTotalVolInNorm = toFixedTrimmed(
+      BigNumber(poolVolsHistData.assetBTotalVolInNorm ?? '0').plus(
+        poolVolsHistData.assetBVolInNorm
+      )
+    );
 
-    poolVolsHistData.assetBTotalVolOutNorm = BigNumber(
-      poolVolsHistData.assetBTotalVolOutNorm ?? '0'
-    )
-      .plus(poolVolsHistData.assetBVolOutNorm)
-      .toFixed();
+    poolVolsHistData.assetBTotalVolOutNorm = toFixedTrimmed(
+      BigNumber(poolVolsHistData.assetBTotalVolOutNorm ?? '0').plus(
+        poolVolsHistData.assetBVolOutNorm
+      )
+    );
 
-    poolVolsHistData.assetAFeesTotalVolNorm = BigNumber(
-      poolVolsHistData.assetAFeesTotalVolNorm ?? '0'
-    )
-      .plus(poolVolsHistData.assetAFeeVolNorm)
-      .toFixed();
+    poolVolsHistData.assetAFeesTotalVolNorm = toFixedTrimmed(
+      BigNumber(poolVolsHistData.assetAFeesTotalVolNorm ?? '0').plus(
+        poolVolsHistData.assetAFeeVolNorm
+      )
+    );
 
-    poolVolsHistData.assetBFeesTotalVolNorm = BigNumber(
-      poolVolsHistData.assetBFeesTotalVolNorm ?? '0'
-    )
-      .plus(poolVolsHistData.assetBFeeVolNorm)
-      .toFixed();
+    poolVolsHistData.assetBFeesTotalVolNorm = toFixedTrimmed(
+      BigNumber(poolVolsHistData.assetBFeesTotalVolNorm ?? '0').plus(
+        poolVolsHistData.assetBFeeVolNorm
+      )
+    );
 
     ctx.batchState.state.lbpPoolVolumes.set(
       poolVolsHistData.id,

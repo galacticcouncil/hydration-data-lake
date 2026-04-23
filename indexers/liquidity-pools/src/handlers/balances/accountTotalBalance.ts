@@ -12,7 +12,7 @@ import {
   Asset,
   AssetResourceType,
 } from '../../model';
-import { BigNumber } from '../../utils/bignumber';
+import { BigNumber, toFixedTrimmed } from '../../utils/bignumber';
 import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
 import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
 import { getOmnipoolLiquidityMiningDepositsForAccounts } from '../liquidity/omnipool/liquidityMining/depositUtils';
@@ -274,34 +274,28 @@ export async function addAssetBalanceToAccountTotalBalance({
      * But account cannot have debt balance higher that collateral or
      * borrowed amount. So in final result totalBalance always will be positive.
      */
-    // accountTotalBalance.totalTransferableNorm = (
-    //   totalBalanceWithoutDebt.isLessThan(0)
-    //     ? BigNumber(0)
-    //     : totalBalanceWithoutDebt
-    // ).toFixed();
-    accountTotalBalance.totalTransferableNorm = totalBalanceWithoutDebt.toFixed(
-      18,
-      BigNumber.ROUND_HALF_UP
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      totalBalanceWithoutDebt
     );
 
-    accountTotalBalance.totalDebtNorm = BigNumber(
-      accountTotalBalance.totalDebtNorm ?? '0'
-    )
-      .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-      .toFixed(18, BigNumber.ROUND_HALF_UP);
+    accountTotalBalance.totalDebtNorm = toFixedTrimmed(
+      BigNumber(accountTotalBalance.totalDebtNorm ?? '0').plus(
+        assetBalanceHistData.transferableInRefAssetNorm || '0'
+      )
+    );
   } else {
-    accountTotalBalance.totalTransferableNorm = BigNumber(
-      accountTotalBalance.totalTransferableNorm
-    )
-      .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-      .toFixed(18, BigNumber.ROUND_HALF_UP);
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      BigNumber(accountTotalBalance.totalTransferableNorm).plus(
+        assetBalanceHistData.transferableInRefAssetNorm || '0'
+      )
+    );
   }
 
-  accountTotalBalance.totalLockedNorm = BigNumber(
-    accountTotalBalance.totalLockedNorm
-  )
-    .plus(assetBalanceHistData.totalLockedInRefAssetNorm || '0')
-    .toFixed(18, BigNumber.ROUND_HALF_UP);
+  accountTotalBalance.totalLockedNorm = toFixedTrimmed(
+    BigNumber(accountTotalBalance.totalLockedNorm).plus(
+      assetBalanceHistData.totalLockedInRefAssetNorm || '0'
+    )
+  );
 
   BalancesLoggerManager.getInstance().addLog({
     accountId: accountTotalBalance.accountId,
@@ -423,11 +417,11 @@ async function addLiquidityBalancesToTotalBalance({
     /**
      * Account total balance calculation
      */
-    accountTotalBalance.totalTransferableNorm = BigNumber(
-      accountTotalBalance.totalTransferableNorm
-    )
-      .plus(portionAmountNorm)
-      .toFixed();
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      BigNumber(accountTotalBalance.totalTransferableNorm).plus(
+        portionAmountNorm
+      )
+    );
 
     BalancesLoggerManager.getInstance().addLog({
       accountId: accountTotalBalance.accountId,

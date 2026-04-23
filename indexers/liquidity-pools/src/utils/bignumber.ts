@@ -4,4 +4,8 @@ BigNumber.config({
   ROUNDING_MODE: BigNumber.ROUND_UP,
 });
 
-export { BigNumber };
+function toFixedTrimmed(value: BigNumber.Value, dp = 18): string {
+  return new BigNumber(value).decimalPlaces(dp).toFixed();
+}
+
+export { BigNumber, toFixedTrimmed };

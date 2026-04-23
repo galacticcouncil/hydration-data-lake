@@ -16,7 +16,7 @@ import {
   UnchangedAccountAssetBalanceHistoricalData,
   UnchangedAccountAssetBalancesPerBlockMap,
 } from './accountTotalBalance';
-import { BigNumber } from '../../utils/bignumber';
+import { BigNumber, toFixedTrimmed } from '../../utils/bignumber';
 import {
   AccountData,
   BalancesAccountInfoWithAccountId,
@@ -560,11 +560,9 @@ export function updateAccountTotalBalanceHistoricalDataWithUnchangedBalances({
       return acc.plus(value.transferableInRefAssetNorm);
     }, BigNumber(accountTotalBalance.totalTransferableNorm));
 
-    accountTotalBalance.totalTransferableNorm =
-      accountTotalTransferableBalanceSummaryAtBlock.toFixed(
-        18,
-        BigNumber.ROUND_HALF_UP
-      );
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      accountTotalTransferableBalanceSummaryAtBlock
+    );
 
     ctx.batchState.state.accountTotalBalanceHistoricalData.set(
       accountTotalBalance.id,

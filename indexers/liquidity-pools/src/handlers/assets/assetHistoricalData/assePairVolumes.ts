@@ -16,7 +16,7 @@ import {
 } from '../../../utils/helpers';
 import { getOrCreateAsset } from '../asset';
 import { getAssetsPairPrice } from './assetSpotPrices';
-import { BigNumber } from '../../../utils/bignumber';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 
 export async function handleAssetPairVolumesHistoricalDataAtBlock({
   blockHeader,
@@ -202,9 +202,11 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
 
       assetAVolume,
       assetBVolume,
-      totalVolumeNormalised: currentTotalVolumeNormalised
-        .plus(existingPairVolEntity?.totalVolumeNormalised ?? '0')
-        .toFixed(18, BigNumber.ROUND_HALF_UP),
+      totalVolumeNormalised: toFixedTrimmed(
+        currentTotalVolumeNormalised.plus(
+          existingPairVolEntity?.totalVolumeNormalised ?? '0'
+        )
+      ),
 
       paraBlockHeight: blockHeader.height,
     });

@@ -1,4 +1,4 @@
-import { BigNumber } from '../../../utils/bignumber';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { OmnipoolAssetVolumeHistoricalData } from '../../../model';
@@ -73,11 +73,11 @@ export async function processOmnipoolAssetNormalizedVolumes({
       assetDecimals: asset.decimals,
     });
 
-    currentAssetVolsHistData.assetTotalFeesVolNorm = BigNumber(
-      previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0'
-    )
-      .plus(currentAssetVolsHistData.assetFeeVolNorm)
-      .toFixed();
+    currentAssetVolsHistData.assetTotalFeesVolNorm = toFixedTrimmed(
+      BigNumber(previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0').plus(
+        currentAssetVolsHistData.assetFeeVolNorm
+      )
+    );
 
     currentAssetVolsHistData.assetVolInNorm = calcPriceNormalized({
       amount: currentAssetVolsHistData.assetVolIn,
@@ -90,17 +90,17 @@ export async function processOmnipoolAssetNormalizedVolumes({
       assetDecimals: asset.decimals,
     });
 
-    currentAssetVolsHistData.assetTotalVolInNorm = BigNumber(
-      previousAssetHistVolume?.assetTotalVolInNorm ?? '0'
-    )
-      .plus(currentAssetVolsHistData.assetVolInNorm)
-      .toFixed();
+    currentAssetVolsHistData.assetTotalVolInNorm = toFixedTrimmed(
+      BigNumber(previousAssetHistVolume?.assetTotalVolInNorm ?? '0').plus(
+        currentAssetVolsHistData.assetVolInNorm
+      )
+    );
 
-    currentAssetVolsHistData.assetTotalVolOutNorm = BigNumber(
-      previousAssetHistVolume?.assetTotalVolOutNorm ?? '0'
-    )
-      .plus(currentAssetVolsHistData.assetVolOutNorm)
-      .toFixed();
+    currentAssetVolsHistData.assetTotalVolOutNorm = toFixedTrimmed(
+      BigNumber(previousAssetHistVolume?.assetTotalVolOutNorm ?? '0').plus(
+        currentAssetVolsHistData.assetVolOutNorm
+      )
+    );
 
     ctx.batchState.state.omnipoolAssetVolumes.set(
       currentAssetVolsHistData.id,

@@ -1,7 +1,7 @@
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
 
-import { BigNumber } from '../../../utils/bignumber';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
 
@@ -287,10 +287,12 @@ async function processAssetSpotPrices({
 
             price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
 
-            priceNormalised: fromExponentialToDecimalNotation(
-              price.amount.toFixed(18, BigNumber.ROUND_HALF_UP),
-              price.decimals
-            ).toFixed(18, BigNumber.ROUND_HALF_UP),
+            priceNormalised: toFixedTrimmed(
+              fromExponentialToDecimalNotation(
+                toFixedTrimmed(price.amount),
+                price.decimals
+              )
+            ),
             priceRoute,
             paraBlockHeight: blockHeader.height,
           })
@@ -666,10 +668,7 @@ async function processXykInvolvedAssetSpotPrices({
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
-          priceNormalised: xykAssetSpotPrice.toFixed(
-            18,
-            BigNumber.ROUND_HALF_UP
-          ),
+          priceNormalised: toFixedTrimmed(xykAssetSpotPrice),
           priceRoute,
 
           paraBlockHeight: blockHeader.height,
@@ -813,7 +812,7 @@ export function getAssetsPairPrice({
       );
       return null;
     }
-    return price.toFixed(18, BigNumber.ROUND_HALF_UP);
+    return toFixedTrimmed(price);
   }
 
   if (
@@ -1035,15 +1034,11 @@ async function processXykShareAssetSpotPrices({
           price: BigInt(
             fromDecimalToExponentialNotation(
               shareAssetPriceNormalised,
-              // assetOut.decimals
               18
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
-          priceNormalised: shareAssetPriceNormalised.toFixed(
-            18,
-            BigNumber.ROUND_HALF_UP
-          ),
+          priceNormalised: toFixedTrimmed(shareAssetPriceNormalised),
           priceRoute,
 
           paraBlockHeight: blockHeader.height,

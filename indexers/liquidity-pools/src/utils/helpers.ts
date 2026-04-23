@@ -7,7 +7,7 @@ import { hexToString, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import v8 from 'v8';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { HYDRADX_SS58_PREFIX, Hop } from '@galacticcouncil/sdk';
-import { BigNumber } from './bignumber';
+import { BigNumber, toFixedTrimmed } from './bignumber';
 import crypto from 'node:crypto';
 import { performance, monitorEventLoopDelay } from 'perf_hooks';
 import { deepEqual } from 'fast-equals';
@@ -263,9 +263,12 @@ export function calcPriceNormalized({
   spotPrice: string;
   assetDecimals: number;
 }): string {
-  return fromExponentialToDecimalNotation(amount.toString(), assetDecimals)
-    .multipliedBy(spotPrice)
-    .toFixed(18, );
+  return toFixedTrimmed(
+    fromExponentialToDecimalNotation(
+      amount.toString(),
+      assetDecimals
+    ).multipliedBy(spotPrice)
+  );
 }
 
 export async function tryExecOrReturnFallback<T>(

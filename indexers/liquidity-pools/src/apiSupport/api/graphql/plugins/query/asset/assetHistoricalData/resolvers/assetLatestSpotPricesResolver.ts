@@ -11,7 +11,10 @@ import {
 import { AppConfig } from '../../../../../../../../appConfig';
 import { getAssetsByAssetRegistryIds } from '../../../../../../../sql/asset.sql';
 import { getAssetSpotPriceHistDataByIds } from '../../../../../../../sql/assetHistData.sql';
-import { BigNumber } from '../../../../../../../../utils/bignumber';
+import {
+  BigNumber,
+  toFixedTrimmed,
+} from '../../../../../../../../utils/bignumber';
 
 const appConfig = AppConfig.getInstance();
 
@@ -126,9 +129,11 @@ export async function assetLatestSpotPricesResolver(
 
     if (!asstInPriceData || !asstOutPriceData) continue;
 
-    const priceNorm = BigNumber(asstInPriceData.price_normalised)
-      .div(asstOutPriceData.price_normalised)
-      .toFixed();
+    const priceNorm = toFixedTrimmed(
+      BigNumber(asstInPriceData.price_normalised).div(
+        asstOutPriceData.price_normalised
+      )
+    );
 
     queryResponse.nodes.push({
       assetInId,

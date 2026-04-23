@@ -9,7 +9,7 @@ import { getOrCreateAccountTotalBalanceHistoricalData } from './accountTotalBala
 import { getOrCreateAsset } from '../assets/asset';
 import { calcPriceNormalized } from '../../utils/helpers';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
-import { BigNumber } from '../../utils/bignumber';
+import { BigNumber, toFixedTrimmed } from '../../utils/bignumber';
 import {
   BalanceLogInput,
   BalancesLoggerManager,
@@ -240,30 +240,30 @@ export async function handleAccountTotalBalanceEventsDriven({
 
         // Debt tokens subtract from total
         if (asset.resourceType === AssetResourceType.Debt) {
-          accountTotalBalance.totalTransferableNorm = BigNumber(
-            accountTotalBalance.totalTransferableNorm
-          )
-            .minus(transferableNorm || '0')
-            .toFixed(18, BigNumber.ROUND_HALF_UP);
+          accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+            BigNumber(accountTotalBalance.totalTransferableNorm).minus(
+              transferableNorm || '0'
+            )
+          );
 
-          accountTotalBalance.totalDebtNorm = BigNumber(
-            accountTotalBalance.totalDebtNorm ?? '0'
-          )
-            .plus(transferableNorm || '0')
-            .toFixed(18, BigNumber.ROUND_HALF_UP);
+          accountTotalBalance.totalDebtNorm = toFixedTrimmed(
+            BigNumber(accountTotalBalance.totalDebtNorm ?? '0').plus(
+              transferableNorm || '0'
+            )
+          );
         } else {
-          accountTotalBalance.totalTransferableNorm = BigNumber(
-            accountTotalBalance.totalTransferableNorm
-          )
-            .plus(transferableNorm || '0')
-            .toFixed(18, BigNumber.ROUND_HALF_UP);
+          accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+            BigNumber(accountTotalBalance.totalTransferableNorm).plus(
+              transferableNorm || '0'
+            )
+          );
         }
 
-        accountTotalBalance.totalLockedNorm = BigNumber(
-          accountTotalBalance.totalLockedNorm
-        )
-          .plus(totalLockedNorm || '0')
-          .toFixed(18, BigNumber.ROUND_HALF_UP);
+        accountTotalBalance.totalLockedNorm = toFixedTrimmed(
+          BigNumber(accountTotalBalance.totalLockedNorm).plus(
+            totalLockedNorm || '0'
+          )
+        );
 
         BalancesLoggerManager.getInstance().addLog({
           accountId,

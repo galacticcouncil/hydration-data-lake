@@ -1,4 +1,4 @@
-import { BigNumber } from '../../../utils/bignumber';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { SqdProcessorContext } from '../../../processor';
@@ -33,10 +33,14 @@ export function processStableswapNormalizedTvl({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const assetHistData of assetsHistDataByBatchList) {
-    const asset = assetHistData.assetId ? ctx.batchState.state.assetsAll.get(assetHistData.assetId) : null;
+    const asset = assetHistData.assetId
+      ? ctx.batchState.state.assetsAll.get(assetHistData.assetId)
+      : null;
 
-    if(!asset) {
-      console.warn(`Asset data not found for asset ${assetHistData.assetId} while processing Stableswap pool TVL normalization at para block height ${assetHistData.paraBlockHeight}`);
+    if (!asset) {
+      console.warn(
+        `Asset data not found for asset ${assetHistData.assetId} while processing Stableswap pool TVL normalization at para block height ${assetHistData.paraBlockHeight}`
+      );
       continue;
     }
 
@@ -54,13 +58,11 @@ export function processStableswapNormalizedTvl({
       continue;
     }
 
-    assetHistData.tvlInRefAssetNorm = BigNumber(
-      calcPriceNormalized({
-        amount: assetHistData.freeBalance,
-        assetDecimals: asset.decimals,
-        spotPrice: assetSpotPriceNorm,
-      })
-    ).toFixed();
+    assetHistData.tvlInRefAssetNorm = calcPriceNormalized({
+      amount: assetHistData.freeBalance,
+      assetDecimals: asset.decimals,
+      spotPrice: assetSpotPriceNorm,
+    });
 
     // Extract poolId from asset historical data ID format: <poolId>-<assetId>-<blockHeight>
     const poolId = assetHistData.id.split('-')[0];
@@ -69,9 +71,11 @@ export function processStableswapNormalizedTvl({
 
     if (poolHistData) {
       poolHistData.tvlTotalInRefAssetNorm =
-        BigNumber(poolHistData.tvlTotalInRefAssetNorm || '0')
-          .plus(assetHistData.tvlInRefAssetNorm)
-          .toFixed() || '0';
+        toFixedTrimmed(
+          BigNumber(poolHistData.tvlTotalInRefAssetNorm || '0').plus(
+            assetHistData.tvlInRefAssetNorm
+          )
+        ) || '0';
 
       poolsHistDataMap.set(poolHistData.id, poolHistData);
       ctx.batchState.state.stablepoolAllHistoricalData.set(

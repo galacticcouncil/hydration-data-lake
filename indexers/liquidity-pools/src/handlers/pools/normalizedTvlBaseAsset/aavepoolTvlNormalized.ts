@@ -1,4 +1,4 @@
-import { BigNumber } from '../../../utils/bignumber';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { SqdProcessorContext } from '../../../processor';
@@ -64,13 +64,15 @@ export async function processAavepoolsNormalizedTvl({
       continue;
     }
 
-    poolHistData.tvlInRefAssetNorm = BigNumber(
-      calcPriceNormalized({
-        amount: poolHistData.liquidityIn,
-        assetDecimals: reserveAsset.decimals,
-        spotPrice: assetSpotPriceNorm,
-      })
-    ).toFixed();
+    poolHistData.tvlInRefAssetNorm = toFixedTrimmed(
+      BigNumber(
+        calcPriceNormalized({
+          amount: poolHistData.liquidityIn,
+          assetDecimals: reserveAsset.decimals,
+          spotPrice: assetSpotPriceNorm,
+        })
+      )
+    );
 
     ctx.batchState.state.aavePoolsHistoricalData.set(
       poolHistData.id,
