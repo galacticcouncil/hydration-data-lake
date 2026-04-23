@@ -10,6 +10,7 @@ export enum EvmEventName {
   ReserveUsedAsCollateralDisabled = "ReserveUsedAsCollateralDisabled",
   OracleUpdate = "OracleUpdate",
   ReserveDataUpdated = "ReserveDataUpdated",
+  ReserveInitialized = "ReserveInitialized",
   FacilitatorAdded = "FacilitatorAdded",
   FacilitatorRemoved = "FacilitatorRemoved",
   FacilitatorBucketCapacityUpdated = "FacilitatorBucketCapacityUpdated",

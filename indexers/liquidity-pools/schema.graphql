@@ -1825,6 +1825,7 @@ enum EvmEventName {
   ReserveUsedAsCollateralDisabled
   OracleUpdate
   ReserveDataUpdated
+  ReserveInitialized
   FacilitatorAdded
   FacilitatorRemoved
   FacilitatorBucketCapacityUpdated

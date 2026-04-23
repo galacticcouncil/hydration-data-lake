@@ -6,7 +6,7 @@ import variableDebtTokenHydration from './abi/aave/variableDebtTokenHydration.js
 import uiPoolDataProviderV3 from './abi/aave/uiPoolDataProviderV3.json';
 import poolImplementation from './abi/aave/aavePoolImplementation.json';
 import { Contract, ContractInterface, ethers } from 'ethers';
-import { AssetResourceType } from '../../model';
+import { AssetResourceType, EvmEventName } from '../../model';
 import { AppConfig } from '../../appConfig';
 import {
   AccountMmPositionDataContractData,
@@ -14,9 +14,12 @@ import {
 } from './types';
 import { BigNumber } from './../bignumber';
 import pMap from 'p-map';
-import { retryAsync } from '../helpers';
+import { getOrderedListByBlockNumber, retryAsync } from '../helpers';
 import { measureEvmContractCall } from '../hydratedLogger/utils';
 import { ContractsPoolManager } from './contractsPoolManager';
+import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
+import { EventName } from '../../parsers/types/events';
+import { handleEvmLog } from '../../handlers/evmLog';
 
 const appConfig = AppConfig.getInstance();
 
@@ -100,6 +103,9 @@ export class MoneyMarketContractsManager {
   // Cache for facilitators to avoid repeated EVM calls
   private facilitatorsCache: Array<AaveFacilitatorContractData> | null = null;
   private facilitatorsCacheBlockNumber: number | null = null;
+
+  // Cache for MM reserves to avoid repeated EVM calls
+  private reservesCacheBlockNumber: number | null = null;
 
   private constructor() {
     this.contractsPoolManager = ContractsPoolManager.getInstance();
@@ -247,14 +253,50 @@ export class MoneyMarketContractsManager {
     return null;
   }
 
+  isMmReservesCacheInvalidationRequired(
+    parsedEvents?: BatchBlocksParsedDataManager | null
+  ) {
+    if (!parsedEvents) return true;
+
+    for (const eventData of getOrderedListByBlockNumber([
+      ...parsedEvents.getSectionByEventName(EventName.EVM_Log).values(),
+    ])) {
+      // Potentially can be tracked and checked event "Initialized" from aToken
+      // and Variable Debt Token contracts
+      if (
+        eventData.eventData.params?.eventName ===
+        EvmEventName.ReserveInitialized
+      ) {
+        console.log(
+          `New MM reserve initialisation has been detected at block ${eventData.eventData.metadata.blockHeader.height}. MM reserves cache invalidation required.`
+        );
+        return true;
+      }
+    }
+    return false;
+  }
+
   async initContractInstances({
     blockNumber,
     ctx,
+    invalidateReservesCache = false,
   }: {
     blockNumber?: number;
     ctx: SqdProcessorContext<Store>;
+    invalidateReservesCache?: boolean;
   }) {
     try {
+      const blockNumberForCache = blockNumber ?? ctx.blocks[0].header.height;
+      if (
+        !invalidateReservesCache &&
+        this.reservesCacheBlockNumber &&
+        blockNumberForCache &&
+        Math.abs(blockNumberForCache - this.reservesCacheBlockNumber) < 100
+      ) {
+        return;
+      }
+      this.reservesCacheBlockNumber = blockNumberForCache;
+
       const reservesData = await this.getReservesData({ blockNumber });
 
       if (!reservesData) {

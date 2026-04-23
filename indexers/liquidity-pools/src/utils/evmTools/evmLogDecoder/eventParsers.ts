@@ -16,6 +16,7 @@ import {
   OracleUpdateEventParams,
   PoolReserveDataUpdatedEventParams,
   MmMintedToTreasuryEventParams,
+  PoolReserveInitialisedEventParams,
 } from '../../../parsers/types/events';
 import { EvmEventName } from '../../../model';
 import { ethers } from 'ethers';
@@ -147,6 +148,25 @@ export class EvmLogEventParsers {
       variableBorrowRate: event.args[3],
       liquidityIndex: event.args[4],
       variableBorrowIndex: event.args[5],
+    };
+  }
+  parsePoolReserveInitializedEvent(
+    event: EvmLogEventParams
+  ): PoolReserveInitialisedEventParams {
+    return {
+      eventName: EvmEventName.ReserveInitialized,
+      contractName: event.contractName,
+      reserveAddress: ethers.utils.getAddress(event.args[0]).toLowerCase(),
+      aTokenAddress: ethers.utils.getAddress(event.args[1]).toLowerCase(),
+      stableDebtTokenAddress: ethers.utils
+        .getAddress(event.args[2])
+        .toLowerCase(),
+      variableDebtTokenAddress: ethers.utils
+        .getAddress(event.args[3])
+        .toLowerCase(),
+      interestRateStrategyAddress: ethers.utils
+        .getAddress(event.args[4])
+        .toLowerCase(),
     };
   }
   parseHsmFasilitatorAddedEvent(
