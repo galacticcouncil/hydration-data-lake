@@ -529,6 +529,7 @@ export async function processBalanceEventsSequentially({
   // accountsFirstActivityAtBlock: Map<AccountId, BlockNumber> - earliest block where account has activity
   const accountsFirstActivityAtBlock = new Map<string, number>();
 
+  // Inject accounts for reaggregation.
   const firstBatchBlockHeight = ctx.blocks[0].header.height;
   for (const accountId of accountsForScheduledReaggregation.values()) {
     accountsFirstActivityAtBlock.set(accountId, firstBatchBlockHeight);
@@ -545,9 +546,10 @@ export async function processBalanceEventsSequentially({
   }
 
   // Step 3: Identify accounts with NO prior DB history (check cache manager)
-  // These need full RPC init via handleManyAccountBalancesInitCore
-  const firstEncounterAccountIds: string[] = Array.from(
-    accountsForScheduledReaggregation
+  // These need full RPC init via handleManyAccountBalancesInitCore.
+  // Inject accounts for reaggregation.
+  const firstEncounterAccountIdsSet: Set<string> = new Set(
+    Array.from(accountsForScheduledReaggregation.values())
   );
 
   for (const [
@@ -579,7 +581,7 @@ export async function processBalanceEventsSequentially({
     }
 
     if (!hasAnyHistory) {
-      firstEncounterAccountIds.push(accountId);
+      firstEncounterAccountIdsSet.add(accountId);
     }
   }
 
@@ -591,9 +593,9 @@ export async function processBalanceEventsSequentially({
     Set<string>
   > = new Map();
 
-  if (firstEncounterAccountIds.length > 0) {
+  if (firstEncounterAccountIdsSet.size > 0) {
     const accountsByBlock = new Map<number, string[]>();
-    for (const accountId of firstEncounterAccountIds) {
+    for (const accountId of firstEncounterAccountIdsSet.values()) {
       const blockHeight = accountsFirstActivityAtBlock.get(accountId)!;
       if (!accountsByBlock.has(blockHeight)) {
         accountsByBlock.set(blockHeight, []);
