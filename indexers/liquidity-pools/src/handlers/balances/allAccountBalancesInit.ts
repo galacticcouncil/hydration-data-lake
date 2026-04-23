@@ -24,6 +24,8 @@ import { updateAccountProcessingStatusOnTotalBalanceChange } from '../accounts/a
 import { getOrCreateAccount } from '../accounts';
 import { ZERO_ADDRESS_PK } from '../../utils/types';
 
+let coldStartDone = false;
+
 export async function handleAllAccountBalancesInit({
   ctx,
   blockHeight,
@@ -111,25 +113,25 @@ export async function initManyAccountAssetBalancesFromOnChainData({
   whitelistedAccountIds?: string[];
   forceFetch?: boolean;
 }) {
-  const hasAnyAccountRecord = await ctx.storeUtils.findOneWithLogs(
-    Account,
-    {
-      where: {},
-    },
-    { className: 'AccountAssetBalanceHistoricalData' }
-  );
+  if (!coldStartDone) {
+    const hasAnyAccountRecord = await ctx.storeUtils.findOneWithLogs(
+      Account,
+      {
+        where: {},
+      },
+      { className: 'Account' }
+    );
 
-  if (!hasAnyAccountRecord) {
-    console.time('initAllAccountsOnColdStart');
-    await initAllAccountsOnColdStart({ ctx });
-    console.timeEnd('initAllAccountsOnColdStart');
+    if (!hasAnyAccountRecord) {
+      console.time('initAllAccountsOnColdStart');
+      await initAllAccountsOnColdStart({ ctx });
+      console.timeEnd('initAllAccountsOnColdStart');
+    }
+
+    coldStartDone = true;
   }
 
-  let allInitializedAccounts = (
-    await ctx.storeUtils.findWithLogs(Account, {
-      where: {},
-    })
-  ).filter((acc) => acc.id !== ZERO_ADDRESS_PK);
+  let allInitializedAccounts = [];
 
   if (whitelistedAccountIds && whitelistedAccountIds.length > 0) {
     allInitializedAccounts = [];
@@ -138,6 +140,12 @@ export async function initManyAccountAssetBalancesFromOnChainData({
         await getOrCreateAccount({ ctx, id: whitelistedAccountId })
       );
     }
+  } else {
+    allInitializedAccounts = (
+      await ctx.storeUtils.findWithLogs(Account, {
+        where: {},
+      })
+    ).filter((acc) => acc.id !== ZERO_ADDRESS_PK);
   }
 
   const accountIdsList = allInitializedAccounts.map((acc) => acc.id);
@@ -168,8 +176,10 @@ export async function initManyAccountAssetBalancesFromOnChainData({
     }
   }, 300000);
 
-  if (!processingBlockHeader)
+  if (!processingBlockHeader) {
+    clearInterval(keepDbConnectionAliveInterval);
     throw new Error('No processing block header found');
+  }
 
   const accountsPerBlock: Map<number, Set<string>> = new Map([
     [processingBlockHeader.height, new Set(accountIdsList)],
@@ -468,7 +478,7 @@ export async function initManyAccountAssetBalancesFromOnChainData({
       );
     }
   }
-  clearInterval(keepDbConnectionAliveInterval);
 
+  clearInterval(keepDbConnectionAliveInterval);
   return accountsPerBlock;
 }
