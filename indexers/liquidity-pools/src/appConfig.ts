@@ -354,10 +354,6 @@ class ProcessingModeConfig {
   readonly MULTI_FLOW_PROCESSING_PHASE: MultiFlowProcessingPhase =
     MultiFlowProcessingPhase.INITIAL;
 
-  @Transform(({ value }: { value: string }) => value === 'true')
-  @IsBoolean()
-  readonly ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED: boolean = true;
-
   static getInstance(): ProcessingModeConfig {
     if (ProcessingModeConfig.instance) return ProcessingModeConfig.instance;
 
@@ -716,6 +712,12 @@ export class AppConfig {
   @IsBoolean()
   readonly USE_HIST_DATA_FROM_REDIS_TIME_SERIES: boolean = true;
 
+  /**
+   * ===========================================================================
+   * ====================== A C C O U N T    B A L A N C E S ===================
+   * ===========================================================================
+   */
+
   @Transform(({ value }: { value: string }) => new Set(value.split(',')))
   readonly ACCOUNT_BALANCE_AGGREGATION_TRIGGERS: Set<string> = new Set([
     'Currencies',
@@ -739,14 +741,30 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ALL_ACCOUNT_BALANCES_INIT: boolean = false;
 
+  /**
+   * ENABLE_ACCOUNT_BALANCES_PROCESSING - on/off processing balances overall
+   */
   @Transform(({ value }: { value: string }) => value === 'true')
-  readonly ENABLE_ACCOUNT_BALANCES_AGGREGATION: boolean = true;
+  readonly ENABLE_ACCOUNT_BALANCES_PROCESSING: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly USE_EVENTS_DRIVEN_BALANCE_TRACKING: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_PERSISTENT_ACCOUNT_ASSET_BALANCES_NORMALISED: boolean = true;
+
+  /**
+   * ===========================================================================
+   * ===========================================================================
+   * ===========================================================================
+   */
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ASSET_SWAP_FEE_AGGREGATION: boolean = true;

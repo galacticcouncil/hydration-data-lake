@@ -404,20 +404,19 @@ export class HistoricalDataManager {
       balances: accountAssetBalanceHistoricalDataList,
       ctx,
     });
+
+    if (!ctx.appConfig.ENABLE_PERSISTENT_ACCOUNT_ASSET_BALANCES_NORMALISED) {
+      for (const entity of accountAssetBalanceHistoricalDataList) {
+        entity.transferableInRefAssetNorm = null;
+        entity.totalLockedInRefAssetNorm = null;
+      }
+    }
+
     const accountTotalBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountTotalBalanceHistoricalData.values()
     );
     const accountTotalBalancesLatest = getAccountTotalBalancesLatest({
       balances: accountTotalBalanceHistoricalDataList,
-      ctx,
-    });
-
-    const accountLiquidityBalanceHistoricalDataList = Array.from(
-      ctx.batchState.state.accountLiquidityBalanceHistoricalData.values()
-    );
-
-    const accountLiquidityBalancesLatest = getAccountLiquidityBalancesLatest({
-      balances: accountLiquidityBalanceHistoricalDataList,
       ctx,
     });
 
@@ -427,10 +426,6 @@ export class HistoricalDataManager {
       ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList),
       ctx.storeUtils.upsertWithBatches(accountTotalBalancesLatest),
       ctx.storeUtils.upsertWithBatches(
-        accountLiquidityBalanceHistoricalDataList
-      ),
-      ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest),
-      ctx.storeUtils.upsertWithBatches(
         Array.from(ctx.batchState.state.accountProcessingStatuses.values())
       ),
       this.commitAccountTotalBalancesToRedisTimeSeries(
@@ -438,6 +433,23 @@ export class HistoricalDataManager {
         ctx
       ),
     ]);
+
+    if (ctx.appConfig.ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED) {
+      const accountLiquidityBalanceHistoricalDataList = Array.from(
+        ctx.batchState.state.accountLiquidityBalanceHistoricalData.values()
+      );
+
+      const accountLiquidityBalancesLatest = getAccountLiquidityBalancesLatest({
+        balances: accountLiquidityBalanceHistoricalDataList,
+        ctx,
+      });
+      await Promise.all([
+        ctx.storeUtils.upsertWithBatches(
+          accountLiquidityBalanceHistoricalDataList
+        ),
+        ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest),
+      ]);
+    }
 
     await BalancesLoggerManager.getInstance().flushLogs(ctx);
   }
