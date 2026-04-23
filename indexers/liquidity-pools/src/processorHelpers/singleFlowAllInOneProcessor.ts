@@ -114,6 +114,17 @@ export async function singleFlowAllInOneProcessor(
         getParsedEventsData(ctx)
       );
 
+      await mt.track('initContractInstances', () =>
+        MoneyMarketContractsManager.getInstance().initContractInstances({
+          ctx: ctx,
+          blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+          invalidateReservesCache:
+            MoneyMarketContractsManager.getInstance().isMmReservesCacheInvalidationRequired(
+              parsedData
+            ),
+        })
+      );
+
       await StorageResolver.getInstance().init({
         ctx: ctx,
         blockNumberFrom: ctx.blocks[0].header.height,
@@ -122,15 +133,6 @@ export async function singleFlowAllInOneProcessor(
 
       await prefetchOrInitAllBatchAccounts(ctx);
       await prefetchOrInitAllAccountProcessingStatuses(ctx);
-    })(),
-    (async () => {
-      await mt.track('initContractInstances', () =>
-        MoneyMarketContractsManager.getInstance().initContractInstances({
-          ctx: ctx,
-          blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-        })
-      );
-      return null;
     })(),
     prefetchGenericPersistentDataWithLogs(ctx, false),
   ]);
