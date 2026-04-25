@@ -185,7 +185,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
     await pMap(
       storageData,
       async ({ assetId, data }) => {
-        if (!data) return;
+        if (!data) {
+          console.log(
+            `actualiseAssets :: asset storage data not found for asset registry ID: ${assetId}`
+          );
+          return;
+        }
 
         const erc20AssetContractAddress = await getAssetEvmAddressByType({
           assetId,
@@ -208,7 +213,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
           assetType: data.assetType,
         });
 
-        if (!assetCustomLocation) return;
+        if (!assetCustomLocation) {
+          console.log(
+            `actualiseAssets :: assetCustomLocation not found for asset registry ID: ${assetId}`
+          );
+          return;
+        }
 
         const assetMultiLocationFromStorage =
           await getNewAssetMultiLocationFromStorageData({
@@ -235,7 +245,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
         const assetEntityId =
           getAssetIdFromCustomMultiLocation(assetCustomLocation);
 
-        if (!assetEntityId) return;
+        if (!assetEntityId) {
+          console.log(
+            `actualiseAssets :: assetEntityId not found for asset registry ID: ${assetId}`
+          );
+          return;
+        }
 
         let bondUnderlyingAsset = null;
         let bondMaturity = null;
@@ -321,7 +336,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
           assetToSave.evmAddress ===
           mmResourceDetails.underlyingAssetAddress.toLowerCase()
       );
-      if (!mmTokenUnderlyingAsset) continue;
+      if (!mmTokenUnderlyingAsset) {
+        console.log(
+          `actualiseAssets :: mmTokenUnderlyingAsset not found for mmReserve with address: ${mmResourceDetails.underlyingAssetAddress.toLowerCase()}`
+        );
+        continue;
+      }
 
       if (
         !assetsToSave.find(
@@ -438,7 +458,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
             })
           : null;
 
-      if (!underlyingAsset) continue;
+      if (!underlyingAsset) {
+        console.log(
+          `actualiseAssets :: underlyingAssett not found for mmReserve with address: ${erc20AssetContractDetails?.underlyingAssetAddress?.toLowerCase()}`
+        );
+        continue;
+      }
 
       erc20Asset.underlyingAssetId = underlyingAsset.id;
       if (erc20Asset.resourceType === AssetResourceType.aToken) {

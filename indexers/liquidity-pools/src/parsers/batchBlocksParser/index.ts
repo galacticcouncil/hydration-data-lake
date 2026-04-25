@@ -28,7 +28,7 @@ import {
 import {
   calls as hydrationPaseoNextCalls,
   events as hydrationPaseoNextEvents,
-} from '../chains/hydration-paseo-next/typegenTypes';
+} from '../chains/hydration-lark/typegenTypes';
 
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { EventDataParserHelper } from './eventDataParserHelper';

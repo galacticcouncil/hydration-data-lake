@@ -5,10 +5,7 @@ import {
   EvmEventName,
   MoneyMarketReserve,
 } from '../../../model';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../processor';
 import {
   MoneyMarketContractsManager,
   MoneyMarketResourceDetails,
@@ -18,12 +15,8 @@ import {
   getOrCreateMoneyMarketAsset,
 } from '../../assets/asset';
 import { getOrCreateAavepool } from '../../pools/pools/aavepool';
-import {
-  handleMoneyMarketReserveConfigOnConfiguratorUpdate,
-} from './moneyMarketReservesConfigHistoricalData';
-import {
-  processMmReserveIndexesHistoricalDataEntity,
-} from './moneyMarketReservesIndexesHistoricalData';
+import { handleMoneyMarketReserveConfigOnConfiguratorUpdate } from './moneyMarketReservesConfigHistoricalData';
+import { processMmReserveIndexesHistoricalDataEntity } from './moneyMarketReservesIndexesHistoricalData';
 
 export async function getOrCreateMoneyMarketReserve({
   id,
@@ -40,12 +33,16 @@ export async function getOrCreateMoneyMarketReserve({
 
   if (reserveEntity) return reserveEntity;
 
-  reserveEntity = await ctx.storeUtils.findOneWithLogs(MoneyMarketReserve, {
-    where: { id },
-    relations: {
-      aavePool: true,
+  reserveEntity = await ctx.storeUtils.findOneWithLogs(
+    MoneyMarketReserve,
+    {
+      where: { id },
+      relations: {
+        aavePool: true,
+      },
     },
-  }, { className: 'MoneyMarketReserve' });
+    { className: 'MoneyMarketReserve' }
+  );
 
   if (reserveEntity) {
     ctx.batchState.state.moneyMarketReserves.set(id, reserveEntity);
@@ -178,12 +175,16 @@ export async function actualizeMoneyMarketReserves({
   ) {
     existingPersistentReserveEntitiesMap = new Map(
       (
-        await ctx.storeUtils.findWithLogs(MoneyMarketReserve, {
-          where: {},
-          relations: {
-            aavePool: true,
+        await ctx.storeUtils.findWithLogs(
+          MoneyMarketReserve,
+          {
+            where: {},
+            relations: {
+              aavePool: true,
+            },
           },
-        }, { className: 'MoneyMarketReserve' })
+          { className: 'MoneyMarketReserve' }
+        )
       ).map((r) => [r.id, r])
     );
 

@@ -87,7 +87,7 @@ import { Between } from 'typeorm/find-options/operator/Between';
 import { BalancesProcPoolManager } from '../../utils/multiProcPoolManager/subProcessors/balancesProcPoolManager';
 import { fetchAndCorrelateAssetSpotPrices } from '../utils';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/pools/hsmpool';
-import { createMetricsTracker } from '../../utils/processorMetrics';
+import { createMetricsTracker } from '../../utils/prometheusMetrics';
 import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
 export async function balancesProcessorHandler(

@@ -15,7 +15,7 @@ import {
 import {
   calls as hydrationPaseoNextCalls,
   events as hydrationPaseoNextEvents,
-} from '../../parsers/chains/hydration-paseo-next/typegenTypes';
+} from '../../parsers/chains/hydration-lark/typegenTypes';
 
 export async function handleRelayChainBlocks(ctx: SqdProcessorContext<Store>) {
   let events = null;

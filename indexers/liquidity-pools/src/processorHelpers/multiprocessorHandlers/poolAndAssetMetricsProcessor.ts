@@ -80,7 +80,7 @@ import { Between } from 'typeorm/find-options/operator/Between';
 import { PoolAndAssetMetricsProcPoolManager } from '../../utils/multiProcPoolManager/subProcessors/poolAndAssetMetricsProcPoolManager';
 import { handlePoolAndAssetMetricsOnBroadcastSwappedEvents } from './utils';
 import { fetchAndCorrelateAssetSpotPrices } from '../utils';
-import { createMetricsTracker } from '../../utils/processorMetrics';
+import { createMetricsTracker } from '../../utils/prometheusMetrics';
 import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
 export async function poolAndAssetMetricsProcessorHandler(

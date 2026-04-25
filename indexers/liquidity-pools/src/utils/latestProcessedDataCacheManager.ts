@@ -74,6 +74,10 @@ export class LatestProcessedDataCacheManager {
     AccountAssetBalanceHistoricalData
   > = new Map();
 
+  // Highest block height committed to accountAssetBalanceCache. Used to detect
+  // SQD reorg/rollback re-runs (when a new batch starts at or before this height).
+  private accountAssetBalanceCacheMaxObservedHeight: number = -1;
+
   static getInstance(): LatestProcessedDataCacheManager {
     if (!LatestProcessedDataCacheManager.instance) {
       LatestProcessedDataCacheManager.instance =
@@ -877,7 +881,44 @@ export class LatestProcessedDataCacheManager {
       if (!existing || existing.paraBlockHeight <= item.paraBlockHeight) {
         this.accountAssetBalanceCache.set(cacheKey, item);
       }
+
+      if (
+        item.paraBlockHeight > this.accountAssetBalanceCacheMaxObservedHeight
+      ) {
+        this.accountAssetBalanceCacheMaxObservedHeight = item.paraBlockHeight;
+      }
     }
+  }
+
+  /**
+   * Drop the entire account-asset balance cache when SQD re-runs a previously
+   * processed block range (reorg / rollback). Without this, delta-based balance
+   * calculation in processBalanceEventsSequentially would read post-transfer
+   * cached state as if it were pre-transfer state and double the delta.
+   *
+   * Returns true if cache was wiped.
+   */
+  invalidateAccountAssetBalanceCacheOnReorg(
+    incomingBatchFirstBlockHeight: number
+  ): boolean {
+    if (this.accountAssetBalanceCacheMaxObservedHeight < 0) return false;
+    if (
+      incomingBatchFirstBlockHeight >
+      this.accountAssetBalanceCacheMaxObservedHeight
+    ) {
+      return false;
+    }
+
+    console.warn(
+      `[reorg] Invalidating accountAssetBalanceCache. ` +
+        `incomingBatchFirstBlockHeight=${incomingBatchFirstBlockHeight}, ` +
+        `cacheMaxObservedHeight=${this.accountAssetBalanceCacheMaxObservedHeight}, ` +
+        `cachedEntries=${this.accountAssetBalanceCache.size}`
+    );
+
+    this.accountAssetBalanceCache.clear();
+    this.accountAssetBalanceCacheMaxObservedHeight = -1;
+    return true;
   }
 
   /**

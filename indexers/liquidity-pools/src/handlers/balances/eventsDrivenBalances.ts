@@ -77,6 +77,11 @@ export async function collectBalanceEvents(
 ): Promise<BalanceEvent[]> {
   let events: BalanceEvent[] = [];
 
+  // Sidecar source tagging for Tokens.Transfer vs EVM.Log Transfer events.
+  // Used post-collection to detect tuple-matching duplicates that would have
+  // doubled the receiver's balance if not already deduped.
+  const eventSource = new WeakMap<BalanceEvent, 'tokens' | 'evm'>();
+
   const getBlockHeader = (eventData: ParsedEventsCallsData): SqdBlock =>
     eventData.eventData.metadata.blockHeader;
   const getBlockHeight = (eventData: ParsedEventsCallsData): number =>
@@ -99,28 +104,29 @@ export async function collectBalanceEvents(
     .values()) {
     const params = eventData.eventData.params as TokensTransferEventParams;
     const assetId = await getAssetEntityFromEventAssetId(params.currencyId);
-    events.push(
-      {
-        blockHeight: getBlockHeight(eventData),
-        indexInBlock: getIndexInBlock(eventData),
-        accountId: params.from,
-        assetId,
-        isEvmAsset: false,
-        transferableDelta: -toBigInt(params.amount),
-        totalLockedDelta: 0n,
-        blockHeader: getBlockHeader(eventData),
-      },
-      {
-        blockHeight: getBlockHeight(eventData),
-        indexInBlock: getIndexInBlock(eventData),
-        accountId: params.to,
-        assetId,
-        isEvmAsset: false,
-        transferableDelta: toBigInt(params.amount),
-        totalLockedDelta: 0n,
-        blockHeader: getBlockHeader(eventData),
-      }
-    );
+    const fromEvent: BalanceEvent = {
+      blockHeight: getBlockHeight(eventData),
+      indexInBlock: getIndexInBlock(eventData),
+      accountId: params.from,
+      assetId,
+      isEvmAsset: false,
+      transferableDelta: -toBigInt(params.amount),
+      totalLockedDelta: 0n,
+      blockHeader: getBlockHeader(eventData),
+    };
+    const toEvent: BalanceEvent = {
+      blockHeight: getBlockHeight(eventData),
+      indexInBlock: getIndexInBlock(eventData),
+      accountId: params.to,
+      assetId,
+      isEvmAsset: false,
+      transferableDelta: toBigInt(params.amount),
+      totalLockedDelta: 0n,
+      blockHeader: getBlockHeader(eventData),
+    };
+    eventSource.set(fromEvent, 'tokens');
+    eventSource.set(toEvent, 'tokens');
+    events.push(fromEvent, toEvent);
   }
 
   // Tokens.Deposited: +transferable
@@ -338,28 +344,60 @@ export async function collectBalanceEvents(
     const evmAssetId = asset.id;
     const evmAmount = BigInt(parsedTransfer.amount.toString());
 
-    events.push(
-      {
-        blockHeight: getBlockHeight(eventData),
-        indexInBlock: getIndexInBlock(eventData),
-        accountId: accountFrom.id,
-        assetId: evmAssetId,
-        isEvmAsset: true,
-        transferableDelta: -evmAmount,
-        totalLockedDelta: 0n,
-        blockHeader,
-      },
-      {
-        blockHeight: getBlockHeight(eventData),
-        indexInBlock: getIndexInBlock(eventData),
-        accountId: accountTo.id,
-        assetId: evmAssetId,
-        isEvmAsset: true,
-        transferableDelta: evmAmount,
-        totalLockedDelta: 0n,
-        blockHeader,
-      }
-    );
+    const fromEvent: BalanceEvent = {
+      blockHeight: getBlockHeight(eventData),
+      indexInBlock: getIndexInBlock(eventData),
+      accountId: accountFrom.id,
+      assetId: evmAssetId,
+      isEvmAsset: true,
+      transferableDelta: -evmAmount,
+      totalLockedDelta: 0n,
+      blockHeader,
+    };
+    const toEvent: BalanceEvent = {
+      blockHeight: getBlockHeight(eventData),
+      indexInBlock: getIndexInBlock(eventData),
+      accountId: accountTo.id,
+      assetId: evmAssetId,
+      isEvmAsset: true,
+      transferableDelta: evmAmount,
+      totalLockedDelta: 0n,
+      blockHeader,
+    };
+    eventSource.set(fromEvent, 'evm');
+    eventSource.set(toEvent, 'evm');
+    events.push(fromEvent, toEvent);
+  }
+
+  // Diagnostic: detect tuple-matching duplicates between Tokens.Transfer and
+  // EVM.Log Transfer events that the assetRegistryId-based dedup did NOT catch.
+  // If this fires in prod, the dedup rule is too narrow and we need to widen it
+  // (e.g., per-extrinsic pair matching). Logs only — does not mutate events.
+  const tupleGroups = new Map<
+    string,
+    { tokens: BalanceEvent[]; evm: BalanceEvent[] }
+  >();
+  for (const ev of events) {
+    const src = eventSource.get(ev);
+    if (!src) continue;
+    const key = `${ev.accountId}|${ev.assetId}|${ev.blockHeight}|${ev.transferableDelta}|${ev.totalLockedDelta}`;
+    let group = tupleGroups.get(key);
+    if (!group) {
+      group = { tokens: [], evm: [] };
+      tupleGroups.set(key, group);
+    }
+    group[src].push(ev);
+  }
+  for (const [key, group] of tupleGroups.entries()) {
+    if (group.tokens.length > 0 && group.evm.length > 0) {
+      console.warn(
+        `[balance-event-dup] tuple match across Tokens.Transfer and EVM.Log Transfer ` +
+          `not removed by assetRegistryId dedup. key=${key} ` +
+          `tokensCount=${group.tokens.length} evmCount=${group.evm.length} ` +
+          `tokensIndexInBlock=[${group.tokens.map((e) => e.indexInBlock).join(',')}] ` +
+          `evmIndexInBlock=[${group.evm.map((e) => e.indexInBlock).join(',')}]`
+      );
+    }
   }
 
   // Sort by block height, then indexInBlock (same as getOrderedListByBlockNumber)
@@ -506,7 +544,7 @@ export async function processBalanceEventsSequentially({
   ctx,
   balanceEvents,
   preProcessedTotalBalancesOnGlobalInit,
-  accountsForScheduledReaggregation = new Set(),
+  accountsForScheduledReaggregation,
 }: {
   ctx: SqdProcessorContext<Store>;
   balanceEvents: BalanceEvent[];
@@ -515,6 +553,19 @@ export async function processBalanceEventsSequentially({
 }): Promise<{
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }> {
+  accountsForScheduledReaggregation =
+    ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH || new Set();
+
+  // Reorg/rollback safety: SQD's in-memory account-asset balance cache survives
+  // across batches but is NOT invalidated when SQD rolls back DB state for a
+  // re-orged block range. If the incoming batch starts at or before the highest
+  // block height we have cached, those cached entries reflect a now-rolled-back
+  // future — using them as "previous balance" would double-apply the deltas
+  // when the same blocks are re-processed. Wipe and let prefetch refill from DB.
+  LatestProcessedDataCacheManager.getInstance().invalidateAccountAssetBalanceCacheOnReorg(
+    ctx.blocks[0].header.height
+  );
+
   if (balanceEvents.length === 0) {
     return { allProcessedAccountsPerBlock: new Map() };
   }

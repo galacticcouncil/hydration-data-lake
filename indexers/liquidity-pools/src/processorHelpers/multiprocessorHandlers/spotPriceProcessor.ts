@@ -78,7 +78,7 @@ import { SpotPriceProcPoolManager } from '../../utils/multiProcPoolManager/subPr
 import { Block, RoutedTrade, Swap, SwapAssetBalanceType } from '../../model';
 import { Between } from 'typeorm/find-options/operator/Between';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/pools/hsmpool';
-import { createMetricsTracker } from '../../utils/processorMetrics';
+import { createMetricsTracker } from '../../utils/prometheusMetrics';
 import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
 export async function spotPriceProcessorHandler(

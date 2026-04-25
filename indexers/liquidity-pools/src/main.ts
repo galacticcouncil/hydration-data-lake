@@ -19,6 +19,7 @@ import { runProcessorCustomDbMigrations } from './customDbMigrations/runProcesso
 import { TimeSeriesDataCommitManager } from './utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
 import { singleFlowAllInOneProcessor } from './processorHelpers/singleFlowAllInOneProcessor';
 import { handleAllInOneMultiprocessorMode } from './processorHelpers/multiprocessorHandlers';
+import { createReorgTracker } from './utils/prometheusMetrics';
 
 console.log(
   `Indexer is staring for CHAIN - ${process.env.CHAIN} in ${process.env.NODE_ENV} environment`
@@ -42,6 +43,8 @@ if (process.env.INDEXING_IS_PAUSED === 'true') {
 
 const appConfig = AppConfig.getInstance();
 
+const reorgTracker = createReorgTracker('single_flow');
+
 async function runProcessor() {
   let customDbMigrationsExecuted = false;
 
@@ -54,6 +57,8 @@ async function runProcessor() {
       isolationLevel: 'READ COMMITTED',
     }),
     async (ctx) => {
+      reorgTracker.observeBatch(ctx as SqdProcessorContext<Store>);
+
       if (
         !customDbMigrationsExecuted &&
         appConfig.IS_CUSTOM_DB_MIGRATIONS_RUNNER

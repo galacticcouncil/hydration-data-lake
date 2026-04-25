@@ -67,7 +67,9 @@ export class ContractsPoolManager {
         appConfig.RPC_HTTPS_URLS_POOL.forEach((url, i) => {
           console.log(`  [${i}] ${url}`);
         });
-        console.log(`[ContractsPoolManager] Debug logging enabled (stats every ${this.LOG_INTERVAL_MS / 1000}s)`);
+        console.log(
+          `[ContractsPoolManager] Debug logging enabled (stats every ${this.LOG_INTERVAL_MS / 1000}s)`
+        );
       }
     } else {
       // Fallback to single provider
@@ -136,7 +138,11 @@ export class ContractsPoolManager {
    * Log distribution statistics
    */
   private logDistributionStats(): void {
-    if (!this.poolingEnabled || this.contractCallCounter === 0 || !appConfig.ENABLE_RPC_POOL_DEBUG_LOGS) {
+    if (
+      !this.poolingEnabled ||
+      this.contractCallCounter === 0 ||
+      !appConfig.ENABLE_RPC_POOL_DEBUG_LOGS
+    ) {
       return;
     }
 
@@ -152,21 +158,35 @@ export class ContractsPoolManager {
     for (let i = 0; i < providerCount; i++) {
       const actualCalls = this.providerCallDistribution.get(i) || 0;
       const percentage = ((actualCalls / totalCalls) * 100).toFixed(1);
-      const deviation = ((actualCalls - expectedPerProvider) / expectedPerProvider * 100).toFixed(1);
+      const deviation = (
+        ((actualCalls - expectedPerProvider) / expectedPerProvider) *
+        100
+      ).toFixed(1);
       const url = appConfig.RPC_HTTPS_URLS_POOL[i] || 'unknown';
 
       console.log(`  Provider ${i} [${url}]:`);
-      console.log(`    Calls: ${actualCalls} (${percentage}%, deviation: ${deviation}%)`);
+      console.log(
+        `    Calls: ${actualCalls} (${percentage}%, deviation: ${deviation}%)`
+      );
     }
 
     // Check for imbalance
-    const maxCalls = Math.max(...Array.from(this.providerCallDistribution.values()));
-    const minCalls = Math.min(...Array.from(this.providerCallDistribution.values()));
-    const imbalance = maxCalls > 0 ? ((maxCalls - minCalls) / maxCalls * 100).toFixed(1) : '0';
+    const maxCalls = Math.max(
+      ...Array.from(this.providerCallDistribution.values())
+    );
+    const minCalls = Math.min(
+      ...Array.from(this.providerCallDistribution.values())
+    );
+    const imbalance =
+      maxCalls > 0
+        ? (((maxCalls - minCalls) / maxCalls) * 100).toFixed(1)
+        : '0';
 
     console.log(`  Load imbalance: ${imbalance}%`);
     if (parseFloat(imbalance) > 20) {
-      console.warn(`  ⚠️  WARNING: High load imbalance detected! Expected even distribution.`);
+      console.warn(
+        `  ⚠️  WARNING: High load imbalance detected! Expected even distribution.`
+      );
     }
     console.log('');
   }

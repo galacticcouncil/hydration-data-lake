@@ -1,11 +1,10 @@
-import { Schedule } from './typegenTypes/v376';
+import { Schedule } from './typegenTypes/v347';
 import {
   DcaScheduleCallData,
   DcaScheduleOrderData,
   DcaScheduleOrderRouteData,
 } from '../../types/calls';
 import { DcaScheduleOrderType, SwapFillerType } from '../../../model';
-
 import { Erc20AssetContractDetails } from '../../types/storage';
 import { AssetRegistryAssetLocation } from '../../types/events';
 import { hexToString } from '@polkadot/util';
@@ -71,10 +70,17 @@ export function getErc20AssetContractFromLocation(
 
   try {
     switch (location.interior.__kind) {
-      case 'X1':
+      case 'X1': {
+        if (location.interior.value && Array.isArray(location.interior.value)) {
+          return {
+            address: location.interior.value[0].key,
+          };
+        }
         return {
           address: location.interior.value.key,
         };
+      }
+
       case 'X2':
         return {
           address: location.interior.value[1].key,
@@ -103,7 +109,7 @@ export function getErc20AssetContractFromLocation(
   }
 }
 
-export function fetOracleNameFromStableswapPegsSource(data: any) {
+export function getOracleNameFromStableswapPegsSource(data: any) {
   if (data.__kind === 'Oracle') return hexToString(data.value[0]);
   if (data.__kind === 'MMOracle') return data.value;
   return undefined;

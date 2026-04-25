@@ -311,7 +311,12 @@ export async function getOrCreateAsset({
     assetType: storageData.assetType,
   });
 
-  if (!assetCustomLocation) return null;
+  if (!assetCustomLocation) {
+    console.log(
+      `getOrCreateAsset :: No assetCustomLocation found for assetRegistryId ${assetRegistryId} at block ${blockHeader.height}`
+    );
+    return null;
+  }
 
   const assetMultiLocationFromStorage =
     await getNewAssetMultiLocationFromStorageData({
@@ -353,7 +358,12 @@ export async function getOrCreateAsset({
 
   const assetEntityId = getAssetIdFromCustomMultiLocation(assetCustomLocation);
 
-  if (!assetEntityId) return null;
+  if (!assetEntityId) {
+    console.log(
+      `getOrCreateAsset :: No assetEntityId found for assetRegistryId ${assetRegistryId} at block ${blockHeader.height}`
+    );
+    return null;
+  }
 
   const evmTokenContractData =
     storageData.assetType === AssetType.Erc20 &&

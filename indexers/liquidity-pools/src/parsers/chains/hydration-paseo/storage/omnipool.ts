@@ -75,7 +75,7 @@ function getNftCollectionIdConstant({
 }: GetDataAtBlockInput): OmnipoolNftCollectionId | null {
   if (block.specVersion < 347) return null;
   if (constants.omnipool.nftCollectionId.v347.is(block)) {
-    const resp = constants.omnipool.burnProtocolFee.v347.get(block);
+    const resp = constants.omnipool.nftCollectionId.v347.get(block);
     return {
       collectionId: resp.toString(),
     };

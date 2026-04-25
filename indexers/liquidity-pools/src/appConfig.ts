@@ -23,7 +23,7 @@ import {
 import {
   calls as hydrationPaseoNextCalls,
   events as hydrationPaseoNextEvents,
-} from './parsers/chains/hydration-paseo-next/typegenTypes';
+} from './parsers/chains/hydration-lark/typegenTypes';
 import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
 import { TimeSeriesMigration } from './utils/redisTimeSeriesManager/migrationsManager';
@@ -728,6 +728,9 @@ export class AppConfig {
     'Broadcast',
     'Uniques',
   ]);
+
+  @Transform(({ value }: { value: string }) => new Set(value.split(',')))
+  readonly ACCOUNTS_FOR_BALANCES_REFRESH: Set<string> = new Set([]);
 
   @Transform(({ value }: { value: string }) => +value)
   readonly ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE: number = 20;

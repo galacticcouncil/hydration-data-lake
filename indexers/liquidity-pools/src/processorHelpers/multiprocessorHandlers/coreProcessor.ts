@@ -75,7 +75,7 @@ import { initAllAccountsOnColdStart } from '../../handlers/accounts/allAccountsI
 import { MultiProcPoolManager } from '../../utils/multiProcPoolManager';
 import { CoreProcPoolManager } from '../../utils/multiProcPoolManager/subProcessors/coreProcPoolManager';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/pools/hsmpool';
-import { createMetricsTracker } from '../../utils/processorMetrics';
+import { createMetricsTracker } from '../../utils/prometheusMetrics';
 import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
 import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
