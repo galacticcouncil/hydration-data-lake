@@ -8,15 +8,11 @@ import {
   AssetRegistryRegisteredData,
   AssetRegistryUpdatedData,
 } from '../../parsers/batchBlocksParser/types';
-import {
-  getErc20AssetContractFromLocation,
-} from '../../parsers/chains/hydration/utils';
+import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
 import { EventName } from '../../parsers/types/events';
 import { SqdProcessorContext } from '../../processor';
 import { AssetHubManager } from '../../utils/assetHubManager';
-import {
-  MoneyMarketContractsManager,
-} from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { getOrCreateAsset } from './asset';
 import {
   getAssetEvmAddressByType,
@@ -24,6 +20,7 @@ import {
   getNewAssetMultiLocationFromStorageData,
   getNewCustomAssetMultiLocation,
 } from './utils';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function assetRegistered(
   ctx: SqdProcessorContext<Store>,
@@ -104,9 +101,15 @@ export async function assetRegistered(
 
   if (!assetEntityId) return null;
 
+  // const evmTokenContractData =
+  //   assetType === AssetType.Erc20
+  //     ? await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
+  //         erc20AssetContractAddress
+  //       )
+  //     : null;
   const evmTokenContractData =
     assetType === AssetType.Erc20
-      ? await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+      ? await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
           erc20AssetContractAddress
         )
       : null;

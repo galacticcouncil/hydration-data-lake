@@ -29,8 +29,9 @@ import { getOrCreateAccount } from '../accounts';
 import { InvolvedAccountsAndAssetsInMmEventsPerBlockMap } from './moneyMarketAssetBalances';
 import parsers from '../../parsers';
 import pMap from 'p-map';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 type AssetId = string;
 
 export async function getUnchangedAccountAssetBalanceFromCachedEntity({
@@ -291,14 +292,25 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
 
               // if (assetEntity.assetType === AssetType.Erc20) {
               if (assetEntity.resourceType === AssetResourceType.Debt) {
-                totalTransferableBalance =
-                  (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
-                    {
-                      contractAddress: assetEntity.evmAddress!,
-                      accountAddress: accountEntity.boundEvmAddress!,
-                      blockNumber,
-                    }
-                  )) ?? 0n;
+                // totalTransferableBalance =
+                //   (await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
+                //     {
+                //       contractAddress: assetEntity.evmAddress!,
+                //       accountAddress: accountEntity.boundEvmAddress!,
+                //       blockNumber,
+                //     }
+                //   )) ?? 0n;
+                const totalTransferableBalance =
+                  (
+                    await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
+                      {
+                        contractAddress: assetEntity.evmAddress!,
+                        accountAddress: accountEntity.boundEvmAddress!,
+                        blockNumber,
+                      }
+                    )
+                  )?.value ?? 0n;
+
                 if (!totalTransferableBalance) {
                   assetBalancesHistDataWithNoResult.set(
                     assetId,

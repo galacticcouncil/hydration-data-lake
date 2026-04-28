@@ -27,7 +27,7 @@ import {
 } from '../accounts';
 import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from '../assets/asset';
 import { EvmLogDecoder } from '../../utils/evmTools/evmLogDecoder';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../utils/helpers';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
@@ -39,6 +39,7 @@ import {
 } from './allAccountBalancesInit';
 import pMap from 'p-map';
 import { ZERO_ADDRESS_PK } from '../../utils/types';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export type BalanceEvent = {
   blockHeight: number;
@@ -886,14 +887,23 @@ async function fetchSingleBalanceFromRpc({
   const account = await getOrCreateAccount({ ctx, id: accountId });
 
   if (asset.resourceType === AssetResourceType.Debt || !asset.assetRegistryId) {
-    const balance =
-      await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+    // const balance =
+    //   await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
+    //     {
+    //       contractAddress: asset.evmAddress,
+    //       accountAddress: account.boundEvmAddress!,
+    //       blockNumber: blockHeader.height,
+    //     }
+    //   );
+    const balance = (
+      await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
         {
           contractAddress: asset.evmAddress,
           accountAddress: account.boundEvmAddress!,
           blockNumber: blockHeader.height,
         }
-      );
+      )
+    )?.value;
     return { transferable: balance ?? 0n, totalLocked: 0n };
   }
 
@@ -910,14 +920,21 @@ async function fetchSingleBalanceFromRpc({
       totalLocked: tokenBalance?.reserved ?? 0n,
     };
 
-  const balance =
-    await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+  // const balance =
+  //   await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs({
+  //     contractAddress: asset.evmAddress,
+  //     accountAddress: account.boundEvmAddress!,
+  //     blockNumber: blockHeader.height,
+  //   });
+  const balance = (
+    await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
       {
         contractAddress: asset.evmAddress,
         accountAddress: account.boundEvmAddress!,
         blockNumber: blockHeader.height,
       }
-    );
+    )
+  )?.value;
 
   return { transferable: balance ?? 0n, totalLocked: 0n };
 }

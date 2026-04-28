@@ -9,6 +9,7 @@ import {
   ValidationError,
   IsEnum,
   IsNumber,
+  IsJSON,
 } from 'class-validator';
 import dotenv from 'dotenv';
 
@@ -28,6 +29,7 @@ import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
 import { TimeSeriesMigration } from './utils/redisTimeSeriesManager/migrationsManager';
 import { PgBossQueueName } from './utils/multiProcPoolManager';
+import { AaveMoneyMarketInstanceConfig } from './utils/evmTools/aave/types';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({
@@ -282,6 +284,29 @@ class EvmConfig {
   @IsString()
   readonly MM_TREASURY_ADDRESS: string =
     '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9';
+
+  @Transform(({ value }: { value: string }) => JSON.parse(value ?? ''))
+  readonly AAVE_MONEY_MARKET_INSTANCES: AaveMoneyMarketInstanceConfig[] | null =
+    [
+      {
+        marketId: 'main',
+        treasuryAddress: '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9',
+        poolDataProviderAddress: '0x112b087b60C1a166130d59266363C45F8aa99db0',
+        poolAddressProviderAddress:
+          '0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691',
+        poolImplementationProxyAddress:
+          '0x1b02e051683b5cfac5929c25e84adb26ecf87b38',
+      },
+      {
+        marketId: 'GIGAHDX',
+        treasuryAddress: '0xaFc199f2d2c0E23b909eBbdB41e8FC4507342dd4',
+        poolDataProviderAddress: '0x112b087b60C1a166130d59266363C45F8aa99db0',
+        poolAddressProviderAddress:
+          '0x9574d4AfAB726f059DB7149FFF7169cB6E0D06Bf',
+        poolImplementationProxyAddress:
+          '0xb952AE92cC4D8D703d2d71Ab541baB34c94b944A',
+      },
+    ];
 
   static getInstance(): EvmConfig {
     if (EvmConfig.instance) return EvmConfig.instance;

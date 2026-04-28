@@ -12,7 +12,7 @@ import {
 } from '../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../parsers/storageResolver';
 import { prefetchOrInitAllBatchAccounts } from '../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { handleDcaSchedules, saveDcaEntities } from '../../handlers/dca';
 import { handleOtcOrders } from '../../handlers/otc';
 import { Swap, SwapAssetBalanceType } from '../../model';
@@ -61,7 +61,7 @@ export async function handleDcaSchedulesAndOtcOrders(
     })(),
     // (async () => {
     //   console.time('initContractInstances');
-    //   await MoneyMarketContractsManager.getInstance().initContractInstances({
+    //   await AaveMoneyMarketManager.getInstance().initContractInstances({
     //     ctx: ctx,
     //     blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
     //   });

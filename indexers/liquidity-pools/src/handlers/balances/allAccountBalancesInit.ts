@@ -8,7 +8,7 @@ import {
   fetchBalancesForAccountsPerBlock,
 } from './utils';
 import pMap from 'p-map';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { getOrCreateAsset } from '../assets/asset';
 import { AccountData } from '../../parsers/types/storage';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
@@ -23,6 +23,7 @@ import parsers from '../../parsers';
 import { updateAccountProcessingStatusOnTotalBalanceChange } from '../accounts/accountProcessingStatus';
 import { getOrCreateAccount } from '../accounts';
 import { ZERO_ADDRESS_PK } from '../../utils/types';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 let coldStartDone = false;
 
@@ -254,15 +255,23 @@ export async function initManyAccountAssetBalancesFromOnChainData({
   };
 
   if (
-    MoneyMarketContractsManager.getInstance().moneyMarketReservesDetailsMap
-      .size > 0
+    // AaveMoneyMarketManager.getInstance().moneyMarketReservesDetailsMap
+    AaveMoneyMarketsRegistry.getInstance().moneyMarketReservesDetailsMap.size >
+    0
   ) {
     await pMap(
       allInitializedAccounts,
       async (account) => {
         const accountKey = `${account.id}-${account.boundEvmAddress ?? 'null'}`;
+        // const accountReserves =
+        //   await AaveMoneyMarketManager.getInstance().getUserReservesDataWithLogs(
+        //     {
+        //       accountAddress: account.boundEvmAddress!,
+        //       blockNumber: processingBlockHeader.height,
+        //     }
+        //   );
         const accountReserves =
-          await MoneyMarketContractsManager.getInstance().getUserReservesDataWithLogs(
+          await AaveMoneyMarketsRegistry.getInstance().getUserReservesDataWithLogs(
             {
               accountAddress: account.boundEvmAddress!,
               blockNumber: processingBlockHeader.height,
@@ -352,14 +361,24 @@ export async function initManyAccountAssetBalancesFromOnChainData({
           const [accountId, accountBoundEvmAddress] = accountKey.split('-');
           if (accountBoundEvmAddress === 'null') return;
 
-          const balance =
-            await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+          // const balance =
+          //   await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
+          //     {
+          //       contractAddress: reserveAddress,
+          //       accountAddress: accountBoundEvmAddress,
+          //       blockNumber: processingBlockHeader.height,
+          //     }
+          //   );
+
+          const balance = (
+            await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
               {
                 contractAddress: reserveAddress,
                 accountAddress: accountBoundEvmAddress,
                 blockNumber: processingBlockHeader.height,
               }
-            );
+            )
+          )?.value;
 
           initMmAssetsBalancesIndexedByAccountIdSlot(accountId);
 

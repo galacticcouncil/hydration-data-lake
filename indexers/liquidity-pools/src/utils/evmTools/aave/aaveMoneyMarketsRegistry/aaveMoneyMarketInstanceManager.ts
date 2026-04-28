@@ -1,96 +1,38 @@
-import { SqdProcessorContext } from '../../processor';
+import { SqdProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import hollarAbi from './abi/aave/hollar_unstableAbi.json';
-import aTokenHydration from './abi/aave/aTokenHydration.json';
-import variableDebtTokenHydration from './abi/aave/variableDebtTokenHydration.json';
-import uiPoolDataProviderV3 from './abi/aave/uiPoolDataProviderV3.json';
-import poolImplementation from './abi/aave/aavePoolImplementation.json';
+import aTokenHydration from '../../abi/aave/aTokenHydration.json';
+import variableDebtTokenHydration from '../../abi/aave/variableDebtTokenHydration.json';
+import uiPoolDataProviderV3 from '../../abi/aave/uiPoolDataProviderV3.json';
+import poolImplementation from '../../abi/aave/aavePoolImplementation.json';
 import { Contract, ContractInterface, ethers } from 'ethers';
-import { AssetResourceType, EvmEventName } from '../../model';
-import { AppConfig } from '../../appConfig';
+import { AssetResourceType, EvmEventName } from '../../../../model';
+import { AppConfig } from '../../../../appConfig';
 import {
+  AaveMoneyMarketInstanceConfig,
   AccountMmPositionDataContractData,
+  MoneyMarketResourceDetails,
+  MoneyMarketTokenDetails,
+  MoneyMarketTokenTotalSupply,
   UserReserveDataContractData,
-} from './types';
-import { BigNumber } from './../bignumber';
+} from '../types';
+import { BigNumber } from '../../../bignumber';
 import pMap from 'p-map';
-import { getOrderedListByBlockNumber, retryAsync } from '../helpers';
-import { measureEvmContractCall } from '../hydratedLogger/utils';
-import { ContractsPoolManager } from './contractsPoolManager';
-import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import { EventName } from '../../parsers/types/events';
-import { handleEvmLog } from '../../handlers/evmLog';
+import { getOrderedListByBlockNumber, retryAsync } from '../../../helpers';
+import { measureEvmContractCall } from '../../../hydratedLogger/utils';
+import { ContractsPoolManager } from '../../contractsPoolManager';
+import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
+import { EventName } from '../../../../parsers/types/events';
 
 const appConfig = AppConfig.getInstance();
 
-export type MoneyMarketTokenDetails = {
-  address: string;
-  resourceType: AssetResourceType;
-  underlyingAssetAddress?: string;
-  name?: string;
-  symbol?: string;
-  decimals?: number;
-};
-
-export type MoneyMarketTokenTotalSupply = {
-  address: string;
-  value: string;
-};
-
-export type MoneyMarketResourceDetails = {
-  underlyingAssetAddress: string;
-  aTokenAddress: string;
-  variableDebtTokenAddress: string;
-  interestRateStrategyAddress: string;
-
-  name: string;
-  symbol: string;
-  decimals: number;
-
-  priceOracle: string;
-  reserveFactor: string;
-  usageAsCollateralEnabled: boolean;
-  borrowingEnabled: boolean;
-  isActive: boolean;
-  isFrozen: boolean;
-  isPaused: boolean;
-  isSiloedBorrowing: boolean;
-  accruedToTreasury: string;
-  unbacked: string;
-  flashLoanEnabled: boolean;
-  debtCeiling: string;
-  debtCeilingDecimals: string;
-  eModeCategoryId: string;
-  borrowCap: string;
-  supplyCap: string;
-  borrowableInIsolation: boolean;
-  baseLTVasCollateral: string;
-  reserveLiquidationThreshold: string;
-  reserveLiquidationBonus: string;
-  variableRateSlope1: string;
-  variableRateSlope2: string;
-  baseVariableBorrowRate: string;
-  optimalUsageRatio: string;
-
-  liquidityIndex: string;
-  variableBorrowIndex: string;
-  liquidityRate: string;
-  variableBorrowRate: string;
-
-  lastUpdateTimestamp: string;
-};
-
-export type AaveFacilitatorContractData = {
-  address: string;
-  label: string;
-  bucketCapacity: string;
-  bucketLevel: string;
-};
-
-export class MoneyMarketContractsManager {
-  private static instance: MoneyMarketContractsManager;
-
+export class AaveMoneyMarketInstanceManager {
   private readonly contractsPoolManager: ContractsPoolManager;
+
+  private readonly config: AaveMoneyMarketInstanceConfig;
+
+  private readonly poolImplementationProxyAddressNormalized: string;
+  private readonly poolAddressProviderAddressNormalized: string;
+  private readonly poolDataProviderAddressNormalized: string;
 
   // Track available money market token addresses and their ABIs
   private moneyMarketTokenAddresses: Map<string, ContractInterface> = new Map();
@@ -100,15 +42,50 @@ export class MoneyMarketContractsManager {
     MoneyMarketResourceDetails
   > = new Map();
 
-  // Cache for facilitators to avoid repeated EVM calls
-  private facilitatorsCache: Array<AaveFacilitatorContractData> | null = null;
-  private facilitatorsCacheBlockNumber: number | null = null;
-
   // Cache for MM reserves to avoid repeated EVM calls
   private reservesCacheBlockNumber: number | null = null;
 
-  private constructor() {
+  constructor(config: AaveMoneyMarketInstanceConfig) {
+    this.config = config;
+    this.poolImplementationProxyAddressNormalized = ethers.utils.getAddress(
+      config.poolImplementationProxyAddress
+    );
+    this.poolAddressProviderAddressNormalized = ethers.utils.getAddress(
+      config.poolAddressProviderAddress
+    );
+    this.poolDataProviderAddressNormalized = ethers.utils.getAddress(
+      config.poolDataProviderAddress
+    );
     this.contractsPoolManager = ContractsPoolManager.getInstance();
+  }
+
+  get marketId(): string {
+    return this.config.marketId;
+  }
+
+  get poolImplementationProxyAddress(): string {
+    return this.poolImplementationProxyAddressNormalized;
+  }
+
+  get poolAddressProviderAddress(): string {
+    return this.poolAddressProviderAddressNormalized;
+  }
+
+  get poolDataProviderAddress(): string {
+    return this.poolDataProviderAddressNormalized;
+  }
+
+  get treasuryAddress(): string {
+    return this.config.treasuryAddress;
+  }
+
+  /**
+   * Returns true if this market instance owns the given token address
+   * (as underlying, aToken, or variable debt token).
+   */
+  hasToken(address: string): boolean {
+    const normalized = ethers.utils.getAddress(address);
+    return this.moneyMarketTokenAddresses.has(normalized);
   }
 
   /**
@@ -133,32 +110,19 @@ export class MoneyMarketContractsManager {
   /**
    * Convenience getters for frequently used contracts
    */
-  private get hollarContractInstance(): Contract {
-    return this.getContract(
-      appConfig.evm.HOLLAR_CONTRACT_ADDRESS,
-      hollarAbi as any
-    );
-  }
 
   private get uiPoolDataProviderContractInstance(): Contract {
     return this.getContract(
-      appConfig.evm.UI_POOL_DATA_PROVIDER_CONTRACT_ADDRESS,
+      this.poolDataProviderAddressNormalized,
       uiPoolDataProviderV3.abi as any
     );
   }
 
   private get poolImplementationContractInstance(): Contract {
     return this.getContract(
-      appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS,
+      this.poolImplementationProxyAddressNormalized,
       poolImplementation.abi as any
     );
-  }
-
-  static getInstance(): MoneyMarketContractsManager {
-    if (!MoneyMarketContractsManager.instance) {
-      MoneyMarketContractsManager.instance = new MoneyMarketContractsManager();
-    }
-    return MoneyMarketContractsManager.instance;
   }
 
   async getReservesData({
@@ -173,17 +137,19 @@ export class MoneyMarketContractsManager {
         blockHeight: blockNumber ?? 0,
         args: {
           POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS:
-            appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
+            this.poolAddressProviderAddressNormalized,
+          poolImplementationProxyAddress:
+            this.poolImplementationProxyAddressNormalized,
         },
         fn: () =>
           retryAsync({
             fn: async () =>
               this.uiPoolDataProviderContractInstance.getReservesData(
-                appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS,
+                this.poolAddressProviderAddressNormalized,
                 { blockTag: blockNumber }
               ),
             fallbackResponse: [],
-            tag: `getReservesData.at(${blockNumber})`,
+            tag: `getReservesData[${this.poolImplementationProxyAddressNormalized}].at(${blockNumber})`,
           }),
       });
 
@@ -268,7 +234,7 @@ export class MoneyMarketContractsManager {
         EvmEventName.ReserveInitialized
       ) {
         console.log(
-          `New MM reserve initialisation has been detected at block ${eventData.eventData.metadata.blockHeader.height}. MM reserves cache invalidation required.`
+          `[${this.config.marketId}] New MM reserve initialisation has been detected at block ${eventData.eventData.metadata.blockHeader.height}. MM reserves cache invalidation required.`
         );
         return true;
       }
@@ -300,9 +266,15 @@ export class MoneyMarketContractsManager {
       const reservesData = await this.getReservesData({ blockNumber });
 
       if (!reservesData) {
-        console.log(`No reserves data found on initContractInstances`);
+        console.log(
+          `[${this.config.marketId}] No reserves data found on initContractInstances`
+        );
         return;
       }
+
+      // Reset routing maps so removed reserves don't linger
+      this.moneyMarketReservesDetailsMap.clear();
+      this.moneyMarketTokenAddresses.clear();
 
       for (const reserve of reservesData) {
         this.moneyMarketReservesDetailsMap.set(
@@ -310,7 +282,13 @@ export class MoneyMarketContractsManager {
           reserve
         );
 
-        // Track available token addresses and their ABIs for pool usage
+        // Track available token addresses and their ABIs for pool usage.
+        // This map also serves as the routing index for hasToken() lookups
+        // so the registry can route per-token calls to the owning market.
+        this.moneyMarketTokenAddresses.set(
+          reserve.underlyingAssetAddress,
+          aTokenHydration.abi as any
+        );
         this.moneyMarketTokenAddresses.set(
           reserve.aTokenAddress,
           aTokenHydration.abi as any
@@ -366,15 +344,17 @@ export class MoneyMarketContractsManager {
     return response;
   }
 
-  async getResourceDetailsWithLogs(
+  async getReserveDetailsWithLogs(
     address: string
   ): Promise<MoneyMarketTokenDetails | null> {
     return measureEvmContractCall({
       call: `moneyMarketTokenContracts.name|symbol|decimals`,
-      originFn: 'getResourceDetailsWithLogs',
+      originFn: 'getReserveDetailsWithLogs',
       blockHeight: 0,
       args: {
         address,
+        poolImplementationProxyAddress:
+          this.poolImplementationProxyAddressNormalized,
       },
       fn: () => this.getReserveDetails(address),
     });
@@ -460,7 +440,11 @@ export class MoneyMarketContractsManager {
       call: `moneyMarketTokenContracts.get(address).totalSupply`,
       originFn: 'getManyTokensTotalSupplyWithLogs',
       blockHeight: args?.blockNumber ?? 0,
-      args: args,
+      args: {
+        ...args,
+        poolImplementationProxyAddress:
+          this.poolImplementationProxyAddressNormalized,
+      },
       fn: () => this.getManyTokensTotalSupply(args),
     });
   }
@@ -511,7 +495,11 @@ export class MoneyMarketContractsManager {
       call: `moneyMarketTokenContracts.get().balanceOf`,
       originFn: 'getAccountTokenBalanceWithLogs',
       blockHeight: args?.blockNumber ?? 0,
-      args: args,
+      args: {
+        ...args,
+        poolImplementationProxyAddress:
+          this.poolImplementationProxyAddressNormalized,
+      },
       fn: () => this.getAccountTokenBalance(args),
     });
   }
@@ -557,7 +545,7 @@ export class MoneyMarketContractsManager {
           .div(100)
           .toFixed(18, BigNumber.ROUND_HALF_UP), // Convert to percentage
         healthFactor: ethers.utils.formatUnits(data.healthFactor, 18),
-        pool: appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS,
+        pool: this.poolImplementationProxyAddressNormalized,
       };
     } catch (e) {
       console.log(e);
@@ -573,7 +561,11 @@ export class MoneyMarketContractsManager {
       call: `poolImplementationContractInstance.getUserAccountData`,
       originFn: 'getAccountMmPositionDataWithLogs',
       blockHeight: args?.blockNumber ?? 0,
-      args: args,
+      args: {
+        ...args,
+        poolImplementationProxyAddress:
+          this.poolImplementationProxyAddressNormalized,
+      },
       fn: () => this.getAccountMmPositionData(args),
     });
   }
@@ -592,9 +584,7 @@ export class MoneyMarketContractsManager {
         // passThrough: true,
         fn: () =>
           this.uiPoolDataProviderContractInstance.getUserReservesData(
-            ethers.utils.getAddress(
-              appConfig.evm.POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS
-            ),
+            this.poolAddressProviderAddressNormalized,
             accountAddressNormalized,
             blockNumber !== undefined ? { blockTag: blockNumber } : undefined
           ),
@@ -628,113 +618,12 @@ export class MoneyMarketContractsManager {
       call: `uiPoolDataProviderContractInstance.getUserReservesData`,
       originFn: 'getUserReservesDataWithLogs',
       blockHeight: args?.blockNumber ?? 0,
-      args: args,
-      fn: () => this.getUserReservesData(args),
-    });
-  }
-
-  async getAllAaveFacilitators({ blockNumber }: { blockNumber?: number }) {
-    // Return cached facilitators if available and within 100 blocks
-    if (
-      this.facilitatorsCache &&
-      this.facilitatorsCacheBlockNumber &&
-      blockNumber &&
-      Math.abs(blockNumber - this.facilitatorsCacheBlockNumber) < 100
-    ) {
-      return this.facilitatorsCache;
-    }
-
-    const facilitatorsList: string[] = await measureEvmContractCall({
-      call: `hollarContractInstance.getFacilitatorsList`,
-      originFn: 'getAllAaveFacilitators',
-      blockHeight: blockNumber ?? 0,
-      fn: () =>
-        retryAsync({
-          // passThrough: true,
-          fn: () =>
-            this.hollarContractInstance.getFacilitatorsList({
-              blockTag: blockNumber,
-            }),
-          fallbackResponse: [],
-          tag: `getFacilitatorsList.at(${blockNumber})`,
-        }),
-    });
-
-    if (!facilitatorsList || facilitatorsList.length === 0) {
-      console.log(`No facilitators found - returning cached data if available`);
-      return this.facilitatorsCache || null;
-    }
-
-    const facilitatorsData: Array<AaveFacilitatorContractData | null> = [];
-
-    await pMap(
-      facilitatorsList,
-      async (facilitatorAddress: string) => {
-        facilitatorsData.push(
-          await this.getAaveFacilitatorWithLogs({
-            facilitatorAddress,
-            blockNumber,
-          })
-        );
+      args: {
+        ...args,
+        poolImplementationProxyAddress:
+          this.poolImplementationProxyAddressNormalized,
       },
-      { concurrency: appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
-    );
-
-    const filteredData = facilitatorsData.filter(
-      (facilitator) => !!facilitator
-    );
-
-    // Cache the result
-    this.facilitatorsCache = filteredData;
-    this.facilitatorsCacheBlockNumber = blockNumber ?? null;
-
-    return filteredData;
-  }
-
-  /**
-   * IMPORTANT: Method cannot provide data at a specific block.
-   */
-  async getAaveFacilitator({
-    facilitatorAddress,
-    blockNumber,
-  }: {
-    facilitatorAddress: string;
-    blockNumber?: number;
-  }): Promise<AaveFacilitatorContractData | null> {
-    const facilitatorData: any = await retryAsync({
-      // passThrough: true,
-      fn: () =>
-        this.hollarContractInstance.getFacilitator(
-          ethers.utils.getAddress(facilitatorAddress),
-          blockNumber !== undefined ? { blockTag: blockNumber } : undefined
-        ),
-      fallbackResponse: null,
-      tag: `getFacilitator(${facilitatorAddress}).at(${blockNumber})`,
-    });
-
-    if (!facilitatorData) {
-      console.log(`No facilitator with address ${facilitatorAddress} found `);
-      return null;
-    }
-
-    return {
-      address: facilitatorAddress.toLowerCase(),
-      label: facilitatorData.label,
-      bucketCapacity: facilitatorData.bucketCapacity.toString(),
-      bucketLevel: facilitatorData.bucketLevel.toString(),
-    };
-  }
-
-  async getAaveFacilitatorWithLogs(args: {
-    facilitatorAddress: string;
-    blockNumber?: number;
-  }): Promise<AaveFacilitatorContractData | null> {
-    return measureEvmContractCall({
-      call: `hollarContractInstance.getFacilitator`,
-      originFn: 'getAaveFacilitatorWithLogs',
-      blockHeight: args?.blockNumber ?? 0,
-      args: args,
-      fn: () => this.getAaveFacilitator(args),
+      fn: () => this.getUserReservesData(args),
     });
   }
 }

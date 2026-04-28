@@ -6,13 +6,14 @@ import { Asset, AssetType, AssetResourceType } from '../../model';
 import parsers from '../../parsers';
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { AssetHubManager } from '../../utils/assetHubManager';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   getAssetEvmAddressByType,
   getAssetIdFromCustomMultiLocation,
   getNewAssetMultiLocationFromStorageData,
   getNewCustomAssetMultiLocation,
 } from './utils';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 /**
  * Batch fetch or create multiple assets in a SINGLE database query.
@@ -365,10 +366,18 @@ export async function getOrCreateAsset({
     return null;
   }
 
+  // const evmTokenContractData =
+  //   storageData.assetType === AssetType.Erc20 &&
+  //   (evmAddress || erc20AssetContractAddress)
+  //     ? await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
+  //         evmAddress ?? erc20AssetContractAddress ?? ''
+  //       )
+  //     : null;
+
   const evmTokenContractData =
     storageData.assetType === AssetType.Erc20 &&
     (evmAddress || erc20AssetContractAddress)
-      ? await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+      ? await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
           evmAddress ?? erc20AssetContractAddress ?? ''
         )
       : null;
@@ -504,8 +513,13 @@ export async function getOrCreateMoneyMarketAsset({
 
   if (!evmAddress) return null; //TODO fix this
 
+  // const contractData =
+  //   await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
+  //     evmAddress
+  //   );
+
   const contractData =
-    await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+    await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
       evmAddress
     );
 

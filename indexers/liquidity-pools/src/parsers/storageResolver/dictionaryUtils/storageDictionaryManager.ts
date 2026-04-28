@@ -82,7 +82,7 @@ import {
 import { getStorageDictionaryItemsListByBlockNumber } from './helpers/common';
 import { MinifiedDataStructureManager } from './helpers/minifiedDataStructureManager';
 import { BatchStorageStateSectionCollection } from './helpers/batchStorageStateSectionCollection';
-import { AccountMmPositionDataContractData } from '../../../utils/evmTools/types';
+import { AccountMmPositionDataContractData } from '../../../utils/evmTools/aave/types';
 import { AppConfig } from '../../../appConfig';
 
 const appConfig = AppConfig.getInstance();

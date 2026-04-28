@@ -35,8 +35,8 @@ import { StorageResolver } from '../../parsers/storageResolver';
 import { SqdProcessorContext } from '../../processor';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import {
-  MoneyMarketContractsManager,
-} from '../../utils/evmTools/moneyMarketContractsManager';
+  AaveMoneyMarketManager,
+} from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { prefetchGenericPersistentData } from '../prefetchHelpers';
 
 export async function aggregateHsmRelatedDataOnPostAggregationMode(
@@ -74,7 +74,7 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
   console.timeEnd('prefetchGenericPersistentData');
 
   console.time('initContractInstances');
-  await MoneyMarketContractsManager.getInstance().initContractInstances({
+  await AaveMoneyMarketManager.getInstance().initContractInstances({
     ctx: ctx,
     blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
   });

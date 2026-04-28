@@ -6,7 +6,7 @@ import hollarAbi from '../abi/aave/hollar_unstableAbi.json';
 import { ethers } from 'ethers';
 import { EvmLogEventParsers } from './eventParsers';
 import { EvmLogEventParams } from '../../../parsers/types/events';
-import { EvmEventParamsTypeDecorated } from '../types';
+import { EvmEventParamsTypeDecorated } from '../aave/types';
 import { EvmContractName, EvmEventName } from '../../../model';
 import { AppConfig } from '../../../appConfig';
 

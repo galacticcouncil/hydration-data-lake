@@ -11,7 +11,7 @@ import {
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
 } from '../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   actualiseAssets,
   ensureNativeToken,
@@ -139,7 +139,7 @@ export async function poolAndAssetMetricsProcessorHandler(
     })(),
     (async () => {
       await mt.track('initContractInstances', () =>
-        MoneyMarketContractsManager.getInstance().initContractInstances({
+        AaveMoneyMarketManager.getInstance().initContractInstances({
           ctx: ctx,
           blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
         })

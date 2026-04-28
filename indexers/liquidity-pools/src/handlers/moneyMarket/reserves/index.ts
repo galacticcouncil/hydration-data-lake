@@ -3,9 +3,10 @@ import { Store } from '@subsquid/typeorm-store';
 import { BatchBlocksParsedDataManager } from '../../../parsers/batchBlocksParser';
 import { EventName } from '../../../parsers/types/events';
 import { EvmContractName, EvmEventName } from '../../../model';
-import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { handleMoneyMarketReserveConfigOnConfiguratorUpdate } from './moneyMarketReservesConfigHistoricalData';
 import { processMmReserveIndexesHistoricalData } from './moneyMarketReservesIndexesHistoricalData';
+import { AaveMoneyMarketsRegistry } from '../../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function handleMmReservesConfigsHistoricalData(
   ctx: SqdProcessorContext<Store>,
@@ -34,10 +35,15 @@ export async function handleMmReservesConfigsHistoricalData(
   }
 
   for (const blockHeader of blocksToBeProcessed.values()) {
+    // const reservesData =
+    //   await AaveMoneyMarketManager.getInstance().getReservesData({
+    //     blockNumber: blockHeader.height,
+    //   });
     const reservesData =
-      await MoneyMarketContractsManager.getInstance().getReservesData({
+      await AaveMoneyMarketsRegistry.getInstance().getAllMarketsReservesData({
         blockNumber: blockHeader.height,
       });
+
     if (!reservesData) {
       console.log(
         `handleMmReservesHistoricalData :: Reserve data cannot be found at block ${blockHeader.height}`

@@ -12,7 +12,7 @@ import {
 } from '../../parsers/types/events';
 import { EvmAccountsAccountExtensionWithEvmAddress } from '../../parsers/types/storage';
 import { SqdBlock, SqdProcessorContext } from '../../processor';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   getOrCreateAccount,
   getOrCreateAccountByBoundEvmAddress,
@@ -24,6 +24,11 @@ import { RawAccountAssetBalanceHistoricalData } from '../balances/accountTotalBa
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
 import { getAccountsWithMmAssetBalancesSql } from '../../utils/pgConnectionManagers/queries/getAccountsWithMmAssetBalances.sql';
 import { getAllMoneyMarketAssets } from '../assets/asset';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
+import {
+  AccountMmPositionDataContractData,
+  WithMarketTag,
+} from '../../utils/evmTools/aave/types';
 
 const maxHealthFactor =
   '115792089237316195423570985008687907853269984665640564039457.584007913129639935';
@@ -169,18 +174,40 @@ export async function handleAccountMmPositionDataOnMmEvent({
     blockHeader: blockHeader,
   });
 
-  const positionData =
+  // const positionData =
+  //   StorageResolver.getInstance().storageDictionaryManager?.getAccountMmPositionData(
+  //     { accountId: account.id, block: blockHeader }
+  //   ) ??
+  //   (await AaveMoneyMarketManager.getInstance().getAccountMmPositionDataWithLogs(
+  //     {
+  //       accountAddress: accountEvmAddress,
+  //       blockNumber: blockHeader.height,
+  //     }
+  //   ));
+  let positionsData: WithMarketTag<AccountMmPositionDataContractData>[] = [];
+  const positionDataStorageDictionary =
     StorageResolver.getInstance().storageDictionaryManager?.getAccountMmPositionData(
       { accountId: account.id, block: blockHeader }
-    ) ??
-    (await MoneyMarketContractsManager.getInstance().getAccountMmPositionDataWithLogs(
-      {
-        accountAddress: accountEvmAddress,
-        blockNumber: blockHeader.height,
-      }
-    ));
+    );
 
-  if (!positionData) {
+  if (positionDataStorageDictionary) {
+    positionsData.push({
+      ...positionDataStorageDictionary,
+      poolImplementationProxyAddress:
+        ctx.appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS, // TODO Storage Dictionary must be updated to support multiple money markets
+    });
+  } else {
+    const contractData =
+      await AaveMoneyMarketsRegistry.getInstance().getAccountMmPositionDataWithLogs(
+        {
+          accountAddress: accountEvmAddress,
+          blockNumber: blockHeader.height,
+        }
+      );
+    if (contractData) positionsData = contractData;
+  }
+
+  if (!positionsData || positionsData.length === 0) {
     // console.log(`No contract data for address ${accountEvmAddress}`);
     return;
   }
@@ -191,37 +218,39 @@ export async function handleAccountMmPositionDataOnMmEvent({
 
   if (!block) throw Error('Block not found');
 
-  const {
-    totalCollateralBase,
-    totalDebtBase,
-    availableBorrowsBase,
-    currentLiquidationThreshold,
-    ltv,
-    healthFactor,
-    pool: poolAddress,
-  } = positionData;
+  for (const positionData of positionsData) {
+    const {
+      totalCollateralBase,
+      totalDebtBase,
+      availableBorrowsBase,
+      currentLiquidationThreshold,
+      ltv,
+      healthFactor,
+      pool: poolAddress,
+    } = positionData;
 
-  const newPositionHistData = new AccountMmPositionHistoricalData({
-    id: `${account.id}-${blockHeader.height}`,
-    accountId: account.id,
-    accountBoundEvmAddress: account.boundEvmAddress,
+    const newPositionHistData = new AccountMmPositionHistoricalData({
+      id: `${account.id}-${blockHeader.height}`,
+      accountId: account.id,
+      accountBoundEvmAddress: account.boundEvmAddress,
 
-    totalCollateralBase,
-    totalDebtBase,
-    availableBorrowsBase,
-    currentLiquidationThreshold,
-    ltv,
-    healthFactor: maxHealthFactor !== healthFactor ? healthFactor : null,
+      totalCollateralBase,
+      totalDebtBase,
+      availableBorrowsBase,
+      currentLiquidationThreshold,
+      ltv,
+      healthFactor: maxHealthFactor !== healthFactor ? healthFactor : null,
 
-    poolAddress,
+      poolAddress,
 
-    paraBlockHeight: block.height,
-  });
+      paraBlockHeight: block.height,
+    });
 
-  ctx.batchState.state.accountMmPositionHistoricalData.set(
-    newPositionHistData.id,
-    newPositionHistData
-  );
+    ctx.batchState.state.accountMmPositionHistoricalData.set(
+      newPositionHistData.id,
+      newPositionHistData
+    );
+  }
 }
 
 export async function handleAllAccountsMmPositionDataUpdate({

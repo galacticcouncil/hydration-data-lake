@@ -10,7 +10,7 @@ import {
   AccountProcessingStatus,
 } from '../../model';
 import { constants } from 'ethers';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
 import { getOrCreateAccount } from '../accounts';
 import { getAllMoneyMarketAssets, getOrCreateAsset } from '../assets/asset';
@@ -25,6 +25,7 @@ import { AssetBalancesStorageDataPerBlockPerAccountMap } from './commonAssetBala
 import { getAssetBalanceInRefAsset } from './utils';
 import { AssetId } from '@polkadot/types/interfaces';
 import { In } from 'typeorm';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function handleMmAssetAccountBalancesPerBlock({
   ctx,
@@ -79,21 +80,6 @@ export async function handleMmAssetAccountBalancesPerBlock({
           async (asset) => {
             if (!accountAssetsMap.account.boundEvmAddress) return;
 
-            // const accountReserves =
-            //   await MoneyMarketContractsManager.getInstance().getUserReservesDataWithLogs(
-            //     {
-            //       accountAddress: accountAssetsMap.account.boundEvmAddress!,
-            //       blockNumber: blockSlotData.block.height,
-            //     }
-            //   );
-            //
-            // console.log(
-            //   'accountReserves - ',
-            //   accountAssetsMap.account.id,
-            //   blockSlotData.block.height
-            // );
-            // console.dir(accountReserves, { depth: null });
-
             const balance =
               prefetchedBalancesAtBlock
                 ?.get(accountAssetsMap.account.id)
@@ -101,13 +87,22 @@ export async function handleMmAssetAccountBalancesPerBlock({
               accountStorageDictionaryBalancesPerAssetMap.get(
                 asset?.assetRegistryId ?? ''
               ) ??
-              (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
-                {
-                  contractAddress: asset.evmAddress!,
-                  accountAddress: accountAssetsMap.account.boundEvmAddress!,
-                  blockNumber: blockSlotData.block.height,
-                }
-              )) ??
+              // (await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
+              //   {
+              //     contractAddress: asset.evmAddress!,
+              //     accountAddress: accountAssetsMap.account.boundEvmAddress!,
+              //     blockNumber: blockSlotData.block.height,
+              //   }
+              // )) ??
+              (
+                await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
+                  {
+                    contractAddress: asset.evmAddress!,
+                    accountAddress: accountAssetsMap.account.boundEvmAddress!,
+                    blockNumber: blockSlotData.block.height,
+                  }
+                )
+              )?.value ??
               0n;
 
             assetBalances.push({
@@ -432,14 +427,23 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
               continue;
             }
 
-            const balance =
-              await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+            // const balance =
+            //   await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
+            //     {
+            //       contractAddress: mmAsset.evmAddress!,
+            //       accountAddress: account.boundEvmAddress!,
+            //       blockNumber: blockHeight,
+            //     }
+            //   );
+            const balance = (
+              await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
                 {
                   contractAddress: mmAsset.evmAddress!,
                   accountAddress: account.boundEvmAddress!,
                   blockNumber: blockHeight,
                 }
-              );
+              )
+            )?.value;
 
             if (
               !balance ||
@@ -641,7 +645,8 @@ async function getAccountMmAssetsPerBlock({
   await pMap(
     allAccountsForMmReserveBalancesInitList,
     async (account) => {
-      const mmContractsManagerInst = MoneyMarketContractsManager.getInstance();
+      // const mmContractsManagerInst = AaveMoneyMarketManager.getInstance();
+      const mmContractsManagerInst = AaveMoneyMarketsRegistry.getInstance();
 
       const accountReserves =
         mmContractsManagerInst.moneyMarketReservesDetailsMap.size > 0
@@ -742,13 +747,16 @@ async function getAccountATokensOnBorrowEvents({
   if (mmEventName !== EvmEventName.Borrow && mmEventName !== EvmEventName.Repay)
     return [];
 
+  // const accountReserves =
+  //   await AaveMoneyMarketManager.getInstance().getUserReservesDataWithLogs({
+  //     accountAddress: accountH160Address,
+  //     blockNumber,
+  //   });
   const accountReserves =
-    await MoneyMarketContractsManager.getInstance().getUserReservesDataWithLogs(
-      {
-        accountAddress: accountH160Address,
-        blockNumber,
-      }
-    );
+    await AaveMoneyMarketsRegistry.getInstance().getUserReservesDataWithLogs({
+      accountAddress: accountH160Address,
+      blockNumber,
+    });
 
   if (!accountReserves || accountReserves.length === 0) {
     // console.log(`No reserves found for account (h160) ${accountH160Address}`);

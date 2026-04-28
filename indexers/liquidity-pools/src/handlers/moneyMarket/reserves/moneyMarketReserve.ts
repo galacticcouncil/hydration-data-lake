@@ -6,10 +6,7 @@ import {
   MoneyMarketReserve,
 } from '../../../model';
 import { SqdBlock, SqdProcessorContext } from '../../../processor';
-import {
-  MoneyMarketContractsManager,
-  MoneyMarketResourceDetails,
-} from '../../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   getOrCreateAsset,
   getOrCreateMoneyMarketAsset,
@@ -17,6 +14,11 @@ import {
 import { getOrCreateAavepool } from '../../pools/pools/aavepool';
 import { handleMoneyMarketReserveConfigOnConfiguratorUpdate } from './moneyMarketReservesConfigHistoricalData';
 import { processMmReserveIndexesHistoricalDataEntity } from './moneyMarketReservesIndexesHistoricalData';
+import {
+  MoneyMarketResourceDetails,
+  WithMarketTag,
+} from '../../../utils/evmTools/aave/types';
+import { AaveMoneyMarketsRegistry } from '../../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function getOrCreateMoneyMarketReserve({
   id,
@@ -25,7 +27,8 @@ export async function getOrCreateMoneyMarketReserve({
   blockHeader,
 }: {
   id: string;
-  reserveData?: MoneyMarketResourceDetails;
+  reserveData?: WithMarketTag<MoneyMarketResourceDetails>;
+  // reserveData?: MoneyMarketResourceDetails;
   blockHeader: SqdBlock;
   ctx: SqdProcessorContext<Store>;
 }) {
@@ -52,16 +55,28 @@ export async function getOrCreateMoneyMarketReserve({
   let reserveDataToProcess = reserveData ?? null;
 
   if (!reserveData) {
+    // const allReservesData =
+    //   await AaveMoneyMarketManager.getInstance().getReservesData({
+    //     blockNumber: blockHeader.height,
+    //   });
     const allReservesData =
-      await MoneyMarketContractsManager.getInstance().getReservesData({
+      await AaveMoneyMarketsRegistry.getInstance().getAllMarketsReservesData({
         blockNumber: blockHeader.height,
       });
 
-    reserveDataToProcess = allReservesData
-      ? (allReservesData.find(
-          (r) => r.aTokenAddress.toLowerCase() === id.toLowerCase()
-        ) ?? null)
-      : null;
+    reserveDataToProcess =
+      allReservesData.find(
+        (r) =>
+          `${r.poolImplementationProxyAddress.toLowerCase()}-${r.underlyingAssetAddress.toLowerCase()}` ===
+          id
+      ) ?? null;
+
+    // TODO remove
+    // reserveDataToProcess = allReservesData
+    //   ? (allReservesData.find(
+    //       (r) => r.aTokenAddress.toLowerCase() === id.toLowerCase()
+    //     ) ?? null)
+    //   : null;
   }
 
   if (!reserveDataToProcess) {
@@ -134,7 +149,7 @@ export async function getOrCreateMoneyMarketReserve({
     });
 
   reserveEntity = new MoneyMarketReserve({
-    id: reserveDataToProcess.underlyingAssetAddress.toLowerCase(),
+    id: `${reserveDataToProcess.poolImplementationProxyAddress.toLowerCase()}-${reserveDataToProcess.underlyingAssetAddress.toLowerCase()}`,
     aTokenId: aTokenEntity.id,
     underlyingAssetId: underliningAssetEntity.id,
     variableDebtTokenId: variableDebtTokenEntity.id,
@@ -162,7 +177,8 @@ export async function actualizeMoneyMarketReserves({
   blockNumber,
   ctx,
 }: {
-  reserves?: MoneyMarketResourceDetails[];
+  reserves?: WithMarketTag<MoneyMarketResourceDetails>[];
+  // reserves?: MoneyMarketResourceDetails[];
   blockNumber?: number;
   ctx: SqdProcessorContext<Store>;
 }) {
@@ -201,7 +217,8 @@ export async function actualizeMoneyMarketReserves({
   const reservesToProcess =
     reserves ??
     Array.from(
-      MoneyMarketContractsManager.getInstance().moneyMarketReservesDetailsMap.values()
+      AaveMoneyMarketsRegistry.getInstance().moneyMarketReservesDetailsMap.values()
+      // AaveMoneyMarketManager.getInstance().moneyMarketReservesDetailsMap.values()
     );
 
   for (const reserveData of reservesToProcess) {
@@ -216,7 +233,7 @@ export async function actualizeMoneyMarketReserves({
       blockNumber ?? ctx.blocks[ctx.blocks.length - 1].header.height
     );
     const reserveEntity = await getOrCreateMoneyMarketReserve({
-      id: reserveData.underlyingAssetAddress.toLowerCase(),
+      id: `${reserveData.poolImplementationProxyAddress.toLowerCase()}-${reserveData.underlyingAssetAddress.toLowerCase()}`,
       reserveData,
       blockHeader,
       ctx,
@@ -240,6 +257,7 @@ export async function actualizeMoneyMarketReserves({
         contractName: EvmContractName.AavePoolImpl,
         eventName: EvmEventName.ReserveDataUpdated,
         reserveAddress: reserveData.underlyingAssetAddress.toLowerCase(),
+        mmReserveEntityId: reserveEntity.id,
         liquidityRate: BigInt(reserveData.liquidityRate),
         stableBorrowRate: BigInt(0),
         variableBorrowRate: BigInt(reserveData.variableBorrowRate),

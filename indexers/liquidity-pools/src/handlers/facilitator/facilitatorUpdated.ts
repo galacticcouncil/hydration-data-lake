@@ -11,12 +11,13 @@ import {
 } from '../../processor';
 import { EvmLogDecoder } from '../../utils/evmTools/evmLogDecoder';
 import {
-  MoneyMarketContractsManager,
-} from '../../utils/evmTools/moneyMarketContractsManager';
+  AaveMoneyMarketManager,
+} from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   getOrCreateAaveFacilitator,
   getPreviousFacilitatorHistDataEntity,
 } from './index';
+import { AaveNativeStableTokenManager } from '../../utils/evmTools/aave/aaveNativeStableTokenManager';
 
 export async function handleFacilitatorBucketCapacityUpdatedEvent({
   ctx,
@@ -122,10 +123,12 @@ export async function handleFacilitatorUpdatedEvent({
        * just stated.
        */
       const facilitatorContractData =
-        await MoneyMarketContractsManager.getInstance().getAaveFacilitatorWithLogs({
-          facilitatorAddress,
-          blockNumber: blockHeader.height,
-        });
+        await AaveNativeStableTokenManager.getInstance().getAaveFacilitatorWithLogs(
+          {
+            facilitatorAddress,
+            blockNumber: blockHeader.height,
+          }
+        );
 
       if (facilitatorContractData) {
         bucketCapacity = BigInt(facilitatorContractData.bucketCapacity);

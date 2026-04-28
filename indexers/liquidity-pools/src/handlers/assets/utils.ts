@@ -22,9 +22,10 @@ import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { AssetHubManager } from '../../utils/assetHubManager';
 import { EvmUtils } from '../../utils/evm';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { anyToStringAllKeys } from '../../utils/helpers';
 import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from './asset';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAll = new Map(
@@ -201,8 +202,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
         let erc20AssetContractDetails = null;
 
         if (data.assetType === AssetType.Erc20 && erc20AssetContractAddress) {
+          // erc20AssetContractDetails =
+          //   await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
+          //     erc20AssetContractAddress
+          //   );
           erc20AssetContractDetails =
-            await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+            await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
               erc20AssetContractAddress
             );
         }
@@ -329,7 +334,8 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
      * Iterate all available MM resources and create Asset entities.
      */
     for (const mmResourceDetails of [
-      ...MoneyMarketContractsManager.getInstance().moneyMarketReservesDetailsMap.values(),
+      // ...AaveMoneyMarketManager.getInstance().moneyMarketReservesDetailsMap.values(),
+      ...AaveMoneyMarketsRegistry.getInstance().moneyMarketReservesDetailsMap.values(),
     ]) {
       const mmTokenUnderlyingAsset = assetsToSave.find(
         (assetToSave) =>
@@ -442,8 +448,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
     for (const erc20Asset of [
       ...ctx.batchState.state.assetsAll.values(),
     ].filter((a) => a.assetType === AssetType.Erc20 && !!a.evmAddress)) {
+      // const erc20AssetContractDetails =
+      //   await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
+      //     erc20Asset.evmAddress!
+      //   );
       const erc20AssetContractDetails =
-        await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+        await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
           erc20Asset.evmAddress!
         );
       let underlyingAsset: Asset | null = null;

@@ -1869,12 +1869,13 @@ type MoneyMarketEvent @entity {
 }
 
 type MoneyMarketReserve @entity {
-  "<underlying_asset_address>"
+  "<underlying_asset_address>-<money-market-pool-address>"
   id: ID!
   aTokenId: String!
   underlyingAssetId: String!
   variableDebtTokenId: String!
   aavePool: Aavepool
+#  mmPoolAddress: String
 
   name: String!
   symbol: String!

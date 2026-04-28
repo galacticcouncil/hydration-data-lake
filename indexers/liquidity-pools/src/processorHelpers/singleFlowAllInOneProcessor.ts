@@ -11,7 +11,7 @@ import {
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
 } from '../handlers/accounts';
-import { MoneyMarketContractsManager } from '../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../utils/evmTools/aave/aaveMoneyMarketManager';
 import { actualiseAssets, ensureNativeToken } from '../handlers/assets/utils';
 import { handleAssetRegistry } from '../handlers/assets';
 import { handleLbpPools } from '../handlers/pools/pools/lbpPool';
@@ -74,6 +74,7 @@ import { createMetricsTracker } from '../utils/prometheusMetrics';
 import { AccountEvmExtensionsCacheManager } from '../utils/accountEvmExtensionsCacheManager';
 import { PoolVolumesCacheManager } from '../handlers/pools/volumes/poolVolumesCacheManager';
 import { LatestProcessedDataCacheManager } from '../utils/latestProcessedDataCacheManager';
+import { AaveMoneyMarketsRegistry } from '../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -111,12 +112,22 @@ export async function singleFlowAllInOneProcessor(
         getParsedEventsData(ctx)
       );
 
-      await mt.track('initContractInstances', () =>
-        MoneyMarketContractsManager.getInstance().initContractInstances({
+      await mt.track('AaveMoneyMarketManager.initContractInstances', () =>
+        AaveMoneyMarketManager.getInstance().initContractInstances({
           ctx: ctx,
           blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
           invalidateReservesCache:
-            MoneyMarketContractsManager.getInstance().isMmReservesCacheInvalidationRequired(
+            AaveMoneyMarketManager.getInstance().isMmReservesCacheInvalidationRequired(
+              parsedData
+            ),
+        })
+      );
+      await mt.track('AaveMoneyMarketsRegistry.initContractInstances', () =>
+        AaveMoneyMarketsRegistry.getInstance().initContractInstances({
+          ctx: ctx,
+          blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+          invalidateReservesCache:
+            AaveMoneyMarketsRegistry.getInstance().isMmReservesCacheInvalidationRequired(
               parsedData
             ),
         })

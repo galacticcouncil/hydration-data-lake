@@ -3,9 +3,8 @@ import { Store } from '@subsquid/typeorm-store';
 import { EvmLogData } from '../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../utils/evmTools/evmLogDecoder';
 import { EvmEventName } from '../../model';
-import { handleFacilitatorUpdatedEvent } from './facilitatorUpdated';
 import { getOrCreateAaveFacilitator } from './index';
-import { AaveFacilitatorContractData } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveFacilitatorContractData } from '../../utils/evmTools/aave/types';
 
 export async function handleFacilitatorAddedEvent({
   ctx,

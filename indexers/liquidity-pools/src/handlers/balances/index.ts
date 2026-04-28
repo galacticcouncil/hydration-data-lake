@@ -9,11 +9,7 @@ import {
   handleMoneyMarketAssetBalancesForAccounts,
   handleMmAssetAccountBalancesPerBlock,
 } from './moneyMarketAssetBalances';
-import { EventName } from '../../parsers/types/events';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
-import { EvmEventName } from '../../model';
-import { handleAllAccountsMmPositionDataUpdate } from '../accounts/moneyMarketPosition';
-import parsers from '../../parsers';
 import {
   handleUnchangedAccountAssetBalances,
   handleAccountTotalBalance,
