@@ -10,6 +10,10 @@ on:
       - 'develop-orca'
       - 'versions/**'
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   docker-images-build-publish:
     name: 'Build and publish docker images of indexers'
