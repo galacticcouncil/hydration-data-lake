@@ -101,12 +101,6 @@ export async function assetRegistered(
 
   if (!assetEntityId) return null;
 
-  // const evmTokenContractData =
-  //   assetType === AssetType.Erc20
-  //     ? await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
-  //         erc20AssetContractAddress
-  //       )
-  //     : null;
   const evmTokenContractData =
     assetType === AssetType.Erc20
       ? await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
@@ -116,6 +110,21 @@ export async function assetRegistered(
 
   let bondUnderlyingAsset = null;
   let bondMaturity = null;
+  let mmAssetUnderliningAsset: Asset | null = null;
+
+  if (
+    evmTokenContractData &&
+    evmTokenContractData.resourceType &&
+    (evmTokenContractData.resourceType === AssetResourceType.aToken ||
+      evmTokenContractData.resourceType === AssetResourceType.Debt) &&
+    evmTokenContractData.underlyingAssetAddress
+  ) {
+    mmAssetUnderliningAsset = await getOrCreateAsset({
+      evmAddress: evmTokenContractData.underlyingAssetAddress.toLowerCase(),
+      ensure: false,
+      ctx,
+    });
+  }
 
   if (assetType === AssetType.Bond) {
     const bondDetails = await parsers.storage.bonds.getBond({
@@ -175,6 +184,7 @@ export async function assetRegistered(
     name: getName(),
     resourceType:
       evmTokenContractData?.resourceType ?? AssetResourceType.Underlying,
+    underlyingAssetId: mmAssetUnderliningAsset?.id ?? null,
     assetType,
     existentialDeposit,
     symbol: getSymbol(),
@@ -187,6 +197,16 @@ export async function assetRegistered(
 
   state.assetsAll.set(newAsset.id, newAsset);
   state.assetIdsToSave.add(newAsset.id);
+
+  if (mmAssetUnderliningAsset && evmTokenContractData) {
+    if (evmTokenContractData.resourceType === AssetResourceType.aToken) {
+      mmAssetUnderliningAsset.aTokenId = newAsset.id;
+    } else if (evmTokenContractData.resourceType === AssetResourceType.Debt) {
+      mmAssetUnderliningAsset.variableDebtTokenId = newAsset.id;
+    }
+    state.assetsAll.set(mmAssetUnderliningAsset.id, mmAssetUnderliningAsset);
+    await ctx.store.upsert(mmAssetUnderliningAsset);
+  }
 }
 
 export async function assetUpdated(
