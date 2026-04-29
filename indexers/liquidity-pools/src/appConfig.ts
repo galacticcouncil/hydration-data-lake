@@ -297,15 +297,6 @@ class EvmConfig {
         poolImplementationProxyAddress:
           '0x1b02e051683b5cfac5929c25e84adb26ecf87b38',
       },
-      {
-        marketId: 'GIGAHDX',
-        treasuryAddress: '0xaFc199f2d2c0E23b909eBbdB41e8FC4507342dd4',
-        poolDataProviderAddress: '0x112b087b60C1a166130d59266363C45F8aa99db0',
-        poolAddressProviderAddress:
-          '0x9574d4AfAB726f059DB7149FFF7169cB6E0D06Bf',
-        poolImplementationProxyAddress:
-          '0xb952AE92cC4D8D703d2d71Ab541baB34c94b944A',
-      },
     ];
 
   static getInstance(): EvmConfig {
