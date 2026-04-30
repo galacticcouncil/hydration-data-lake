@@ -608,6 +608,27 @@ export class BatchState {
     return blockData;
   }
 
+  async getParaBlockByHeightWithFallbackFetch(
+    paraBlockHeight: number,
+    ctx: SqdProcessorContext<Store>
+  ): Promise<BlockEntity | undefined> {
+    const cached = this.getParaBlockFromCacheByHeight(paraBlockHeight);
+    if (cached) return cached;
+
+    const fetched = await ctx.storeUtils.findOneWithLogs(
+      BlockEntity,
+      { where: { height: paraBlockHeight } },
+      {
+        className: 'BlockEntity',
+        originCallFn: 'getParaBlockByHeightWithFallbackFetch',
+      }
+    );
+
+    if (fetched) this.state.batchBlocks.set(fetched.id, fetched);
+
+    return fetched ?? undefined;
+  }
+
   getBlockHeaderByBlockHeight(height: number): SqdBlock {
     if (!this.state.blockHeadersByHeight.has(height))
       throw new Error(`Block header cannot be found for height ${height}`);

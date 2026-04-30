@@ -14,7 +14,6 @@ import { getAssetHistDataWithUniqueData } from '../assets/assetHistoricalData/as
 import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoricalData/assetSpotPrices';
 import {
   AddMultiplePricesPayload,
-  RedisTimeSeriesManager,
   RedisTimeSeriesName,
 } from '../../utils/redisTimeSeriesManager';
 import { ProcessorStatusManager } from '../../processorStatusManager';
@@ -22,12 +21,10 @@ import {
   getProcessingMode,
   ProcessingMode,
 } from '../../processorHelpers/getProcessingMode';
-import { MultiFlowProcessingPhase } from '../../utils/types';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 import { getAccountAssetBalancesLatest } from '../balances/accountAssetBalanceLatest';
 import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/historicalDataLatest';
 import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
-import { ApiSupportPgClient } from '../../utils/redisTimeSeriesSupport/apiSupportPgClient';
 import { getXykpoolHistDataWithUniqueData } from '../pools/pools/xykPool/historicalData';
 import { BigNumber } from '../../utils/bignumber';
 import { getXykpoolsHistDataLatest } from '../pools/pools/xykPool/historicalDataLatest';
@@ -474,35 +471,43 @@ export class HistoricalDataManager {
 
     let latestBlock = 0;
 
-    const pricesData = src
-      .filter((item) => {
-        // Get assets to check if they have registry IDs
-        const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId);
-        const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId);
-        return !!assetIn?.assetRegistryId && !!assetOut?.assetRegistryId;
-      })
-      .map((item) => {
-        if (item.paraBlockHeight > latestBlock)
-          latestBlock = item.paraBlockHeight;
+    const pricesData = await Promise.all(
+      src
+        .filter((item) => {
+          // Get assets to check if they have registry IDs
+          const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId);
+          const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId);
+          return !!assetIn?.assetRegistryId && !!assetOut?.assetRegistryId;
+        })
+        .map(async (item) => {
+          if (item.paraBlockHeight > latestBlock)
+            latestBlock = item.paraBlockHeight;
 
-        const block = ctx.batchState.getParaBlockFromCacheByHeight(
-          item.paraBlockHeight
-        );
-        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+          const block =
+            await ctx.batchState.getParaBlockByHeightWithFallbackFetch(
+              item.paraBlockHeight,
+              ctx
+            );
+          if (!block)
+            throw new Error(
+              `Block entity not found for paraBlockHeight ${item.paraBlockHeight} (commitAssetPricesToRedisTimeSeries)`
+            );
+          const timestamp = block.timestamp.getTime();
 
-        // Get asset registry IDs from the Asset entities
-        const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId)!;
-        const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId)!;
+          // Get asset registry IDs from the Asset entities
+          const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId)!;
+          const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId)!;
 
-        return {
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.price,
-          assetAId: assetIn.assetRegistryId!,
-          assetBId: assetOut.assetRegistryId!,
-          timestamp,
-          value: BigNumber(item.priceNormalised).toNumber(),
-        };
-      });
+          return {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.price,
+            assetAId: assetIn.assetRegistryId!,
+            assetBId: assetOut.assetRegistryId!,
+            timestamp,
+            value: BigNumber(item.priceNormalised).toNumber(),
+          };
+        })
+    );
 
     await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
       actionName: DataCommitterJobName.commitAssetPriceVolume,
@@ -529,33 +534,41 @@ export class HistoricalDataManager {
 
     let latestBlock = 0;
 
-    const volumesData = src
-      .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
-      .map((item): AddMultiplePricesPayload => {
-        if (item.paraBlockHeight > latestBlock)
-          latestBlock = item.paraBlockHeight;
+    const volumesData = await Promise.all(
+      src
+        .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
+        .map(async (item): Promise<AddMultiplePricesPayload> => {
+          if (item.paraBlockHeight > latestBlock)
+            latestBlock = item.paraBlockHeight;
 
-        const block = ctx.batchState.getParaBlockFromCacheByHeight(
-          item.paraBlockHeight
-        );
-        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+          const block =
+            await ctx.batchState.getParaBlockByHeightWithFallbackFetch(
+              item.paraBlockHeight,
+              ctx
+            );
+          if (!block)
+            throw new Error(
+              `Block entity not found for paraBlockHeight ${item.paraBlockHeight} (commitAssetsPairVolumeToRedisTimeSeries)`
+            );
+          const timestamp = block.timestamp.getTime();
 
-        return {
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.volume,
-          assetAId:
-            +item.assetRegistryAId! < +item.assetRegistryBId!
-              ? item.assetRegistryAId!
-              : item.assetRegistryBId!,
-          assetBId:
-            +item.assetRegistryAId! < +item.assetRegistryBId!
-              ? item.assetRegistryBId!
-              : item.assetRegistryAId!,
+          return {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.volume,
+            assetAId:
+              +item.assetRegistryAId! < +item.assetRegistryBId!
+                ? item.assetRegistryAId!
+                : item.assetRegistryBId!,
+            assetBId:
+              +item.assetRegistryAId! < +item.assetRegistryBId!
+                ? item.assetRegistryBId!
+                : item.assetRegistryAId!,
 
-          timestamp,
-          value: BigNumber(item.totalVolumeNormalised).toNumber(),
-        };
-      });
+            timestamp,
+            value: BigNumber(item.totalVolumeNormalised).toNumber(),
+          };
+        })
+    );
 
     await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
       actionName: DataCommitterJobName.commitAssetPriceVolume,
@@ -586,39 +599,47 @@ export class HistoricalDataManager {
     )) {
       let latestBlock = 0;
 
-      const balancesData = srcBatch.map((item) => {
-        if (item.paraBlockHeight > latestBlock)
-          latestBlock = item.paraBlockHeight;
+      const balancesData = await Promise.all(
+        srcBatch.map(async (item) => {
+          if (item.paraBlockHeight > latestBlock)
+            latestBlock = item.paraBlockHeight;
 
-        const block = ctx.batchState.getParaBlockFromCacheByHeight(
-          item.paraBlockHeight
-        );
-        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+          const block =
+            await ctx.batchState.getParaBlockByHeightWithFallbackFetch(
+              item.paraBlockHeight,
+              ctx
+            );
+          if (!block)
+            throw new Error(
+              `Block entity not found for paraBlockHeight ${item.paraBlockHeight} (commitAccountTotalBalancesToRedisTimeSeries)`
+            );
+          const timestamp = block.timestamp.getTime();
 
-        return [
-          {
-            keyPrefix: ctx.appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.acc_bal_tot_tns,
-            accountId: item.accountId,
-            timestamp,
-            value: +item.totalTransferableNorm,
-          },
-          {
-            keyPrefix: ctx.appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.acc_bal_tot_loc,
-            accountId: item.accountId,
-            timestamp,
-            value: +item.totalLockedNorm,
-          },
-          {
-            keyPrefix: ctx.appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.acc_bal_tot_debt,
-            accountId: item.accountId,
-            timestamp,
-            value: +(item.totalDebtNorm ?? '0'),
-          },
-        ];
-      });
+          return [
+            {
+              keyPrefix: ctx.appConfig.INDEXER_ID,
+              name: RedisTimeSeriesName.acc_bal_tot_tns,
+              accountId: item.accountId,
+              timestamp,
+              value: +item.totalTransferableNorm,
+            },
+            {
+              keyPrefix: ctx.appConfig.INDEXER_ID,
+              name: RedisTimeSeriesName.acc_bal_tot_loc,
+              accountId: item.accountId,
+              timestamp,
+              value: +item.totalLockedNorm,
+            },
+            {
+              keyPrefix: ctx.appConfig.INDEXER_ID,
+              name: RedisTimeSeriesName.acc_bal_tot_debt,
+              accountId: item.accountId,
+              timestamp,
+              value: +(item.totalDebtNorm ?? '0'),
+            },
+          ];
+        })
+      );
 
       await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
         actionName: DataCommitterJobName.commitAccountTotalBalance,

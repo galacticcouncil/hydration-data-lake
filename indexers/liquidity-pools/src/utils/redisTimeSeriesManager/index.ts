@@ -301,20 +301,6 @@ export class RedisTimeSeriesManager extends RedisTimeSeriesMigrationsManager {
         listToSave.push({ key, timestamp, value });
       }
 
-      // await pMap(
-      //   Array.from(keysMap.entries()),
-      //   ([uniqueKey, indexerData]) =>
-      //     this.ensureTimeSeries(uniqueKey, {
-      //       name: indexerData.name,
-      //       astAId: indexerData.assetAId,
-      //       astBId: indexerData.assetBId,
-      //       ...this.getVolumeSeriesLabel(
-      //         indexerData.assetAId,
-      //         indexerData.assetBId
-      //       ),
-      //     }),
-      //   { concurrency: 10 }
-      // );
       for (const [uniqueKey, indexerData] of keysMap.entries()) {
         await this.ensureTimeSeries(uniqueKey, {
           name: indexerData.name,
