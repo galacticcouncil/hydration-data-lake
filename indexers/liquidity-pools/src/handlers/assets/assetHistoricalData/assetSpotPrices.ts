@@ -744,7 +744,7 @@ export function getAssetsPairPrice({
           assetInEntity.resourceType === AssetResourceType.Debt) &&
         !assetInEntity.underlyingAssetId)
     ) {
-      const lastPrice = getPreviousProtPriceFromCache({
+      const lastPrice = getPreviousSpotPriceFromCache({
         ctx,
         assetInId: assetInIdEnsured,
         assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
@@ -776,7 +776,7 @@ export function getAssetsPairPrice({
       : '1';
 
   if (assetInRefPrice === undefined) {
-    assetInRefPrice = getPreviousProtPriceFromCache({
+    assetInRefPrice = getPreviousSpotPriceFromCache({
       ctx,
       assetInId: assetInIdEnsured,
       assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
@@ -792,7 +792,7 @@ export function getAssetsPairPrice({
       : '1';
 
   if (assetOutRefPrice === undefined) {
-    assetOutRefPrice = getPreviousProtPriceFromCache({
+    assetOutRefPrice = getPreviousSpotPriceFromCache({
       ctx,
       assetInId: assetOutIdEnsured,
       assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
@@ -850,7 +850,7 @@ export function getAssetsPairPrice({
   });
 }
 
-function getPreviousProtPriceFromCache({
+function getPreviousSpotPriceFromCache({
   ctx,
   assetInId,
   assetOutId,

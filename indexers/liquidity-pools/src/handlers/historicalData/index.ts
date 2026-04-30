@@ -338,7 +338,7 @@ export class HistoricalDataManager {
       ctx.batchState.state.assetsHistoricalDataBatch,
       ctx
     );
-    const assetSpotPriceHistDataToSaveList =
+    const assetSpotPriceHistDataToSaveListDeduped =
       await getAssetSpotPriceHistDataWithUniqueData(
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch,
         ctx
@@ -348,13 +348,6 @@ export class HistoricalDataManager {
       ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
     );
 
-    // AssetHistoricalData is managed separately - assetInHistData relation was removed
-    // for (const priceHistData of assetSpotPriceHistDataToSaveList) {
-    //   assetHistDataToSaveMap.set(
-    //     priceHistData.assetInHistData.id,
-    //     priceHistData.assetInHistData
-    //   );
-    // }
     for (const junctionRecord of ctx.batchState.state.assetAssetsPairVolumesBatch.values()) {
       assetHistDataToSaveMap.set(
         junctionRecord.assetHistoricalData.id,
@@ -374,10 +367,14 @@ export class HistoricalDataManager {
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.priceRoutes.values())
     );
-    await ctx.storeUtils.upsertWithBatches(assetSpotPriceHistDataToSaveList);
+    await ctx.storeUtils.upsertWithBatches(
+      assetSpotPriceHistDataToSaveListDeduped
+    );
 
     LatestProcessedDataCacheManager.getInstance().setLastAssetSpotPriceHistoricalDataItem(
-      assetSpotPriceHistDataToSaveList
+      Array.from(
+        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+      )
     );
 
     await ctx.storeUtils.upsertWithBatches(assetsPairVolumesHistDataToSaveList);
