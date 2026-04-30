@@ -470,7 +470,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
       if (!underlyingAsset) {
         console.log(
-          `actualiseAssets :: underlyingAssett not found for mmReserve with address: ${erc20AssetContractDetails?.underlyingAssetAddress?.toLowerCase()}`
+          `actualiseAssets :: underlyingAssett not found for mmReserve with address: ${erc20AssetContractDetails?.underlyingAssetAddress?.toLowerCase()} [${erc20Asset.evmAddress}]`
         );
         continue;
       }

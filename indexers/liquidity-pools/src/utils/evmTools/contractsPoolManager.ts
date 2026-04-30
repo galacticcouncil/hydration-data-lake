@@ -25,8 +25,13 @@ export class ContractsPoolManager {
   // Pool of providers
   private providers: ethers.providers.JsonRpcProvider[] = [];
 
-  // Contract pools - each contract address maps to an array of contract instances
-  private contractPools: Map<string, Contract[]> = new Map();
+  // Contract pools - keyed by ABI reference, then by normalized address.
+  // Keying on the ABI object identity prevents cache collisions when the same
+  // address is used with different ABIs (e.g. HOLLAR as both an aToken and the
+  // native stable token). Imported JSON ABIs are module singletons, so identity
+  // equality is stable for the process lifetime.
+  private contractPools: Map<ContractInterface, Map<string, Contract[]>> =
+    new Map();
 
   // Atomic counter for round-robin contract distribution (thread-safe via Node.js event loop)
   private contractCallCounter = 0;
@@ -98,21 +103,27 @@ export class ContractsPoolManager {
   ): Contract[] {
     const normalizedAddress = ethers.utils.getAddress(address);
 
-    if (!this.contractPools.has(normalizedAddress)) {
-      // Create one contract instance per provider
-      const contracts = this.providers.map(
+    let abiPools = this.contractPools.get(abi);
+    if (!abiPools) {
+      abiPools = new Map();
+      this.contractPools.set(abi, abiPools);
+    }
+
+    let pool = abiPools.get(normalizedAddress);
+    if (!pool) {
+      pool = this.providers.map(
         (provider) => new Contract(normalizedAddress, abi, provider)
       );
-      this.contractPools.set(normalizedAddress, contracts);
+      abiPools.set(normalizedAddress, pool);
 
       if (this.poolingEnabled && appConfig.ENABLE_RPC_POOL_DEBUG_LOGS) {
         console.log(
-          `[ContractsPoolManager] Created contract pool for ${normalizedAddress.slice(0, 10)}... with ${contracts.length} instances`
+          `[ContractsPoolManager] Created contract pool for ${normalizedAddress.slice(0, 10)}... with ${pool.length} instances`
         );
       }
     }
 
-    return this.contractPools.get(normalizedAddress)!;
+    return pool;
   }
 
   /**
