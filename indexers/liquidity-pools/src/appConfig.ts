@@ -745,6 +745,11 @@ export class AppConfig {
     'Uniques',
   ]);
 
+  /**
+   * List of accounts which will be used in balances aggregation from storage data
+   * on each batch handling. Should be used for couple of blocks just for
+   * balances actualisation.
+   */
   @Transform(({ value }: { value: string }) => new Set(value.split(',')))
   readonly ACCOUNTS_FOR_BALANCES_REFRESH: Set<string> = new Set([]);
 
@@ -790,6 +795,9 @@ export class AppConfig {
 
   @Transform(({ value }: { value: string }) => +value)
   readonly XYKPOOL_HIST_DATA_TRACKING_BATCH_SIZE_PER_BLOCK: number = -1;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly XYKPOOL_HIST_DATA_TRACKING_HIGH_PRIO_SUBSET_SIZE: number = 10;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly API_PROXY_CACHE_TTL_MS_DEFILLAMA: number = 600000;
