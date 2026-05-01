@@ -1,21 +1,13 @@
-import { Account, AccountProcessingStatus, AccountType } from '../../model';
+import { Account, AccountProcessingStatus } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
-import { getPreviousAssetAccountBalancesSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
-import { RawAccountAssetBalanceHistoricalData } from '../balances/accountTotalBalance';
 import {
   getAccountProcessingStatusesToProcess,
   getWhitelistedAccountProcessingStatusesToProcess,
 } from '../../utils/pgConnectionManagers/queries/getAccountProcessingStatusesToProcess';
 import { In } from 'typeorm';
-import {
-  getNewAccount,
-  getOrCreateAccount,
-  saveAllBatchAccounts,
-} from './index';
 import { splitIntoBatches } from '../../utils/helpers';
-import parsers from '../../parsers';
 import pMap from 'p-map';
 
 export type RawAccountProcessingStatus = {
