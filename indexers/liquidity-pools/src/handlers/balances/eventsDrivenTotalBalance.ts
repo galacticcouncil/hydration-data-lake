@@ -51,16 +51,16 @@ export async function handleAccountTotalBalanceEventsDriven({
 
   if (!refAsset) throw Error('Ref asset not found');
 
-  // Step 1: Index batchState entries by (block, account) -> asset[]
+  // Step 1: Single linear pass — index entries by (block, account) -> asset
+  // and group them per account for the per-block "older snapshot" build below.
   const changedByBlockAndAccount = new Map<
     BlockHeight,
     Map<AccountId, Map<AssetId, AccountAssetBalanceHistoricalData>>
   >();
 
-  // Also index by (account, asset) keeping the latest entry per asset (across all blocks)
-  const batchStateLatestByAccountAsset = new Map<
+  const entriesByAccount = new Map<
     AccountId,
-    Map<BlockHeight, Map<AssetId, AccountAssetBalanceHistoricalData>>
+    AccountAssetBalanceHistoricalData[]
   >();
 
   for (const entity of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
@@ -74,54 +74,82 @@ export async function handleAccountTotalBalanceEventsDriven({
       continue;
 
     // Index by block+account
-    if (!changedByBlockAndAccount.has(entity.paraBlockHeight)) {
-      changedByBlockAndAccount.set(entity.paraBlockHeight, new Map());
+    let blockMap = changedByBlockAndAccount.get(entity.paraBlockHeight);
+    if (!blockMap) {
+      blockMap = new Map();
+      changedByBlockAndAccount.set(entity.paraBlockHeight, blockMap);
     }
-    const blockMap = changedByBlockAndAccount.get(entity.paraBlockHeight)!;
-    if (!blockMap.has(entity.accountId)) {
-      blockMap.set(entity.accountId, new Map());
+    let accountAssetMap = blockMap.get(entity.accountId);
+    if (!accountAssetMap) {
+      accountAssetMap = new Map();
+      blockMap.set(entity.accountId, accountAssetMap);
     }
-    blockMap.get(entity.accountId)!.set(entity.assetId, entity);
+    accountAssetMap.set(entity.assetId, entity);
 
-    // Index latest per (account, asset) per block
-    if (!batchStateLatestByAccountAsset.has(entity.accountId)) {
-      batchStateLatestByAccountAsset.set(entity.accountId, new Map());
+    // Group per account for the snapshot pass below
+    let accountEntries = entriesByAccount.get(entity.accountId);
+    if (!accountEntries) {
+      accountEntries = [];
+      entriesByAccount.set(entity.accountId, accountEntries);
     }
-    if (
-      !batchStateLatestByAccountAsset
-        .get(entity.accountId)!
-        .has(entity.paraBlockHeight)
-    ) {
-      batchStateLatestByAccountAsset
-        .get(entity.accountId)!
-        .set(entity.paraBlockHeight, new Map());
-    }
-    const accountBlockAssetsMap = batchStateLatestByAccountAsset
-      .get(entity.accountId)!
-      .get(entity.paraBlockHeight)!;
-
-    for (const prevHistEntity of ctx.batchState.state.accountAssetBalanceHistoricalData.values()) {
-      const existingPrevHistDataEntity = accountBlockAssetsMap.get(
-        prevHistEntity.assetId
-      );
-      if (
-        prevHistEntity.paraBlockHeight < entity.paraBlockHeight &&
-        prevHistEntity.accountId === entity.accountId &&
-        (!existingPrevHistDataEntity ||
-          existingPrevHistDataEntity?.paraBlockHeight <
-            prevHistEntity.paraBlockHeight)
-      ) {
-        accountBlockAssetsMap.set(prevHistEntity.assetId, prevHistEntity);
-      }
-    }
-
-    // const existing = accountBlockMap.get(entity.assetId);
-    // if (!existing || existing.paraBlockHeight < entity.paraBlockHeight) {
-    //   accountBlockMap.set(entity.assetId, entity);
-    // }
+    accountEntries.push(entity);
   }
 
   if (changedByBlockAndAccount.size === 0) return;
+
+  // For each account, walk entries in ascending block order and accumulate
+  // a running "latest seen per asset" map. At each distinct block, snapshot
+  // the running map BEFORE adding that block's entries — that snapshot is
+  // exactly the set of older balances available to this block.
+  // Skip the snapshot clone when the running map is empty (common for
+  // accounts that only appear once in the batch).
+  const batchStateLatestByAccountAsset = new Map<
+    AccountId,
+    Map<BlockHeight, Map<AssetId, AccountAssetBalanceHistoricalData>>
+  >();
+
+  for (const [accountId, entries] of entriesByAccount) {
+    // Group this account's entries by block, then iterate blocks in ascending order.
+    const entriesByBlock = new Map<
+      BlockHeight,
+      AccountAssetBalanceHistoricalData[]
+    >();
+    for (const entry of entries) {
+      const bucket = entriesByBlock.get(entry.paraBlockHeight);
+      if (bucket) bucket.push(entry);
+      else entriesByBlock.set(entry.paraBlockHeight, [entry]);
+    }
+    const sortedBlockHeights = [...entriesByBlock.keys()].sort((a, b) => a - b);
+
+    const latestPerAsset = new Map<
+      AssetId,
+      AccountAssetBalanceHistoricalData
+    >();
+    const blockSnapshots = new Map<
+      BlockHeight,
+      Map<AssetId, AccountAssetBalanceHistoricalData>
+    >();
+
+    for (const blockHeight of sortedBlockHeights) {
+      // Snapshot "older balances" available to this block (skip if empty —
+      // the first block for an account always has nothing older).
+      if (latestPerAsset.size > 0) {
+        blockSnapshots.set(blockHeight, new Map(latestPerAsset));
+      }
+
+      // Apply this block's entries to the running map for the next iteration.
+      for (const entry of entriesByBlock.get(blockHeight)!) {
+        const prev = latestPerAsset.get(entry.assetId);
+        if (!prev || prev.paraBlockHeight < entry.paraBlockHeight) {
+          latestPerAsset.set(entry.assetId, entry);
+        }
+      }
+    }
+
+    if (blockSnapshots.size > 0) {
+      batchStateLatestByAccountAsset.set(accountId, blockSnapshots);
+    }
+  }
 
   // Step 2: For each (block, account), compute total balance from ALL assets
   // All balances are already prefetched in processBalanceEventsSequentially -> prefetchPreviousBalances
