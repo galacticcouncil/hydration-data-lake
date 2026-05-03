@@ -271,6 +271,15 @@ type AccountAssetBalanceLatest @entity {
   paraBlockHeight: Int!
 }
 
+type AccountOwnedAsset @entity {
+  "<address>-<assetId>"
+  id: ID!
+  accountId: String! @index
+  assetId: String! @index
+
+  firstSeenParaBlockHeight: Int!
+}
+
 enum AccountLiquidityType {
   OmnipoolPosition
   OmnipoolDeposit

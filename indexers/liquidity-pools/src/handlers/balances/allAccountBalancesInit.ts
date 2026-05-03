@@ -24,6 +24,7 @@ import { updateAccountProcessingStatusOnTotalBalanceChange } from '../accounts/a
 import { getOrCreateAccount } from '../accounts';
 import { ZERO_ADDRESS_PK } from '../../utils/types';
 import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
+import { getOrCreateAccountOwnedAsset } from './accountOwnedAssets';
 
 let coldStartDone = false;
 
@@ -448,6 +449,13 @@ export async function initManyAccountAssetBalancesFromOnChainData({
         assetBalanceHistData.id,
         assetBalanceHistData
       );
+
+      await getOrCreateAccountOwnedAsset({
+        ctx,
+        accountId: account.id,
+        assetId: asset.id,
+        firstSeenParaBlockHeight: processingBlockHeader.height,
+      });
     }
   }
 
@@ -495,6 +503,13 @@ export async function initManyAccountAssetBalancesFromOnChainData({
         assetBalanceHistData.id,
         assetBalanceHistData
       );
+
+      await getOrCreateAccountOwnedAsset({
+        ctx,
+        accountId: account.id,
+        assetId: asset.id,
+        firstSeenParaBlockHeight: processingBlockHeader.height,
+      });
     }
   }
 

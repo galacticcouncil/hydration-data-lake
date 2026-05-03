@@ -40,6 +40,10 @@ import {
 import pMap from 'p-map';
 import { ZERO_ADDRESS_PK } from '../../utils/types';
 import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
+import {
+  getOrCreateAccountOwnedAsset,
+  prefetchAccountOwnedAssetsByAccountIds,
+} from './accountOwnedAssets';
 
 export type BalanceEvent = {
   blockHeight: number;
@@ -413,9 +417,17 @@ export async function collectBalanceEvents(
 }
 
 /**
- * Prefetch previous balances for ALL assets of accounts involved in balance
- * events. Fetches from account_asset_balance_historical_data (not _latest).
- * Skips accounts already present in cacheManager (loaded in previous batch).
+ * Prefetch previous balances for all assets of accounts involved in balance
+ * events. Discovery of (account, asset) pairs goes through account_owned_asset
+ * (a thin lookup table) instead of scanning account_asset_balance_historical_data,
+ * which on prod has hundreds of thousands of rows per (account, asset) pair and
+ * makes the discovery scan dominate batch time.
+ *
+ * Flow:
+ *   1. Load ownership rows for involved accounts into batchState (cross-batch
+ *      guard skips repeats).
+ *   2. Build the (account, asset) pair set from batchState ownership.
+ *   3. Fetch the latest balance per pair via the existing LATERAL-join query.
  */
 async function prefetchPreviousBalances({
   ctx,
@@ -434,10 +446,24 @@ async function prefetchPreviousBalances({
 
   const batchStartBlockHeight = ctx.blocks[0].header.height;
 
-  await LatestProcessedDataCacheManager.getInstance().prefetchAllAccountAssetBalances(
+  await prefetchAccountOwnedAssetsByAccountIds({
+    ctx,
+    accountIds: Array.from(uniqueAccountIds),
+  });
+
+  const accountAssetPairs: { accountId: string; assetId: string }[] = [];
+  for (const ownedAsset of ctx.batchState.state.accountOwnedAssets.values()) {
+    if (!uniqueAccountIds.has(ownedAsset.accountId)) continue;
+    accountAssetPairs.push({
+      accountId: ownedAsset.accountId,
+      assetId: ownedAsset.assetId,
+    });
+  }
+
+  await LatestProcessedDataCacheManager.getInstance().prefetchLastAccountAssetBalances(
     {
       ctx,
-      accountIds: Array.from(uniqueAccountIds),
+      accountAssetPairs,
       maxBlockHeight: batchStartBlockHeight,
     }
   );
@@ -845,6 +871,17 @@ export async function processBalanceEventsSequentially({
       entity.id,
       entity
     );
+
+    // Register pair in account_owned_asset so future batches can discover it
+    // without scanning account_asset_balance_historical_data. Idempotent on
+    // reorg re-runs (deterministic id; first-seen value never overwritten on
+    // existing entities).
+    await getOrCreateAccountOwnedAsset({
+      ctx,
+      accountId: snapshot.accountId,
+      assetId,
+      firstSeenParaBlockHeight: snapshot.blockHeight,
+    });
   }
 
   return { allProcessedAccountsPerBlock };

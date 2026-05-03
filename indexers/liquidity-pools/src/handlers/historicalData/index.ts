@@ -422,6 +422,9 @@ export class HistoricalDataManager {
       ctx.storeUtils.upsertWithBatches(
         Array.from(ctx.batchState.state.accountProcessingStatuses.values())
       ),
+      ctx.storeUtils.upsertWithBatches(
+        Array.from(ctx.batchState.state.accountOwnedAssets.values())
+      ),
       this.commitAccountTotalBalancesToRedisTimeSeries(
         accountTotalBalanceHistoricalDataList,
         ctx
