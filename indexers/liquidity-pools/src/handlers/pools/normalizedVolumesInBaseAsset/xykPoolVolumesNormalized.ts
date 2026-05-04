@@ -1,4 +1,4 @@
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { XykpoolVolumeHistoricalData } from '../../../model';
@@ -117,41 +117,41 @@ export async function processXykPoolsNormalizedVolumes({
       assetDecimals: assetB.decimals,
     });
 
-    currentPoolVolsHistData.assetATotalVolInNorm = BigNumber(
-      previousPoolHistVolume?.assetATotalVolInNorm ?? '0'
-    )
-      .plus(currentPoolVolsHistData.assetAVolInNorm)
-      .toFixed();
+    currentPoolVolsHistData.assetATotalVolInNorm = toFixedTrimmed(
+      BigNumber(previousPoolHistVolume?.assetATotalVolInNorm ?? '0').plus(
+        currentPoolVolsHistData.assetAVolInNorm
+      )
+    );
 
-    currentPoolVolsHistData.assetATotalVolOutNorm = BigNumber(
-      previousPoolHistVolume?.assetATotalVolOutNorm ?? '0'
-    )
-      .plus(currentPoolVolsHistData.assetAVolOutNorm)
-      .toFixed();
+    currentPoolVolsHistData.assetATotalVolOutNorm = toFixedTrimmed(
+      BigNumber(previousPoolHistVolume?.assetATotalVolOutNorm ?? '0').plus(
+        currentPoolVolsHistData.assetAVolOutNorm
+      )
+    );
 
-    currentPoolVolsHistData.assetBTotalVolInNorm = BigNumber(
-      previousPoolHistVolume?.assetBTotalVolInNorm ?? '0'
-    )
-      .plus(currentPoolVolsHistData.assetBVolInNorm)
-      .toFixed();
+    currentPoolVolsHistData.assetBTotalVolInNorm = toFixedTrimmed(
+      BigNumber(previousPoolHistVolume?.assetBTotalVolInNorm ?? '0').plus(
+        currentPoolVolsHistData.assetBVolInNorm
+      )
+    );
 
-    currentPoolVolsHistData.assetBTotalVolOutNorm = BigNumber(
-      previousPoolHistVolume?.assetBTotalVolOutNorm ?? '0'
-    )
-      .plus(currentPoolVolsHistData.assetBVolOutNorm)
-      .toFixed();
+    currentPoolVolsHistData.assetBTotalVolOutNorm = toFixedTrimmed(
+      BigNumber(previousPoolHistVolume?.assetBTotalVolOutNorm ?? '0').plus(
+        currentPoolVolsHistData.assetBVolOutNorm
+      )
+    );
 
-    currentPoolVolsHistData.assetAFeesTotalVolNorm = BigNumber(
-      previousPoolHistVolume?.assetAFeesTotalVolNorm ?? '0'
-    )
-      .plus(currentPoolVolsHistData.assetAFeeVolNorm)
-      .toFixed();
+    currentPoolVolsHistData.assetAFeesTotalVolNorm = toFixedTrimmed(
+      BigNumber(previousPoolHistVolume?.assetAFeesTotalVolNorm ?? '0').plus(
+        currentPoolVolsHistData.assetAFeeVolNorm
+      )
+    );
 
-    currentPoolVolsHistData.assetBFeesTotalVolNorm = BigNumber(
-      previousPoolHistVolume?.assetBFeesTotalVolNorm ?? '0'
-    )
-      .plus(currentPoolVolsHistData.assetBFeeVolNorm)
-      .toFixed();
+    currentPoolVolsHistData.assetBFeesTotalVolNorm = toFixedTrimmed(
+      BigNumber(previousPoolHistVolume?.assetBFeesTotalVolNorm ?? '0').plus(
+        currentPoolVolsHistData.assetBFeeVolNorm
+      )
+    );
 
     ctx.batchState.state.xykPoolVolumes.set(
       currentPoolVolsHistData.id,

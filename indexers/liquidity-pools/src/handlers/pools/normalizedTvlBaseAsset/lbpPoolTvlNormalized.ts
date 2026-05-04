@@ -1,4 +1,4 @@
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { SqdProcessorContext } from '../../../processor';
@@ -33,8 +33,10 @@ export function processLbppoolsNormalizedTvl({
     const assetA = ctx.batchState.state.assetsAll.get(assetAId);
     const assetB = ctx.batchState.state.assetsAll.get(assetBId);
 
-    if(!assetA || !assetB) {
-      console.warn(`Asset data not found for assets ${assetAId} or ${assetBId} while processing LBP pool TVL normalization at para block height ${poolHistData.paraBlockHeight}`);
+    if (!assetA || !assetB) {
+      console.warn(
+        `Asset data not found for assets ${assetAId} or ${assetBId} while processing LBP pool TVL normalization at para block height ${poolHistData.paraBlockHeight}`
+      );
       continue;
     }
 
@@ -59,21 +61,21 @@ export function processLbppoolsNormalizedTvl({
     )
       continue;
 
-    poolHistData.tvlInRefAssetNorm = BigNumber(
-      calcPriceNormalized({
-        amount: poolHistData.assetABalance,
-        assetDecimals: assetA.decimals,
-        spotPrice: assetASpotPriceNorm,
-      })
-    )
-      .plus(
+    poolHistData.tvlInRefAssetNorm = toFixedTrimmed(
+      BigNumber(
+        calcPriceNormalized({
+          amount: poolHistData.assetABalance,
+          assetDecimals: assetA.decimals,
+          spotPrice: assetASpotPriceNorm,
+        })
+      ).plus(
         calcPriceNormalized({
           amount: poolHistData.assetBBalance,
           assetDecimals: assetB.decimals,
           spotPrice: assetBSpotPriceNorm,
         })
       )
-      .toFixed();
+    );
 
     ctx.batchState.state.lbpPoolAllHistoricalData.set(
       poolHistData.id,

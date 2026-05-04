@@ -44,6 +44,7 @@ import {
   LbpPoolData,
   MmAggregatorDictionaryData,
   OmnipoolAssetData,
+  OmnipoolAssetDataWithId,
   OmnipoolAssetTradability,
   OmnipoolData,
   OmnipoolGetAssetDataInput,
@@ -81,7 +82,7 @@ import {
 import { getStorageDictionaryItemsListByBlockNumber } from './helpers/common';
 import { MinifiedDataStructureManager } from './helpers/minifiedDataStructureManager';
 import { BatchStorageStateSectionCollection } from './helpers/batchStorageStateSectionCollection';
-import { AccountMmPositionDataContractData } from '../../../utils/evmTools/types';
+import { AccountMmPositionDataContractData } from '../../../utils/evmTools/aave/types';
 import { AppConfig } from '../../../appConfig';
 
 const appConfig = AppConfig.getInstance();
@@ -983,16 +984,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: OmnipoolGetAssetDataInput): OmnipoolAssetData | null {
-    // const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
-    //   `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
-    // );
-    //
-    // if (!node) return null;
-    // const asset = node.omnipoolAssetDataByPoolId.nodes.find(
-    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
-    // );
-    // if (!asset) return null;
-
     const asset = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL)
       .getAssetsByParentId(
         `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
@@ -1014,6 +1005,38 @@ export class StorageDictionaryManager extends QueriesHelper {
       cap: BigInt(assetState.cap ?? 0),
       tradable: { bits: assetState.tradable?.bits ?? 0 },
     };
+  }
+
+  getOmnipoolAllAssetsState({
+    block,
+  }: GetDataAtBlockInput): OmnipoolAssetDataWithId[] | null {
+    const assetNodes = this.getBatchStorageStatePart(
+      ProcessingTopic.OMNIPOOL
+    ).getAssetsByParentId(
+      `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
+    );
+
+    if (!assetNodes || assetNodes.size === 0) return null;
+
+    const decoratedResult: OmnipoolAssetDataWithId[] = [];
+
+    for (const [assetId, assetNode] of assetNodes.entries()) {
+      const assetState =
+        MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.OmnipoolAssetState>(
+          assetNode.assetState
+        );
+      decoratedResult.push({
+        assetId,
+        data: {
+          hubReserve: BigInt(assetState.hubReserve ?? 0),
+          shares: BigInt(assetState.shares ?? 0),
+          protocolShares: BigInt(assetState.protocolShares ?? 0),
+          cap: BigInt(assetState.cap ?? 0),
+          tradable: { bits: assetState.tradable?.bits ?? 0 },
+        },
+      });
+    }
+    return decoratedResult;
   }
 
   getXykpoolData({
@@ -1055,15 +1078,6 @@ export class StorageDictionaryManager extends QueriesHelper {
   getXykpoolShareTokenPairsAll({
     block,
   }: XykGetPoolShareTokenPairsManyInput): XykPoolShareTokenPair[] | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(ProcessingTopic.XYK).entries(),
-    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
-
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.XYK>({
-    //     blockNumber: block.height,
-    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.XYK),
-    //   });
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.XYK
     ).getEntitiesByBlockNumber(block.height);
@@ -1215,68 +1229,26 @@ export class StorageDictionaryManager extends QueriesHelper {
   }: AaveTradeExecutorPoolsInput):
     | AaveTradeExecutorPoolDataWithPoolId[]
     | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(ProcessingTopic.AAVE).entries(),
-    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
-
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.AAVE>({
-    //     blockNumber: block.height,
-    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.AAVE),
-    //   });
-    //
-    // if (nodes.length === 0) return null;
-
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.AAVE
     ).getEntitiesByBlockNumber(block.height);
 
     if (!nodes || nodes.size === 0) return null;
 
-    return (
-      Array.from(nodes)
-        // .filter(
-        //   ([key, data]) =>
-        //     data.reserveAssetId !== undefined &&
-        //     data.reserveAssetId !== null &&
-        //     data.aTokenId !== undefined &&
-        //     data.aTokenId !== null
-        // )
-        .map(([key, data]) => ({
-          poolId: key,
-          data: {
-            reserve: +data.reserveAssetId!,
-            aToken: +data.aTokenId!,
-            liquidityIn: BigInt(data.liquidityIn),
-            liquidityOut: BigInt(data.liquidityOut),
-          },
-        }))
-    );
+    return Array.from(nodes).map(([key, data]) => ({
+      poolId: key,
+      data: {
+        reserve: +data.reserveAssetId!,
+        aToken: +data.aTokenId!,
+        liquidityIn: BigInt(data.liquidityIn),
+        liquidityOut: BigInt(data.liquidityOut),
+      },
+    }));
   }
 
   getAssetDynamicFeesAll({
     block,
   }: GetAssetsDynamicFeesAllInput): AssetDynamicFeeData[] | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(
-    //     ProcessingTopic.ASSET_HIST_DATA
-    //   ).entries(),
-    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
-    //
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
-    //     {
-    //       blockNumber: block.height,
-    //       fullData: this.getBatchStorageStatePart(
-    //         ProcessingTopic.ASSET_HIST_DATA
-    //       ),
-    //       additionalFilter: ([key, data]) =>
-    //         data.assetId !== undefined && data.assetId !== null,
-    //     }
-    //   );
-    //
-    // if (nodes.length === 0) return null;
-
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.ASSET_HIST_DATA
     ).getEntitiesByBlockNumber(block.height);

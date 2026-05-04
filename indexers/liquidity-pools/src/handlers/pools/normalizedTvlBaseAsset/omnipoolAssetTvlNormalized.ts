@@ -1,4 +1,4 @@
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { SqdProcessorContext } from '../../../processor';
@@ -34,7 +34,9 @@ export function processOmnipoolNormalizedTvl({
   for (const assetHistData of assetsHistDataByBatchList) {
     const asset = ctx.batchState.state.assetsAll.get(assetHistData.assetId);
     if (!asset) {
-      console.warn(`Asset data not found for asset ${assetHistData.assetId} while processing Omnipool asset TVL normalization at para block height ${assetHistData.paraBlockHeight}`);
+      console.warn(
+        `Asset data not found for asset ${assetHistData.assetId} while processing Omnipool asset TVL normalization at para block height ${assetHistData.paraBlockHeight}`
+      );
       continue;
     }
 
@@ -47,13 +49,15 @@ export function processOmnipoolNormalizedTvl({
 
     if (!assetSpotPriceNorm || !asset.decimals) continue;
 
-    assetHistData.tvlInRefAssetNorm = BigNumber(
-      calcPriceNormalized({
-        amount: assetHistData.freeBalance,
-        assetDecimals: asset.decimals,
-        spotPrice: assetSpotPriceNorm,
-      })
-    ).toFixed();
+    assetHistData.tvlInRefAssetNorm = toFixedTrimmed(
+      BigNumber(
+        calcPriceNormalized({
+          amount: assetHistData.freeBalance,
+          assetDecimals: asset.decimals,
+          spotPrice: assetSpotPriceNorm,
+        })
+      )
+    );
 
     const poolHistData = poolHistDataMap.get(
       assetHistData.poolHistoricalData.id
@@ -61,9 +65,11 @@ export function processOmnipoolNormalizedTvl({
 
     if (poolHistData) {
       poolHistData.tvlTotalInRefAssetNorm =
-        BigNumber(poolHistData.tvlTotalInRefAssetNorm || '0')
-          .plus(assetHistData.tvlInRefAssetNorm)
-          .toFixed() || '0';
+        toFixedTrimmed(
+          BigNumber(poolHistData.tvlTotalInRefAssetNorm || '0').plus(
+            assetHistData.tvlInRefAssetNorm
+          )
+        ) || '0';
 
       poolHistDataMap.set(poolHistData.id, poolHistData);
       ctx.batchState.state.omnipoolAllHistoricalData.set(

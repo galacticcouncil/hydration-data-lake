@@ -62,6 +62,11 @@ export interface OmnipoolAssetData {
   tradable: OmnipoolAssetTradability;
 }
 
+export interface OmnipoolAssetDataWithId {
+  assetId: number;
+  data: OmnipoolAssetData | null;
+}
+
 export interface OmnipoolLiquidityPositionData {
   assetId: number;
   amount: bigint;

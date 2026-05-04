@@ -14,7 +14,7 @@ async function getCollateral({
   block,
 }: GetHsmCollateralInput): Promise<HsmCollateralData | null> {
   return measureStorageFetch({
-    storageName: 'hsm.collaterals',
+    storageName: 'hsm.collaterals.get',
     originFn: 'getCollateral',
     blockHeight: block.height,
     args: { collateralId },
@@ -46,7 +46,7 @@ async function getAllCollaterals({
   block,
 }: GetDataAtBlockInput): Promise<HsmCollateralData[] | null> {
   return measureStorageFetch({
-    storageName: 'hsm.collaterals',
+    storageName: 'hsm.collaterals.getPairs',
     originFn: 'getAllCollaterals',
     blockHeight: block.height,
     fn: async () => {

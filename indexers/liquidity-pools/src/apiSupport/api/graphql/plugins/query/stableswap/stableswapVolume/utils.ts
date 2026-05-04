@@ -9,7 +9,7 @@ import {
   getAssetsByStableswapIds,
   getAllStableswapIds,
 } from '../../../../../../sql/stableswap/stableswap.sql';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../../../../../utils/bignumber';
 import { AppConfig } from '../../../../../../../appConfig';
 
 const appConfig = AppConfig.getInstance();

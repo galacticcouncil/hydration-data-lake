@@ -101,6 +101,14 @@ export type PoolReserveDataUpdatedEventParams = MmEventParamsWithEventName & {
   variableBorrowIndex: bigint;
 };
 
+export type PoolReserveInitialisedEventParams = MmEventParamsWithEventName & {
+  reserveAddress: string;
+  aTokenAddress: string;
+  stableDebtTokenAddress: string;
+  variableDebtTokenAddress: string;
+  interestRateStrategyAddress: string;
+};
+
 export type HsmFacilitatorAddedEventParams = MmEventParamsWithEventName & {
   facilitatorAddress: string;
   label: string;

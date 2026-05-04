@@ -11,7 +11,7 @@ import {
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
 } from '../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   actualiseAssets,
   ensureNativeToken,
@@ -75,7 +75,7 @@ import { initAllAccountsOnColdStart } from '../../handlers/accounts/allAccountsI
 import { MultiProcPoolManager } from '../../utils/multiProcPoolManager';
 import { CoreProcPoolManager } from '../../utils/multiProcPoolManager/subProcessors/coreProcPoolManager';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/pools/hsmpool';
-import { createMetricsTracker } from '../../utils/processorMetrics';
+import { createMetricsTracker } from '../../utils/prometheusMetrics';
 import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
 import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
@@ -138,7 +138,7 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
   await prefetchOrInitAllAccountProcessingStatuses(ctx);
 
   await mt.track('initContractInstances', () =>
-    MoneyMarketContractsManager.getInstance().initContractInstances({
+    AaveMoneyMarketManager.getInstance().initContractInstances({
       ctx: ctx,
       blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
     })
@@ -180,7 +180,7 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
   //   })(),
   //   (async () => {
   //     console.time('initContractInstances');
-  //     await MoneyMarketContractsManager.getInstance().initContractInstances({
+  //     await AaveMoneyMarketManager.getInstance().initContractInstances({
   //       ctx: ctx,
   //       blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
   //     });

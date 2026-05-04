@@ -11,7 +11,7 @@ import {
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
 } from '../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   actualiseAssets,
   ensureNativeToken,
@@ -80,7 +80,7 @@ import { Between } from 'typeorm/find-options/operator/Between';
 import { PoolAndAssetMetricsProcPoolManager } from '../../utils/multiProcPoolManager/subProcessors/poolAndAssetMetricsProcPoolManager';
 import { handlePoolAndAssetMetricsOnBroadcastSwappedEvents } from './utils';
 import { fetchAndCorrelateAssetSpotPrices } from '../utils';
-import { createMetricsTracker } from '../../utils/processorMetrics';
+import { createMetricsTracker } from '../../utils/prometheusMetrics';
 import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
 
 export async function poolAndAssetMetricsProcessorHandler(
@@ -139,7 +139,7 @@ export async function poolAndAssetMetricsProcessorHandler(
     })(),
     (async () => {
       await mt.track('initContractInstances', () =>
-        MoneyMarketContractsManager.getInstance().initContractInstances({
+        AaveMoneyMarketManager.getInstance().initContractInstances({
           ctx: ctx,
           blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
         })

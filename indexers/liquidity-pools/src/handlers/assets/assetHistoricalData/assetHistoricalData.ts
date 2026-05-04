@@ -11,8 +11,11 @@ import {
 } from '../../../model';
 import parsers from '../../../parsers';
 import { SqdProcessorContext } from '../../../processor';
-import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
+import {
+  AaveMoneyMarketsRegistry
+} from '../../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -56,7 +59,7 @@ export async function processAssetsHistoricalDataAtBlock({
   // );
   //
   // const mmAssetsTotalSupply =
-  //   await MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs(
+  //   await AaveMoneyMarketManager.getInstance().getManyTokensTotalSupplyWithLogs(
   //     {
   //       addresses: mmAssets.map((a) => a.evmAddress!),
   //       blockNumber: block.height,
@@ -74,7 +77,11 @@ export async function processAssetsHistoricalDataAtBlock({
       tokenIds: otherAssets.map((asset) => asset.assetRegistryId!),
     }),
     parsers.storage.balances.getTotalIssuance({ block }),
-    MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs({
+    // AaveMoneyMarketManager.getInstance().getManyTokensTotalSupplyWithLogs({
+    //   addresses: mmAssets.map((a) => a.evmAddress!),
+    //   blockNumber: block.height,
+    // }),
+    AaveMoneyMarketsRegistry.getInstance().getManyTokensTotalSupplyWithLogs({
       addresses: mmAssets.map((a) => a.evmAddress!),
       blockNumber: block.height,
     }),

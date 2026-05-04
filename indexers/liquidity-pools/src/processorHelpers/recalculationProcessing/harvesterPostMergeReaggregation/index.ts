@@ -30,7 +30,7 @@ import {
   handleAssetVolumeUpdates,
   processAssetNormalizedVolumes,
 } from '../../../handlers/assets/volume';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../utils/bignumber';
 import {
   getOldLbpVolume,
   getOldOmnipoolAssetVolume,
@@ -60,7 +60,7 @@ import { ChainActivityTraceManager } from '../../../chainActivityTracingManagers
 import { getParsedEventsData } from '../../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../../parsers/storageResolver';
 import { prefetchOrInitAllBatchAccounts } from '../../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { omnipoolPositionsDepositsProcessing } from './omnipoolPositionsDepositsProcessing';
 import { xykDepositsProcessing } from './xykDepositsProcessing';
 import { handleUniquesEvents } from '../../../handlers/uniques';
@@ -170,7 +170,7 @@ export async function handleHarvesterPostMergeReaggregation(
     })(),
     (async () => {
       console.time('initContractInstances');
-      await MoneyMarketContractsManager.getInstance().initContractInstances({
+      await AaveMoneyMarketManager.getInstance().initContractInstances({
         ctx: ctx,
         blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
       });

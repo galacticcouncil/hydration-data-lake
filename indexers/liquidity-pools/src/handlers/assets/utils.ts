@@ -22,9 +22,10 @@ import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import { AssetHubManager } from '../../utils/assetHubManager';
 import { EvmUtils } from '../../utils/evm';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { anyToStringAllKeys } from '../../utils/helpers';
 import { getOrCreateAsset, getOrCreateMoneyMarketAsset } from './asset';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
   ctx.batchState.state.assetsAll = new Map(
@@ -182,12 +183,15 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
 
     await AssetHubManager.getInstance().prefetchAllAssetsMetadata();
 
-    // for (const { assetId, data } of storageData)
-
     await pMap(
       storageData,
       async ({ assetId, data }) => {
-        if (!data) return;
+        if (!data) {
+          console.log(
+            `actualiseAssets :: asset storage data not found for asset registry ID: ${assetId}`
+          );
+          return;
+        }
 
         const erc20AssetContractAddress = await getAssetEvmAddressByType({
           assetId,
@@ -198,8 +202,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
         let erc20AssetContractDetails = null;
 
         if (data.assetType === AssetType.Erc20 && erc20AssetContractAddress) {
+          // erc20AssetContractDetails =
+          //   await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
+          //     erc20AssetContractAddress
+          //   );
           erc20AssetContractDetails =
-            await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+            await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
               erc20AssetContractAddress
             );
         }
@@ -210,7 +218,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
           assetType: data.assetType,
         });
 
-        if (!assetCustomLocation) return;
+        if (!assetCustomLocation) {
+          console.log(
+            `actualiseAssets :: assetCustomLocation not found for asset registry ID: ${assetId}`
+          );
+          return;
+        }
 
         const assetMultiLocationFromStorage =
           await getNewAssetMultiLocationFromStorageData({
@@ -237,7 +250,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
         const assetEntityId =
           getAssetIdFromCustomMultiLocation(assetCustomLocation);
 
-        if (!assetEntityId) return;
+        if (!assetEntityId) {
+          console.log(
+            `actualiseAssets :: assetEntityId not found for asset registry ID: ${assetId}`
+          );
+          return;
+        }
 
         let bondUnderlyingAsset = null;
         let bondMaturity = null;
@@ -316,14 +334,20 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
      * Iterate all available MM resources and create Asset entities.
      */
     for (const mmResourceDetails of [
-      ...MoneyMarketContractsManager.getInstance().moneyMarketReservesDetailsMap.values(),
+      // ...AaveMoneyMarketManager.getInstance().moneyMarketReservesDetailsMap.values(),
+      ...AaveMoneyMarketsRegistry.getInstance().moneyMarketReservesDetailsMap.values(),
     ]) {
       const mmTokenUnderlyingAsset = assetsToSave.find(
         (assetToSave) =>
           assetToSave.evmAddress ===
           mmResourceDetails.underlyingAssetAddress.toLowerCase()
       );
-      if (!mmTokenUnderlyingAsset) continue;
+      if (!mmTokenUnderlyingAsset) {
+        console.log(
+          `actualiseAssets :: mmTokenUnderlyingAsset not found for mmReserve with address: ${mmResourceDetails.underlyingAssetAddress.toLowerCase()}`
+        );
+        continue;
+      }
 
       if (
         !assetsToSave.find(
@@ -424,8 +448,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
     for (const erc20Asset of [
       ...ctx.batchState.state.assetsAll.values(),
     ].filter((a) => a.assetType === AssetType.Erc20 && !!a.evmAddress)) {
+      // const erc20AssetContractDetails =
+      //   await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
+      //     erc20Asset.evmAddress!
+      //   );
       const erc20AssetContractDetails =
-        await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+        await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
           erc20Asset.evmAddress!
         );
       let underlyingAsset: Asset | null = null;
@@ -440,7 +468,12 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
             })
           : null;
 
-      if (!underlyingAsset) continue;
+      if (!underlyingAsset) {
+        console.log(
+          `actualiseAssets :: underlyingAssett not found for mmReserve with address: ${erc20AssetContractDetails?.underlyingAssetAddress?.toLowerCase()} [${erc20Asset.evmAddress}]`
+        );
+        continue;
+      }
 
       erc20Asset.underlyingAssetId = underlyingAsset.id;
       if (erc20Asset.resourceType === AssetResourceType.aToken) {
@@ -526,7 +559,9 @@ export async function getNewAssetMultiLocationFromStorageData({
       block: blockHeader,
     }));
 
-  if (!storageData) return null;
+  if (!storageData) {
+    return null;
+  }
 
   const tpl = new AssetMultiLocation({
     parents: storageData.parents,
@@ -550,7 +585,6 @@ export async function getNewAssetMultiLocationFromStorageData({
     .value as AssetLocationJunction[]) {
     tpl.interior.push(getNewAssetMultiLocationsInterior(interiorValue));
   }
-
   return tpl;
 }
 

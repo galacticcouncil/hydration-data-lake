@@ -1,4 +1,4 @@
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { HsmpoolAssetHistoricalData } from '../../../model';
@@ -75,11 +75,11 @@ export async function processHsmpoolAssetNormalizedVolumes({
       assetDecimals: decimals,
     });
 
-    currentAssetHistData.assetTotalFeesVolNorm = BigNumber(
-      previousAssetHistData?.assetTotalFeesVolNorm ?? '0'
-    )
-      .plus(currentAssetHistData.assetFeeVolNorm)
-      .toFixed();
+    currentAssetHistData.assetTotalFeesVolNorm = toFixedTrimmed(
+      BigNumber(previousAssetHistData?.assetTotalFeesVolNorm ?? '0').plus(
+        currentAssetHistData.assetFeeVolNorm
+      )
+    );
 
     currentAssetHistData.assetVolInNorm = calcPriceNormalized({
       amount: currentAssetHistData.assetVolIn,
@@ -92,17 +92,17 @@ export async function processHsmpoolAssetNormalizedVolumes({
       assetDecimals: decimals,
     });
 
-    currentAssetHistData.assetTotalVolInNorm = BigNumber(
-      previousAssetHistData?.assetTotalVolInNorm ?? '0'
-    )
-      .plus(currentAssetHistData.assetVolInNorm)
-      .toFixed();
+    currentAssetHistData.assetTotalVolInNorm = toFixedTrimmed(
+      BigNumber(previousAssetHistData?.assetTotalVolInNorm ?? '0').plus(
+        currentAssetHistData.assetVolInNorm
+      )
+    );
 
-    currentAssetHistData.assetTotalVolOutNorm = BigNumber(
-      previousAssetHistData?.assetTotalVolOutNorm ?? '0'
-    )
-      .plus(currentAssetHistData.assetVolOutNorm)
-      .toFixed();
+    currentAssetHistData.assetTotalVolOutNorm = toFixedTrimmed(
+      BigNumber(previousAssetHistData?.assetTotalVolOutNorm ?? '0').plus(
+        currentAssetHistData.assetVolOutNorm
+      )
+    );
 
     ctx.batchState.state.hsmpoolAssetHistData.set(
       currentAssetHistData.id,

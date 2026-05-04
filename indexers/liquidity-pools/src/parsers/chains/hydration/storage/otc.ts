@@ -9,7 +9,7 @@ async function getOtcOrder({
   block,
 }: OtcGetOrderInput): Promise<OtcOrderData | null> {
   return measureStorageFetch({
-    storageName: 'otc.orders',
+    storageName: 'otc.orders.get',
     originFn: 'getOtcOrder',
     blockHeight: block.height,
     args: { orderId },

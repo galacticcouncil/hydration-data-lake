@@ -444,12 +444,173 @@ export class EventDataParserHelper {
       },
     };
   }
+
+  /**
+   * ==== Tokens Deposited ====
+   */
+  parseTokensDepositedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.tokens.parseDepositedParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== Tokens Withdrawn ====
+   */
+  parseTokensWithdrawnData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.tokens.parseWithdrawnParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== Tokens Reserved ====
+   */
+  parseTokensReservedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.tokens.parseReservedParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== Tokens Unreserved ====
+   */
+  parseTokensUnreservedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.tokens.parseUnreservedParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
   /**
    * ==== Balances Transfer ====
    */
   parseBalancesTransferData() {
     const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
     const eventParams = parsers.events.balances.parseTransferParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== Balances Deposit ====
+   */
+  parseBalancesDepositData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.balances.parseDepositParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== Balances Withdraw ====
+   */
+  parseBalancesWithdrawData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.balances.parseWithdrawParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== Balances Reserved ====
+   */
+  parseBalancesReservedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.balances.parseReservedParams(event);
+
+    return {
+      relayChainInfo,
+      id: eventMetadata.id,
+      eventData: {
+        name: eventMetadata.name,
+        metadata: eventMetadata,
+        params: eventParams,
+      },
+      callData: {
+        ...callMetadata,
+      },
+    };
+  }
+  /**
+   * ==== Balances Unreserved ====
+   */
+  parseBalancesUnreservedData() {
+    const { relayChainInfo, eventMetadata, callMetadata, call, event } = this;
+    const eventParams = parsers.events.balances.parseUnreservedParams(event);
 
     return {
       relayChainInfo,

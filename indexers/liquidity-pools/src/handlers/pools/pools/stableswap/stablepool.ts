@@ -148,11 +148,16 @@ export async function getOrCreateStableswap({
     blockHeader: blockHeader,
   });
 
-  await ctx.store.upsert(newPool);
-
   newPool.assets = poolAssets;
 
   const state = ctx.batchState.state;
+
+  // Store pool in batchState before any async operations to prevent
+  // concurrent callers from querying the DB and getting a pool without assets.
+  state.stableswapIdsToSave.add(newPool.id);
+  state.stableswapPools.set(newPool.id, newPool);
+
+  await ctx.store.upsert(newPool);
 
   for (const poolAsset of poolAssets) {
     state.stableswapAssets.set(poolAsset.id, poolAsset);
@@ -168,9 +173,6 @@ export async function getOrCreateStableswap({
 
   // await ctx.store.save(newPool.account);
   await ctx.storeUtils.runWithRetry(() => ctx.store.save(stableAccount));
-
-  state.stableswapIdsToSave.add(newPool.id);
-  state.stableswapPools.set(newPool.id, newPool);
 
   state.accounts.set(stableAccount.id, stableAccount);
 

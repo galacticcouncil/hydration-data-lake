@@ -6,6 +6,7 @@ import {
   OmnipoolAssetTradability,
   StablepoolAllPoolsInfoWithPoolId,
   StablepoolAssetState,
+  StablepoolAssetStatesWithId,
   StablepoolGetAllPoolIdsInput,
   StablepoolGetPoolDataInput,
   StablepoolGetPoolPegsInput,
@@ -20,6 +21,7 @@ import { hexToString } from '@polkadot/util';
 import { EmaOraclePeriod } from '../../../../model';
 import { tryExecOrReturnFallback } from '../../../../utils/helpers';
 import { getOracleNameFromStableswapPegsSource } from '../../hydration/utils';
+import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
 
 function getConstants({ block }: GetConstantsInput): StableswapConstants {
   let minTradingLimit = null;
@@ -288,9 +290,51 @@ async function getAllPoolsPegs({
   throw new UnknownVersionError('storage.stableswap.poolPegs');
 }
 
+async function getAllPoolsAssetsStorageData({
+  block,
+}: GetDataAtBlockInput): Promise<StablepoolAssetStatesWithId[] | null> {
+  return measureStorageFetch({
+    storageName: 'stableswap.assetTradability.get',
+    originFn: 'getAllPoolsAssetsStorageData',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 347) return null;
+
+      if (
+        storage.stableswap.assetTradability.v347.is(block) ||
+        block.specVersion >= 347
+      ) {
+        const pairsPageMap: Map<number, StablepoolAssetStatesWithId> =
+          new Map();
+
+        for await (const page of storage.stableswap.assetTradability.v347.getPairsPaged(
+          500,
+          block
+        )) {
+          for (const [[poolId, assetId], data] of page.filter(
+            (p) => !!p && !!p[1]
+          )) {
+            if (!pairsPageMap.has(poolId))
+              pairsPageMap.set(poolId, { poolId, assetStates: [] });
+
+            pairsPageMap.get(poolId)!.assetStates.push({
+              assetId: assetId,
+              data: { tradable: { bits: data?.bits ?? 15 } },
+            });
+          }
+        }
+
+        return Array.from(pairsPageMap.values());
+      }
+      throw new UnknownVersionError('storage.stableswap.assetTradability');
+    },
+  });
+}
+
 export default {
   getPoolData,
   getPoolAssetStorageData,
+  getAllPoolsAssetsStorageData,
   getAllPoolIds,
   getConstants,
   getPoolPegs,

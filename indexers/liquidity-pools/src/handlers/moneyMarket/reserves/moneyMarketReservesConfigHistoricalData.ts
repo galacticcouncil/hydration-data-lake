@@ -1,26 +1,24 @@
 import { Store } from '@subsquid/typeorm-store';
 
 import { MmReserveConfigHistoricalData } from '../../../model';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../processor';
+import { getOrCreateMoneyMarketReserve } from './moneyMarketReserve';
 import {
   MoneyMarketResourceDetails,
-} from '../../../utils/evmTools/moneyMarketContractsManager';
-import { getOrCreateMoneyMarketReserve } from './moneyMarketReserve';
+  WithMarketTag,
+} from '../../../utils/evmTools/aave/types';
 
 export async function handleMoneyMarketReserveConfigOnConfiguratorUpdate({
   reserveData,
   blockHeader,
   ctx,
 }: {
-  reserveData: MoneyMarketResourceDetails;
+  reserveData: WithMarketTag<MoneyMarketResourceDetails>;
   blockHeader: SqdBlock;
   ctx: SqdProcessorContext<Store>;
 }) {
   const mmReserveEntity = await getOrCreateMoneyMarketReserve({
-    id: reserveData.underlyingAssetAddress.toLowerCase(),
+    id: `${reserveData.poolImplementationProxyAddress.toLowerCase()}-${reserveData.underlyingAssetAddress.toLowerCase()}`,
     reserveData,
     blockHeader,
     ctx,

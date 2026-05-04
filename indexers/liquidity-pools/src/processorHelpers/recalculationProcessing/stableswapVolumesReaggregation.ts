@@ -18,12 +18,7 @@ import {
 } from '../../model';
 import { SqdProcessorContext } from '../../processor';
 import { ProcessorStatusManager } from '../../processorStatusManager';
-import {
-  getOldAssetVolume,
-  handleAssetVolumeUpdates,
-  processAssetNormalizedVolumes,
-} from '../../handlers/assets/volume';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../utils/bignumber';
 import {
   getOldLbpVolume,
   getOldOmnipoolAssetVolume,

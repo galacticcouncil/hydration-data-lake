@@ -1,7 +1,7 @@
 import { AppConfig } from '../../../../../appConfig';
 import { CommonPgPool } from '../../../../../utils/pgConnectionManagers/pgPool';
 import { getLatestAavepoolHistData } from '../../../../sql/aavepool/aavepoolHistData';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../../../utils/bignumber';
 
 const appConfig = AppConfig.getInstance();
 

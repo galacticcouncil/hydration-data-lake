@@ -18,7 +18,7 @@ import {
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
 } from '../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { handleOmnipoolLiquidityPositions } from '../../handlers/liquidity/omnipool/liquidityPositions';
 import { HistoricalDataManager } from '../../handlers/historicalData';
 import { Between } from 'typeorm/find-options/operator/Between';
@@ -69,7 +69,7 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
     })(),
     (async () => {
       console.time('initContractInstances');
-      await MoneyMarketContractsManager.getInstance().initContractInstances({
+      await AaveMoneyMarketManager.getInstance().initContractInstances({
         ctx: ctx,
         blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
       });

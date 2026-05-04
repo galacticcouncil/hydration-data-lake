@@ -139,5 +139,25 @@ export type AssetLocationJunction_AccountKey20 = {
 } & Record<string, any>;
 
 export type AssetLocationJunction_Any = {
-  __kind: string;
+  __kind:
+    | string
+    | 'Here'
+    | 'X1'
+    | 'X2'
+    | 'X3'
+    | 'X4'
+    | 'X5'
+    | 'X6'
+    | 'X7'
+    | 'X8'
+    | 'Plurality'
+    | 'Parachain'
+    | 'OnlyChild'
+    | 'PalletInstance'
+    | 'GlobalConsensus'
+    | 'GeneralKey'
+    | 'GeneralIndex'
+    | 'AccountId32'
+    | 'AccountIndex64'
+    | 'AccountKey20';
 } & Record<string, any>;

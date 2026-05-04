@@ -11,7 +11,12 @@ export function getStableswapAssetsHistDataLatest({
   const indexedData: Map<string, StableswapAssetHistoricalData> = new Map();
 
   for (const data of histDataList) {
-    const itemId = `${data.stableswapAsset.id}`;
+    let itemId = data.stableswapAsset?.id;
+
+    if (!itemId) {
+      const itemIdFractions = data.id.split('-');
+      itemId = `${itemIdFractions[0]}-${itemIdFractions[1]}`;
+    }
     const indexedValue = indexedData.get(itemId);
 
     if (indexedValue && indexedValue.paraBlockHeight >= data.paraBlockHeight)
@@ -23,18 +28,18 @@ export function getStableswapAssetsHistDataLatest({
   const latestHistDataEntities = [];
 
   for (const [id, data] of indexedData.entries()) {
+    const itemIdFractions = data.id.split('-');
     // Extract poolId from the ID format: <poolId>-<assetId>-<blockHeight>
-    const poolId = id.split('-')[0];
+    const poolId = itemIdFractions[0];
     // Construct pool historical data ID: <poolId>-<blockHeight>
     const poolHistoricalDataId = `${poolId}-${data.paraBlockHeight}`;
 
     latestHistDataEntities.push(
       new StableswapAssetHistoricalDataLatest({
         id,
-
         assetId: data.assetId,
         poolId,
-        stableswapAssetId: data.stableswapAsset.id,
+        stableswapAssetId: `${itemIdFractions[0]}-${itemIdFractions[1]}`,
         poolHistoricalDataId,
         freeBalance: data.freeBalance,
         tradable: data.tradable,

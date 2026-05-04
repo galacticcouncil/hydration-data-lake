@@ -99,6 +99,7 @@ import {
   MmMintedToTreasuryEvent,
   LiquidationLiquidatedEvent,
   AccountLiquidityBalanceHistoricalData,
+  AccountOwnedAsset,
 } from '../model';
 import { RelayChainInfo } from '../parsers/types/events';
 import { SqdBlock, SqdProcessorContext } from '../processor';
@@ -143,6 +144,7 @@ export type BatchStatePayload = {
     string,
     AccountAssetBalanceHistoricalData
   >;
+  accountOwnedAssets: Map<string, AccountOwnedAsset>;
   accountLiquidityBalanceHistoricalData: Map<
     string,
     AccountLiquidityBalanceHistoricalData
@@ -324,6 +326,7 @@ export class BatchState {
     assetsAll: new Map(),
 
     accountAssetBalanceHistoricalData: new Map(),
+    accountOwnedAssets: new Map(),
     accountLiquidityBalanceHistoricalData: new Map(),
     accountTotalBalanceHistoricalData: new Map(),
     balanceImpactingEvents: new Map(),
@@ -469,6 +472,7 @@ export class BatchState {
       assetsAll: new Map(),
 
       accountAssetBalanceHistoricalData: new Map(),
+      accountOwnedAssets: new Map(),
       accountLiquidityBalanceHistoricalData: new Map(),
       accountTotalBalanceHistoricalData: new Map(),
       balanceImpactingEvents: new Map(),
@@ -606,6 +610,27 @@ export class BatchState {
     );
 
     return blockData;
+  }
+
+  async getParaBlockByHeightWithFallbackFetch(
+    paraBlockHeight: number,
+    ctx: SqdProcessorContext<Store>
+  ): Promise<BlockEntity | undefined> {
+    const cached = this.getParaBlockFromCacheByHeight(paraBlockHeight);
+    if (cached) return cached;
+
+    const fetched = await ctx.storeUtils.findOneWithLogs(
+      BlockEntity,
+      { where: { height: paraBlockHeight } },
+      {
+        className: 'BlockEntity',
+        originCallFn: 'getParaBlockByHeightWithFallbackFetch',
+      }
+    );
+
+    if (fetched) this.state.batchBlocks.set(fetched.id, fetched);
+
+    return fetched ?? undefined;
   }
 
   getBlockHeaderByBlockHeight(height: number): SqdBlock {

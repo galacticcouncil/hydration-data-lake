@@ -96,6 +96,7 @@ export default {
   otc,
   evmAccounts,
   stableswap: {
+    getAllPoolsAssetsStorageData: stableswap.getAllPoolsAssetsStorageData,
     getConstants: stableswap.getConstants,
     getPoolPegs: stableswap.getPoolPegs,
     getAllPoolIds: stableswap.getAllPoolIds,
@@ -150,6 +151,7 @@ export default {
     getOmnipoolHubAssetTradability: omnipool.getOmnipoolHubAssetTradability,
     getAllOmnipoolLiquidityPositions: omnipool.getAllOmnipoolLiquidityPositions,
     getPoolData: omnipool.getPoolData,
+    getOmnipoolAllAssetsData: omnipool.getOmnipoolAllAssetsData,
     getOmnipoolAssetData: (
       args: OmnipoolGetAssetDataInput
     ): Promise<OmnipoolAssetData | null> =>

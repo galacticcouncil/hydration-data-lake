@@ -8,7 +8,7 @@ async function getLastRelayChainBlockNumber(
   block: BlockHeader
 ): Promise<ParachainSystemLastRelayChainBlockNumber | null> {
   return measureStorageFetch({
-    storageName: 'parachainSystem.lastRelayChainBlockNumber',
+    storageName: 'parachainSystem.lastRelayChainBlockNumber.get',
     originFn: 'getLastRelayChainBlockNumber',
     blockHeight: block.height,
     fn: async () => {

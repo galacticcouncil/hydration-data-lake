@@ -10,7 +10,7 @@ async function getNextFeeMultiplier({
   block,
 }: GetDataAtBlockInput): Promise<TransactionPaymentNextFeeMultiplier | null> {
   return measureStorageFetch({
-    storageName: 'transactionPayment.nextFeeMultiplier',
+    storageName: 'transactionPayment.nextFeeMultiplier.get',
     originFn: 'getNextFeeMultiplier',
     blockHeight: block.height,
     fn: async () => {

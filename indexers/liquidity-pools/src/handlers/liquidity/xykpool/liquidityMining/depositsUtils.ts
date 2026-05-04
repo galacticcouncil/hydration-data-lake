@@ -11,16 +11,9 @@ import parsers from '../../../../parsers';
 import { getOrCreateXykPool } from '../../../pools/pools/xykPool/xykPool';
 import { getOrCreateAccount } from '../../../accounts';
 import { getOrCreateAsset } from '../../../assets/asset';
-import {
-  AccountBalancesPerBlock,
-  AccountPositionBalancesPerBlockPerAsset,
-} from '../../../balances/accountTotalBalance';
+import { AccountPositionBalancesPerBlockPerAsset } from '../../../balances/accountTotalBalance';
 import { In, IsNull, LessThanOrEqual, MoreThanOrEqual, Or } from 'typeorm';
-import { BigNumber } from '@galacticcouncil/sdk';
-import {
-  XykpoolLMDepositData,
-  XykpoolLMDepositDataWithId,
-} from '../../../../parsers/types/storage/xykpoolLiquidityMining';
+import { XykpoolLMDepositDataWithId } from '../../../../parsers/types/storage/xykpoolLiquidityMining';
 import { splitIntoBatches } from '../../../../utils/helpers';
 import { getOrCreateAccountLiquidityBalanceWithAmounts } from '../../../balances/accountLiquidityBalance';
 

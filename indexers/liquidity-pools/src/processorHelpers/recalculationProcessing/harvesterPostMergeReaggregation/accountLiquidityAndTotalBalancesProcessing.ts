@@ -192,7 +192,7 @@ export async function accountLiquidityAndTotalBalancesProcessing(
     'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountTotalBalancesLatest'
   );
 
-  if (ctx.appConfig.processingMode.ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED) {
+  if (ctx.appConfig.ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED) {
     console.time(
       'accountLiquidityAndTotalBalancesProcessing:: Save :: Flush :: accountLiquidityBalanceHistoricalDataList'
     );

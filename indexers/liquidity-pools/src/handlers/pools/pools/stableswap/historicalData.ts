@@ -11,11 +11,11 @@ import {
   StableswapPegsSource,
 } from '../../../../model';
 import parsers from '../../../../parsers';
-import {
-  BatchBlocksParsedDataManager,
-} from '../../../../parsers/batchBlocksParser';
+import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import {
   StablepoolAllPoolsInfoWithPoolId,
+  StablepoolAssetStatesWithId,
+  StablepoolAssetStateWithId,
   StablepoolInfo,
   StablepoolManyPoolsPegsInfoWithPoolId,
   StablepoolPoolPegsInfo,
@@ -30,12 +30,14 @@ async function getStableswapDataPromise({
   poolId,
   poolData,
   poolPegs,
+  poolAssetsStorageData,
   blockHeader,
 }: {
   ctx: SqdProcessorContext<Store>;
   poolId: number;
   poolData: StablepoolInfo;
   poolPegs?: StablepoolPoolPegsInfo;
+  poolAssetsStorageData?: StablepoolAssetStateWithId[];
   blockHeader: BlockHeader;
 }): Promise<{
   poolData: StableswapHistoricalData;
@@ -51,12 +53,11 @@ async function getStableswapDataPromise({
 
   if (!poolStorageData) return null;
 
-  const poolPegsData =
-    poolPegs ??
-    (await parsers.storage.stableswap.getPoolPegs({
-      poolId,
-      block: blockHeader,
-    }));
+  const poolPegsData = poolPegs;
+
+  const poolAssetsStorageDataMap = new Map(
+    (poolAssetsStorageData || []).map((a) => [a.assetId, a.data])
+  );
 
   const assetsData = await pMap(
     poolStorageData.assets,
@@ -68,12 +69,7 @@ async function getStableswapDataPromise({
         block: blockHeader,
         poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
       }),
-      storageData: await parsers.storage.stableswap.getPoolAssetStorageData({
-        poolId,
-        assetId,
-        block: blockHeader,
-        poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
-      }),
+      storageData: poolAssetsStorageDataMap.get(assetId),
     }),
     {
       concurrency:
@@ -138,9 +134,13 @@ async function getStableswapDataPromise({
     poolEntity.assets.map((sAsset) => [sAsset.assetId, sAsset])
   );
 
-  const block = ctx.batchState.getParaBlockFromCacheByHeight(blockHeader.height);
+  const block = ctx.batchState.getParaBlockFromCacheByHeight(
+    blockHeader.height
+  );
   if (!block) {
-    throw new Error(`Block not found in cache for height ${blockHeader.height}`);
+    throw new Error(
+      `Block not found in cache for height ${blockHeader.height}`
+    );
   }
 
   const poolHistoricalDataEntity = new StableswapHistoricalData({
@@ -208,14 +208,22 @@ export async function handleStableswapHistoricalData(
       blockHeader: BlockHeader;
       poolsDataMap: Map<number, StablepoolAllPoolsInfoWithPoolId>;
       poolsPegsMap: Map<number, StablepoolManyPoolsPegsInfoWithPoolId>;
+      poolsAssetsStorageDataMap: Map<number, StablepoolAssetStatesWithId>;
     }> = await pMap(
       blocksSubBatch,
       async ({ header: blockHeader }) => {
-        const [blockAllPoolsData, blockAllPoolsPegs] = await Promise.all([
+        const [
+          blockAllPoolsData,
+          blockAllPoolsPegs,
+          blockAllPoolsAssetsStorageData,
+        ] = await Promise.all([
           parsers.storage.stableswap.getAllPoolsData({
             block: blockHeader,
           }),
           parsers.storage.stableswap.getAllPoolsPegs({
+            block: blockHeader,
+          }),
+          parsers.storage.stableswap.getAllPoolsAssetsStorageData({
             block: blockHeader,
           }),
         ]);
@@ -228,6 +236,12 @@ export async function handleStableswapHistoricalData(
           poolsPegsMap: new Map(
             (blockAllPoolsPegs || []).map((data) => [data.poolId, data])
           ),
+          poolsAssetsStorageDataMap: new Map(
+            (blockAllPoolsAssetsStorageData || []).map((data) => [
+              data.poolId,
+              data,
+            ])
+          ),
         };
       },
       {
@@ -239,13 +253,22 @@ export async function handleStableswapHistoricalData(
     predefinedEntities.push(
       await pMap(
         allPoolsPerBlock
-          .map(({ blockHeader, poolsDataMap, poolsPegsMap }) =>
-            [...poolsDataMap.values()].map((poolDataWithId) => ({
-              blockHeader: blockHeader,
-              poolId: poolDataWithId.poolId,
-              poolData: poolDataWithId.data,
-              poolPegs: poolsPegsMap.get(poolDataWithId.poolId)?.data,
-            }))
+          .map(
+            ({
+              blockHeader,
+              poolsDataMap,
+              poolsPegsMap,
+              poolsAssetsStorageDataMap,
+            }) =>
+              [...poolsDataMap.values()].map((poolDataWithId) => ({
+                blockHeader: blockHeader,
+                poolId: poolDataWithId.poolId,
+                poolData: poolDataWithId.data,
+                poolPegs: poolsPegsMap.get(poolDataWithId.poolId)?.data,
+                poolAssetsStorageData: poolsAssetsStorageDataMap.get(
+                  poolDataWithId.poolId
+                )?.assetStates,
+              }))
           )
           .flat(),
         async (item) => getStableswapDataPromise({ ...item, ctx }),
@@ -275,10 +298,10 @@ export async function handleStableswapHistoricalData(
     }
   }
 
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.stablepoolAssetsAllHistoricalData.values())
-  );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.stablepoolAssetsAllHistoricalData.values())
+  // );
 }

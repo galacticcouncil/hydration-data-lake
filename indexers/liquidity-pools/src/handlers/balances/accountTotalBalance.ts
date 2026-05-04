@@ -1,7 +1,6 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { calcPriceNormalized } from '../../utils/helpers';
-import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { getOrCreateAsset } from '../assets/asset';
 import { AccountData } from '../../parsers/types/storage';
 import { SqdBlock } from '../../processor';
@@ -12,14 +11,13 @@ import {
   Asset,
   AssetResourceType,
 } from '../../model';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../utils/bignumber';
 import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
 import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
 import { getOmnipoolLiquidityMiningDepositsForAccounts } from '../liquidity/omnipool/liquidityMining/depositUtils';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
 import {
   getPreviousAssetAccountBalancesForListOfAccountsSql,
-  getPreviousAssetAccountBalancesSql,
 } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
 import {
   createAccountAssetBalancesForOutdatedBalances,
@@ -34,6 +32,7 @@ import {
 } from './balancesLoggerManager';
 import { FindOptionsRelations } from 'typeorm';
 import { AppConfig } from '../../appConfig';
+import { getAccountsInvolvedToLiquidityProviding } from './accountLiquidityBalance';
 
 const appConfig = AppConfig.getInstance();
 
@@ -274,32 +273,28 @@ export async function addAssetBalanceToAccountTotalBalance({
      * But account cannot have debt balance higher that collateral or
      * borrowed amount. So in final result totalBalance always will be positive.
      */
-    // accountTotalBalance.totalTransferableNorm = (
-    //   totalBalanceWithoutDebt.isLessThan(0)
-    //     ? BigNumber(0)
-    //     : totalBalanceWithoutDebt
-    // ).toFixed();
-    accountTotalBalance.totalTransferableNorm =
-      totalBalanceWithoutDebt.toFixed();
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      totalBalanceWithoutDebt
+    );
 
-    accountTotalBalance.totalDebtNorm = BigNumber(
-      accountTotalBalance.totalDebtNorm ?? '0'
-    )
-      .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-      .toFixed();
+    accountTotalBalance.totalDebtNorm = toFixedTrimmed(
+      BigNumber(accountTotalBalance.totalDebtNorm ?? '0').plus(
+        assetBalanceHistData.transferableInRefAssetNorm || '0'
+      )
+    );
   } else {
-    accountTotalBalance.totalTransferableNorm = BigNumber(
-      accountTotalBalance.totalTransferableNorm
-    )
-      .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-      .toFixed();
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      BigNumber(accountTotalBalance.totalTransferableNorm).plus(
+        assetBalanceHistData.transferableInRefAssetNorm || '0'
+      )
+    );
   }
 
-  accountTotalBalance.totalLockedNorm = BigNumber(
-    accountTotalBalance.totalLockedNorm
-  )
-    .plus(assetBalanceHistData.totalLockedInRefAssetNorm || '0')
-    .toFixed();
+  accountTotalBalance.totalLockedNorm = toFixedTrimmed(
+    BigNumber(accountTotalBalance.totalLockedNorm).plus(
+      assetBalanceHistData.totalLockedInRefAssetNorm || '0'
+    )
+  );
 
   BalancesLoggerManager.getInstance().addLog({
     accountId: accountTotalBalance.accountId,
@@ -343,29 +338,63 @@ export async function handleLiquidityBalancesInTotalBalances({
 
   if (!refAsset) throw Error('Ref asset not found');
 
+  const accountsInvolvedToLiquidityProviding =
+    getAccountsInvolvedToLiquidityProviding({ ctx });
+
+  const allProcessedAccountsPerBlockAugmented: Map<
+    number,
+    Set<string>
+  > = new Map();
+
+  for (const block of ctx.blocks) {
+    if (
+      (!allProcessedAccountsPerBlock.has(block.header.height) ||
+        !allProcessedAccountsPerBlock.get(block.header.height)?.size) &&
+      (!accountsInvolvedToLiquidityProviding.has(block.header.height) ||
+        !accountsInvolvedToLiquidityProviding.get(block.header.height)?.size)
+    )
+      continue;
+
+    const mergedAccounts = new Set<string>([
+      ...(allProcessedAccountsPerBlock.get(block.header.height) || []),
+      ...(accountsInvolvedToLiquidityProviding.get(block.header.height) || []),
+    ]);
+    allProcessedAccountsPerBlockAugmented.set(
+      block.header.height,
+      mergedAccounts
+    );
+  }
+
   const allInvolvedAccountsInBatchSet = new Set(
-    Array.from(allProcessedAccountsPerBlock.values())
+    Array.from(allProcessedAccountsPerBlockAugmented.values())
       .map((accSet) => Array.from(accSet.values()))
       .flat()
   );
 
+  /**
+   * TODO
+   * Redundancy with involved account lists should be refactored:
+   *       involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
+   *       involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
+   */
+
   const { allDepositsInvolvedInBatch } =
     await getOmnipoolLiquidityMiningDepositsForAccounts({
       ctx,
-      involvedAccountsPerBlock: allProcessedAccountsPerBlock,
+      involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
       involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
     });
 
   await getOmnipoolLiquidityPositionsForAccounts({
     ctx,
-    involvedAccountsPerBlock: allProcessedAccountsPerBlock,
+    involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
     involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
     allDepositsInvolvedInBatch,
   });
 
   await getXykLiquidityMiningDepositsForAccounts({
     ctx,
-    involvedAccountsPerBlock: allProcessedAccountsPerBlock,
+    involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
     involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
   });
 
@@ -373,7 +402,7 @@ export async function handleLiquidityBalancesInTotalBalances({
     refAssetId: refAsset.id,
     preProcessedTotalBalances,
     ctx,
-    dataSource: 'XYK_DEPOSIT',
+    dataSource: 'LIQUIDITY_ACTIONS',
   });
 }
 
@@ -421,11 +450,11 @@ async function addLiquidityBalancesToTotalBalance({
     /**
      * Account total balance calculation
      */
-    accountTotalBalance.totalTransferableNorm = BigNumber(
-      accountTotalBalance.totalTransferableNorm
-    )
-      .plus(portionAmountNorm)
-      .toFixed();
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      BigNumber(accountTotalBalance.totalTransferableNorm).plus(
+        portionAmountNorm
+      )
+    );
 
     BalancesLoggerManager.getInstance().addLog({
       accountId: accountTotalBalance.accountId,
@@ -751,9 +780,6 @@ export async function handleUnchangedAccountAssetBalances({
       unchangedAccountAssetBalancesPerBlock,
       ctx,
     });
-  // console.timeEnd(
-  //   'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData'
-  // );
   await createAccountAssetBalancesForOutdatedBalances({
     unchangedAccountAssetBalancesPerBlock:
       ensuredUnchangedAccountAssetBalancesPerBlock,

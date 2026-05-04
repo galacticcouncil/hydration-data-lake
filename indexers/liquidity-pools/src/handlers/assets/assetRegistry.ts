@@ -8,15 +8,11 @@ import {
   AssetRegistryRegisteredData,
   AssetRegistryUpdatedData,
 } from '../../parsers/batchBlocksParser/types';
-import {
-  getErc20AssetContractFromLocation,
-} from '../../parsers/chains/hydration/utils';
+import { getErc20AssetContractFromLocation } from '../../parsers/chains/hydration/utils';
 import { EventName } from '../../parsers/types/events';
 import { SqdProcessorContext } from '../../processor';
 import { AssetHubManager } from '../../utils/assetHubManager';
-import {
-  MoneyMarketContractsManager,
-} from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { getOrCreateAsset } from './asset';
 import {
   getAssetEvmAddressByType,
@@ -24,6 +20,7 @@ import {
   getNewAssetMultiLocationFromStorageData,
   getNewCustomAssetMultiLocation,
 } from './utils';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function assetRegistered(
   ctx: SqdProcessorContext<Store>,
@@ -106,13 +103,28 @@ export async function assetRegistered(
 
   const evmTokenContractData =
     assetType === AssetType.Erc20
-      ? await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+      ? await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
           erc20AssetContractAddress
         )
       : null;
 
   let bondUnderlyingAsset = null;
   let bondMaturity = null;
+  let mmAssetUnderliningAsset: Asset | null = null;
+
+  if (
+    evmTokenContractData &&
+    evmTokenContractData.resourceType &&
+    (evmTokenContractData.resourceType === AssetResourceType.aToken ||
+      evmTokenContractData.resourceType === AssetResourceType.Debt) &&
+    evmTokenContractData.underlyingAssetAddress
+  ) {
+    mmAssetUnderliningAsset = await getOrCreateAsset({
+      evmAddress: evmTokenContractData.underlyingAssetAddress.toLowerCase(),
+      ensure: false,
+      ctx,
+    });
+  }
 
   if (assetType === AssetType.Bond) {
     const bondDetails = await parsers.storage.bonds.getBond({
@@ -172,6 +184,7 @@ export async function assetRegistered(
     name: getName(),
     resourceType:
       evmTokenContractData?.resourceType ?? AssetResourceType.Underlying,
+    underlyingAssetId: mmAssetUnderliningAsset?.id ?? null,
     assetType,
     existentialDeposit,
     symbol: getSymbol(),
@@ -184,6 +197,16 @@ export async function assetRegistered(
 
   state.assetsAll.set(newAsset.id, newAsset);
   state.assetIdsToSave.add(newAsset.id);
+
+  if (mmAssetUnderliningAsset && evmTokenContractData) {
+    if (evmTokenContractData.resourceType === AssetResourceType.aToken) {
+      mmAssetUnderliningAsset.aTokenId = newAsset.id;
+    } else if (evmTokenContractData.resourceType === AssetResourceType.Debt) {
+      mmAssetUnderliningAsset.variableDebtTokenId = newAsset.id;
+    }
+    state.assetsAll.set(mmAssetUnderliningAsset.id, mmAssetUnderliningAsset);
+    await ctx.store.upsert(mmAssetUnderliningAsset);
+  }
 }
 
 export async function assetUpdated(

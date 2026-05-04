@@ -5,7 +5,7 @@ import {
 } from '../../../../../../sql/xykpool/xykPoolsVolume.sql';
 import { XykpoolHistoricalVolumeRaw } from '../../../../../../types';
 import { XykpoolVolumeAggregated } from './resolvers';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../../../../../utils/bignumber';
 import { AppConfig } from '../../../../../../../appConfig';
 
 const appConfig = AppConfig.getInstance();

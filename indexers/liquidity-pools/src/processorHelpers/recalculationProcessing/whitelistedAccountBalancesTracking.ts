@@ -17,7 +17,7 @@ import {
   prefetchOrInitAllAccountProcessingStatuses,
   updateAccountProcessingStatusOnTotalBalanceChange,
 } from '../../handlers/accounts/accountProcessingStatus';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { prefetchGenericPersistentDataWithLogs } from '../prefetchHelpers';
 import {
   actualiseAssets,
@@ -137,7 +137,7 @@ export async function whitelistedAccountBalancesTrackingProcessor(
     })(),
     (async () => {
       console.time('initContractInstances');
-      await MoneyMarketContractsManager.getInstance().initContractInstances({
+      await AaveMoneyMarketManager.getInstance().initContractInstances({
         ctx: ctx,
         blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
       });

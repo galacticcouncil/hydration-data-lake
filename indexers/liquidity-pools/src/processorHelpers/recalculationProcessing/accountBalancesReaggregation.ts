@@ -26,22 +26,6 @@ import {
   prefetchGenericPersistentData,
   prefetchGenericPersistentDataWithLogs,
 } from '../prefetchHelpers';
-import {
-  getOldAssetVolume,
-  handleAssetVolumeUpdates,
-  processAssetNormalizedVolumes,
-} from '../../handlers/assets/volume';
-import { BigNumber } from '@galacticcouncil/sdk';
-import {
-  getOldLbpVolume,
-  getOldOmnipoolAssetVolume,
-  getOldStablepoolAssetVolume,
-  getOldStablepoolVolume,
-  getOldXykVolume,
-  getPoolAssetPreviousVolumeFromCache,
-  getPoolPreviousVolumeFromCache,
-} from '../../handlers/pools/volumes';
-import { getOldHsmAssetHistDataEntity } from '../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { HistoricalDataManager } from '../../handlers/historicalData';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 import { handleRelayChainBlocks } from '../../handlers/relayChain';
@@ -49,7 +33,7 @@ import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { getParsedEventsData } from '../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../parsers/storageResolver';
 import { prefetchOrInitAllBatchAccounts } from '../../handlers/accounts';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   addAccountsToPeriodicalBalancesAggregation,
   initAllAccountProcessingStatusesOnColdStart,
@@ -121,7 +105,7 @@ export async function handleAccountBalancesReaggregation(
     })(),
     (async () => {
       console.time('initContractInstances');
-      await MoneyMarketContractsManager.getInstance().initContractInstances({
+      await AaveMoneyMarketManager.getInstance().initContractInstances({
         ctx: ctx,
         blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
       });

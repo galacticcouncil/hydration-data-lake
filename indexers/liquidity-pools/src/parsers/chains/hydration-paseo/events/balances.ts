@@ -1,6 +1,12 @@
 import { events } from '../typegenTypes';
 import { SqdEvent } from '../../../../processor';
-import { BalancesTransferEventParams } from '../../../types/events';
+import {
+  BalancesTransferEventParams,
+  BalancesDepositEventParams,
+  BalancesWithdrawEventParams,
+  BalancesReservedEventParams,
+  BalancesUnreservedEventParams,
+} from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
 
 function parseTransferParams(event: SqdEvent): BalancesTransferEventParams {
@@ -16,4 +22,46 @@ function parseTransferParams(event: SqdEvent): BalancesTransferEventParams {
   throw new UnknownVersionError(event.name);
 }
 
-export default { parseTransferParams };
+function parseDepositParams(event: SqdEvent): BalancesDepositEventParams {
+  if (events.balances.deposit.v347.is(event)) {
+    const { who, amount } = events.balances.deposit.v347.decode(event);
+    return { who, amount };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+function parseWithdrawParams(event: SqdEvent): BalancesWithdrawEventParams {
+  if (events.balances.withdraw.v347.is(event)) {
+    const { who, amount } = events.balances.withdraw.v347.decode(event);
+    return { who, amount };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+function parseReservedParams(event: SqdEvent): BalancesReservedEventParams {
+  if (events.balances.reserved.v347.is(event)) {
+    const { who, amount } = events.balances.reserved.v347.decode(event);
+    return { who, amount };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+function parseUnreservedParams(event: SqdEvent): BalancesUnreservedEventParams {
+  if (events.balances.unreserved.v347.is(event)) {
+    const { who, amount } = events.balances.unreserved.v347.decode(event);
+    return { who, amount };
+  }
+
+  throw new UnknownVersionError(event.name);
+}
+
+export default {
+  parseTransferParams,
+  parseDepositParams,
+  parseWithdrawParams,
+  parseReservedParams,
+  parseUnreservedParams,
+};

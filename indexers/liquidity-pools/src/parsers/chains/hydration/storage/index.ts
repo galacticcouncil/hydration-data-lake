@@ -38,6 +38,7 @@ import {
   LbpGetPoolDataInput,
   LbpPoolData,
   OmnipoolAssetData,
+  OmnipoolAssetDataWithId,
   OmnipoolAssetTradability,
   OmnipoolData,
   OmnipoolGetAllAssetIdsInput,
@@ -185,6 +186,7 @@ export default {
   stableswap: {
     getAllPoolIds: stableswap.getAllPoolIds,
     getConstants: stableswap.getConstants,
+    getAllPoolsAssetsStorageData: stableswap.getAllPoolsAssetsStorageData,
     getPoolPegs: (
       args: StablepoolGetPoolPegsInput
     ): Promise<StablepoolPoolPegsInfo | null> =>
@@ -314,6 +316,18 @@ export default {
         pallet: ProcessingTopic.OMNIPOOL,
         method: 'getAssetData',
         fallbackFns: [omnipool.getOmnipoolAssetData],
+      }),
+    getOmnipoolAllAssetsData: (
+      args: GetDataAtBlockInput
+    ): Promise<OmnipoolAssetDataWithId[] | null> =>
+      StorageResolver.getInstance().resolveStorageData<
+        GetDataAtBlockInput,
+        OmnipoolAssetDataWithId[] | null
+      >({
+        args,
+        pallet: ProcessingTopic.OMNIPOOL,
+        method: 'getAllAssetsData',
+        fallbackFns: [omnipool.getOmnipoolAllAssetsData],
       }),
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput

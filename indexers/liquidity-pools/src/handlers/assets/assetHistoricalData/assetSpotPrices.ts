@@ -1,7 +1,7 @@
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
 
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
 
@@ -287,10 +287,12 @@ async function processAssetSpotPrices({
 
             price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
 
-            priceNormalised: fromExponentialToDecimalNotation(
-              price.amount.toFixed(18, BigNumber.ROUND_HALF_UP),
-              price.decimals
-            ).toFixed(18, BigNumber.ROUND_HALF_UP),
+            priceNormalised: toFixedTrimmed(
+              fromExponentialToDecimalNotation(
+                toFixedTrimmed(price.amount),
+                price.decimals
+              )
+            ),
             priceRoute,
             paraBlockHeight: blockHeader.height,
           })
@@ -666,10 +668,7 @@ async function processXykInvolvedAssetSpotPrices({
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
-          priceNormalised: xykAssetSpotPrice.toFixed(
-            18,
-            BigNumber.ROUND_HALF_UP
-          ),
+          priceNormalised: toFixedTrimmed(xykAssetSpotPrice),
           priceRoute,
 
           paraBlockHeight: blockHeader.height,
@@ -724,11 +723,11 @@ export function getAssetsPairPrice({
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
       assetOutEntity.underlyingAssetId
     );
-    assetOutIdEnsured = underlyingAsset?.id ?? assetInId;
+    assetOutIdEnsured = underlyingAsset?.id ?? assetOutId;
   }
 
   if (assetOutIdEnsured === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) {
-    const price = ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
+    let price = ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
       `${assetInIdEnsured}-${assetOutIdEnsured}-${blockHeight}`
     )?.priceNormalised;
 
@@ -738,12 +737,22 @@ export function getAssetsPairPrice({
       (recursionExec && !price) ||
       !assetInEntity ||
       (assetInEntity &&
-        assetInEntity.resourceType !== AssetResourceType.aToken) ||
+        assetInEntity.resourceType !== AssetResourceType.aToken &&
+        assetInEntity.resourceType !== AssetResourceType.Debt) ||
       (assetInEntity &&
-        assetInEntity.resourceType === AssetResourceType.aToken &&
+        (assetInEntity.resourceType === AssetResourceType.aToken ||
+          assetInEntity.resourceType === AssetResourceType.Debt) &&
         !assetInEntity.underlyingAssetId)
-    )
-      return null;
+    ) {
+      const lastPrice = getPreviousSpotPriceFromCache({
+        ctx,
+        assetInId: assetInIdEnsured,
+        assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+        currentBlockHeight: blockHeight,
+      })?.priceNormalised;
+
+      return lastPrice ?? null;
+    }
 
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
       assetInEntity.underlyingAssetId || assetInEntity.id
@@ -759,21 +768,41 @@ export function getAssetsPairPrice({
     });
   }
 
-  const assetInRefPrice =
+  let assetInRefPrice =
     assetInIdEnsured !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
       ? ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
           `${assetInIdEnsured}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
         )?.priceNormalised
       : '1';
 
-  const assetOutRefPrice =
+  if (assetInRefPrice === undefined) {
+    assetInRefPrice = getPreviousSpotPriceFromCache({
+      ctx,
+      assetInId: assetInIdEnsured,
+      assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+      currentBlockHeight: blockHeight,
+    })?.priceNormalised;
+  }
+
+  let assetOutRefPrice =
     assetOutIdEnsured !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
       ? ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
           `${assetOutIdEnsured}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
         )?.priceNormalised
       : '1';
 
-  if (recursionExec && (!assetInRefPrice || !assetOutRefPrice)) return null;
+  if (assetOutRefPrice === undefined) {
+    assetOutRefPrice = getPreviousSpotPriceFromCache({
+      ctx,
+      assetInId: assetOutIdEnsured,
+      assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+      currentBlockHeight: blockHeight,
+    })?.priceNormalised;
+  }
+
+  if (recursionExec && (!assetInRefPrice || !assetOutRefPrice)) {
+    return null;
+  }
 
   if (assetInRefPrice && assetOutRefPrice) {
     const price = BigNumber(assetInRefPrice).div(assetOutRefPrice);
@@ -783,13 +812,14 @@ export function getAssetsPairPrice({
       );
       return null;
     }
-    return price.toFixed();
+    return toFixedTrimmed(price);
   }
 
   if (
     !assetInRefPrice &&
     assetInEntity &&
-    assetInEntity.resourceType === AssetResourceType.aToken &&
+    (assetInEntity.resourceType === AssetResourceType.aToken ||
+      assetInEntity.resourceType === AssetResourceType.Debt) &&
     assetInEntity.underlyingAssetId
   ) {
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
@@ -801,7 +831,8 @@ export function getAssetsPairPrice({
   if (
     !assetOutRefPrice &&
     assetOutEntity &&
-    assetOutEntity.resourceType === AssetResourceType.aToken &&
+    (assetOutEntity.resourceType === AssetResourceType.aToken ||
+      assetOutEntity.resourceType === AssetResourceType.Debt) &&
     assetOutEntity.underlyingAssetId
   ) {
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
@@ -817,6 +848,48 @@ export function getAssetsPairPrice({
     blockHeight,
     ctx,
   });
+}
+
+function getPreviousSpotPriceFromCache({
+  ctx,
+  assetInId,
+  assetOutId,
+  currentBlockHeight,
+  checkBatchCache = false,
+}: {
+  assetInId: string;
+  assetOutId: string;
+  currentBlockHeight: number;
+  checkBatchCache?: boolean;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let batchStatePrevEntity: AssetSpotPriceHistoricalData | null = null;
+
+  if (checkBatchCache)
+    for (const entity of Array.from(
+      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+    )) {
+      if (
+        entity.paraBlockHeight >= currentBlockHeight ||
+        entity.assetInId !== assetInId ||
+        entity.assetOutId !== assetOutId
+      )
+        continue;
+
+      if (!batchStatePrevEntity) {
+        batchStatePrevEntity = entity;
+        continue;
+      }
+      if (batchStatePrevEntity.paraBlockHeight < entity.paraBlockHeight)
+        batchStatePrevEntity = entity;
+    }
+
+  return (
+    batchStatePrevEntity ??
+    LatestProcessedDataCacheManager.getInstance().getLastAssetSpotPriceHistoricalDataItem(
+      assetInId
+    )
+  );
 }
 
 async function processXykShareAssetSpotPrices({
@@ -961,15 +1034,11 @@ async function processXykShareAssetSpotPrices({
           price: BigInt(
             fromDecimalToExponentialNotation(
               shareAssetPriceNormalised,
-              // assetOut.decimals
               18
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
-          priceNormalised: shareAssetPriceNormalised.toFixed(
-            18,
-            BigNumber.ROUND_HALF_UP
-          ),
+          priceNormalised: toFixedTrimmed(shareAssetPriceNormalised),
           priceRoute,
 
           paraBlockHeight: blockHeader.height,

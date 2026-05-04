@@ -35,8 +35,8 @@ async function getOmniPositionId({
   block,
 }: OmnipoolLiquidityMiningGetOmniPositionIdInput): Promise<OmnipoolLiquidityMiningOmniPositionId | null> {
   return measureStorageFetch({
-    storageName: 'otc.orders',
-    originFn: 'getOtcOrder',
+    storageName: 'omnipoolLiquidityMining.omniPositionId.get',
+    originFn: 'getOmniPositionId',
     blockHeight: block.height,
     args: { depositId },
     fn: async () => {

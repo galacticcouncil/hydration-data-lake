@@ -9,6 +9,7 @@ import {
   ValidationError,
   IsEnum,
   IsNumber,
+  IsJSON,
 } from 'class-validator';
 import dotenv from 'dotenv';
 
@@ -23,11 +24,12 @@ import {
 import {
   calls as hydrationPaseoNextCalls,
   events as hydrationPaseoNextEvents,
-} from './parsers/chains/hydration-paseo-next/typegenTypes';
+} from './parsers/chains/hydration-lark/typegenTypes';
 import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
 import { TimeSeriesMigration } from './utils/redisTimeSeriesManager/migrationsManager';
 import { PgBossQueueName } from './utils/multiProcPoolManager';
+import { AaveMoneyMarketInstanceConfig } from './utils/evmTools/aave/types';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({
@@ -283,6 +285,20 @@ class EvmConfig {
   readonly MM_TREASURY_ADDRESS: string =
     '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9';
 
+  @Transform(({ value }: { value: string }) => JSON.parse(value ?? ''))
+  readonly AAVE_MONEY_MARKET_INSTANCES: AaveMoneyMarketInstanceConfig[] | null =
+    [
+      {
+        marketId: 'main',
+        treasuryAddress: '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9',
+        poolDataProviderAddress: '0x112b087b60C1a166130d59266363C45F8aa99db0',
+        poolAddressProviderAddress:
+          '0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691',
+        poolImplementationProxyAddress:
+          '0x1b02e051683b5cfac5929c25e84adb26ecf87b38',
+      },
+    ];
+
   static getInstance(): EvmConfig {
     if (EvmConfig.instance) return EvmConfig.instance;
 
@@ -353,10 +369,6 @@ class ProcessingModeConfig {
   @IsEnum(MultiFlowProcessingPhase)
   readonly MULTI_FLOW_PROCESSING_PHASE: MultiFlowProcessingPhase =
     MultiFlowProcessingPhase.INITIAL;
-
-  @Transform(({ value }: { value: string }) => value === 'true')
-  @IsBoolean()
-  readonly ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED: boolean = true;
 
   static getInstance(): ProcessingModeConfig {
     if (ProcessingModeConfig.instance) return ProcessingModeConfig.instance;
@@ -716,6 +728,12 @@ export class AppConfig {
   @IsBoolean()
   readonly USE_HIST_DATA_FROM_REDIS_TIME_SERIES: boolean = true;
 
+  /**
+   * ===========================================================================
+   * ====================== A C C O U N T    B A L A N C E S ===================
+   * ===========================================================================
+   */
+
   @Transform(({ value }: { value: string }) => new Set(value.split(',')))
   readonly ACCOUNT_BALANCE_AGGREGATION_TRIGGERS: Set<string> = new Set([
     'Currencies',
@@ -726,6 +744,14 @@ export class AppConfig {
     'Broadcast',
     'Uniques',
   ]);
+
+  /**
+   * List of accounts which will be used in balances aggregation from storage data
+   * on each batch handling. Should be used for couple of blocks just for
+   * balances actualisation.
+   */
+  @Transform(({ value }: { value: string }) => new Set(value.split(',')))
+  readonly ACCOUNTS_FOR_BALANCES_REFRESH: Set<string> = new Set([]);
 
   @Transform(({ value }: { value: string }) => +value)
   readonly ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE: number = 20;
@@ -739,17 +765,39 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ALL_ACCOUNT_BALANCES_INIT: boolean = false;
 
+  /**
+   * ENABLE_ACCOUNT_BALANCES_PROCESSING - on/off processing balances overall
+   */
   @Transform(({ value }: { value: string }) => value === 'true')
-  readonly ENABLE_ACCOUNT_BALANCES_AGGREGATION: boolean = true;
+  readonly ENABLE_ACCOUNT_BALANCES_PROCESSING: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly USE_EVENTS_DRIVEN_BALANCE_TRACKING: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_PERSISTENT_ACCOUNT_ASSET_BALANCES_NORMALISED: boolean = true;
+
+  /**
+   * ===========================================================================
+   * ===========================================================================
+   * ===========================================================================
+   */
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly XYKPOOL_HIST_DATA_TRACKING_BATCH_SIZE_PER_BLOCK: number = -1;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly XYKPOOL_HIST_DATA_TRACKING_HIGH_PRIO_SUBSET_SIZE: number = 10;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly API_PROXY_CACHE_TTL_MS_DEFILLAMA: number = 600000;

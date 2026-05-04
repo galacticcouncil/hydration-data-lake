@@ -18,7 +18,7 @@ async function getDcaSchedule({
   block,
 }: DcaGetScheduleInput): Promise<DcaScheduleData | null> {
   return measureStorageFetch({
-    storageName: 'dca.schedules',
+    storageName: 'dca.schedules.get',
     originFn: 'getDcaSchedule',
     blockHeight: block.height,
     args: { scheduleId },
@@ -72,7 +72,7 @@ async function getDcaSchedulesMany({
   };
 
   return measureStorageFetch({
-    storageName: 'dca.schedules',
+    storageName: 'dca.schedules.getMany',
     originFn: 'getDcaSchedulesMany',
     blockHeight: block.height,
     args: { scheduleIds },

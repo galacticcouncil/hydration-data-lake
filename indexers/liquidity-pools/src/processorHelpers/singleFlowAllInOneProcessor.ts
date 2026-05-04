@@ -11,7 +11,7 @@ import {
   prefetchOrInitAllBatchAccounts,
   saveAllBatchAccounts,
 } from '../handlers/accounts';
-import { MoneyMarketContractsManager } from '../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../utils/evmTools/aave/aaveMoneyMarketManager';
 import { actualiseAssets, ensureNativeToken } from '../handlers/assets/utils';
 import { handleAssetRegistry } from '../handlers/assets';
 import { handleLbpPools } from '../handlers/pools/pools/lbpPool';
@@ -69,13 +69,12 @@ import { handleUniquesEvents } from '../handlers/uniques';
 import { prefetchOrInitAllAccountProcessingStatuses } from '../handlers/accounts/accountProcessingStatus';
 import { handleLiquidationEvents } from '../handlers/liquidation';
 import { initAllAccountsOnColdStart } from '../handlers/accounts/allAccountsInit';
-import { MultiProcPoolManager } from '../utils/multiProcPoolManager';
-import { CoreProcPoolManager } from '../utils/multiProcPoolManager/subProcessors/coreProcPoolManager';
-import { BalancesProcPoolManager } from '../utils/multiProcPoolManager/subProcessors/balancesProcPoolManager';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../handlers/pools/pools/hsmpool';
-import { createMetricsTracker } from '../utils/processorMetrics';
+import { createMetricsTracker } from '../utils/prometheusMetrics';
 import { AccountEvmExtensionsCacheManager } from '../utils/accountEvmExtensionsCacheManager';
 import { PoolVolumesCacheManager } from '../handlers/pools/volumes/poolVolumesCacheManager';
+import { LatestProcessedDataCacheManager } from '../utils/latestProcessedDataCacheManager';
+import { AaveMoneyMarketsRegistry } from '../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function singleFlowAllInOneProcessor(
   ctx: SqdProcessorContext<Store>
@@ -113,6 +112,27 @@ export async function singleFlowAllInOneProcessor(
         getParsedEventsData(ctx)
       );
 
+      // await mt.track('AaveMoneyMarketManager.initContractInstances', () =>
+      //   AaveMoneyMarketManager.getInstance().initContractInstances({
+      //     ctx: ctx,
+      //     blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+      //     invalidateReservesCache:
+      //       AaveMoneyMarketManager.getInstance().isMmReservesCacheInvalidationRequired(
+      //         parsedData
+      //       ),
+      //   })
+      // );
+      await mt.track('AaveMoneyMarketsRegistry.initContractInstances', () =>
+        AaveMoneyMarketsRegistry.getInstance().initContractInstances({
+          ctx: ctx,
+          blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+          invalidateReservesCache:
+            AaveMoneyMarketsRegistry.getInstance().isMmReservesCacheInvalidationRequired(
+              parsedData
+            ),
+        })
+      );
+
       await StorageResolver.getInstance().init({
         ctx: ctx,
         blockNumberFrom: ctx.blocks[0].header.height,
@@ -121,15 +141,6 @@ export async function singleFlowAllInOneProcessor(
 
       await prefetchOrInitAllBatchAccounts(ctx);
       await prefetchOrInitAllAccountProcessingStatuses(ctx);
-    })(),
-    (async () => {
-      await mt.track('initContractInstances', () =>
-        MoneyMarketContractsManager.getInstance().initContractInstances({
-          ctx: ctx,
-          blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-        })
-      );
-      return null;
     })(),
     prefetchGenericPersistentDataWithLogs(ctx, false),
   ]);
@@ -142,6 +153,28 @@ export async function singleFlowAllInOneProcessor(
   await ensureNativeToken(ctx);
 
   await mt.track('actualiseAssets', () => actualiseAssets(ctx));
+
+  await mt.track(
+    'LatestProcessedDataCacheManager.prefetchLastAssetHistDataItem',
+    () =>
+      LatestProcessedDataCacheManager.getInstance().prefetchLastAssetHistDataItem(
+        ctx
+      )
+  );
+  await mt.track(
+    'LatestProcessedDataCacheManager.prefetchLastAssetSpotPriceHistDataItem',
+    () =>
+      LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
+        { ctx }
+      )
+  );
+  await mt.track(
+    'LatestProcessedDataCacheManager.prefetchLastXykpoolHistDataItem',
+    () =>
+      LatestProcessedDataCacheManager.getInstance().prefetchLastXykpoolHistDataItem(
+        ctx
+      )
+  );
 
   await mt.track('initAllXykPools', () =>
     initAllXykPools({

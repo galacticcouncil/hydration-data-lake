@@ -8,7 +8,7 @@ import {
   fetchBalancesForAccountsPerBlock,
 } from './utils';
 import pMap from 'p-map';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { getOrCreateAsset } from '../assets/asset';
 import { AccountData } from '../../parsers/types/storage';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
@@ -22,6 +22,11 @@ import { initAllAccountsOnColdStart } from '../accounts/allAccountsInit';
 import parsers from '../../parsers';
 import { updateAccountProcessingStatusOnTotalBalanceChange } from '../accounts/accountProcessingStatus';
 import { getOrCreateAccount } from '../accounts';
+import { ZERO_ADDRESS_PK } from '../../utils/types';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
+import { getOrCreateAccountOwnedAsset } from './accountOwnedAssets';
+
+let coldStartDone = false;
 
 export async function handleAllAccountBalancesInit({
   ctx,
@@ -52,23 +57,83 @@ export async function handleAllAccountBalancesInit({
     return;
   }
 
-  const hasAnyAccountRecord = await ctx.storeUtils.findOneWithLogs(
-    Account,
-    {
-      where: {},
-    },
-    { className: 'AccountAssetBalanceHistoricalData' }
+  return handleManyAccountBalancesInitCore({
+    ctx,
+    blockHeight,
+    whitelistedAccountIds,
+  });
+}
+
+export async function handleManyAccountBalancesInitCore({
+  ctx,
+  blockHeight,
+  whitelistedAccountIds,
+  forceFetch = false,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  blockHeight?: number;
+  whitelistedAccountIds?: string[];
+  forceFetch?: boolean;
+}) {
+  const accountsPerBlock = await initManyAccountAssetBalancesFromOnChainData({
+    ctx,
+    blockHeight,
+    whitelistedAccountIds,
+    forceFetch,
+  });
+
+  /**
+   * Aggregate Account Total Balances
+   */
+  await handleAccountTotalBalance({ ctx });
+
+  /**
+   * Include Liquidity Balances in Total Balances.
+   */
+  await handleLiquidityBalancesInTotalBalances({
+    ctx,
+    allProcessedAccountsPerBlock: accountsPerBlock ?? new Map(),
+  });
+
+  await updateAccountProcessingStatusOnTotalBalanceChange({ ctx });
+
+  const processedTotalBalances: Set<string> = new Set(
+    Array.from(ctx.batchState.state.accountTotalBalanceHistoricalData.keys())
   );
 
-  if (!hasAnyAccountRecord) {
-    console.time('initAllAccountsOnColdStart');
-    await initAllAccountsOnColdStart({ ctx });
-    console.timeEnd('initAllAccountsOnColdStart');
+  return processedTotalBalances;
+}
+
+export async function initManyAccountAssetBalancesFromOnChainData({
+  ctx,
+  blockHeight,
+  whitelistedAccountIds,
+  forceFetch = false,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  blockHeight?: number;
+  whitelistedAccountIds?: string[];
+  forceFetch?: boolean;
+}) {
+  if (!coldStartDone) {
+    const hasAnyAccountRecord = await ctx.storeUtils.findOneWithLogs(
+      Account,
+      {
+        where: {},
+      },
+      { className: 'Account' }
+    );
+
+    if (!hasAnyAccountRecord) {
+      console.time('initAllAccountsOnColdStart');
+      await initAllAccountsOnColdStart({ ctx });
+      console.timeEnd('initAllAccountsOnColdStart');
+    }
+
+    coldStartDone = true;
   }
 
-  let allInitializedAccounts = await ctx.storeUtils.findWithLogs(Account, {
-    where: {},
-  });
+  let allInitializedAccounts = [];
 
   if (whitelistedAccountIds && whitelistedAccountIds.length > 0) {
     allInitializedAccounts = [];
@@ -77,6 +142,12 @@ export async function handleAllAccountBalancesInit({
         await getOrCreateAccount({ ctx, id: whitelistedAccountId })
       );
     }
+  } else {
+    allInitializedAccounts = (
+      await ctx.storeUtils.findWithLogs(Account, {
+        where: {},
+      })
+    ).filter((acc) => acc.id !== ZERO_ADDRESS_PK);
   }
 
   const accountIdsList = allInitializedAccounts.map((acc) => acc.id);
@@ -84,7 +155,6 @@ export async function handleAllAccountBalancesInit({
   console.log(
     `handleAssetAccountBalances :: total initialized accounts: ${allInitializedAccounts.length}`
   );
-
   if (!allInitializedAccounts || allInitializedAccounts.length === 0) {
     console.log(
       `handleAssetAccountBalances :: no initialized accounts found. Skipping.`
@@ -108,8 +178,10 @@ export async function handleAllAccountBalancesInit({
     }
   }, 300000);
 
-  if (!processingBlockHeader)
+  if (!processingBlockHeader) {
+    clearInterval(keepDbConnectionAliveInterval);
     throw new Error('No processing block header found');
+  }
 
   const accountsPerBlock: Map<number, Set<string>> = new Map([
     [processingBlockHeader.height, new Set(accountIdsList)],
@@ -184,15 +256,23 @@ export async function handleAllAccountBalancesInit({
   };
 
   if (
-    MoneyMarketContractsManager.getInstance().moneyMarketReservesDetailsMap
-      .size > 0
+    // AaveMoneyMarketManager.getInstance().moneyMarketReservesDetailsMap
+    AaveMoneyMarketsRegistry.getInstance().moneyMarketReservesDetailsMap.size >
+    0
   ) {
     await pMap(
       allInitializedAccounts,
       async (account) => {
         const accountKey = `${account.id}-${account.boundEvmAddress ?? 'null'}`;
+        // const accountReserves =
+        //   await AaveMoneyMarketManager.getInstance().getUserReservesDataWithLogs(
+        //     {
+        //       accountAddress: account.boundEvmAddress!,
+        //       blockNumber: processingBlockHeader.height,
+        //     }
+        //   );
         const accountReserves =
-          await MoneyMarketContractsManager.getInstance().getUserReservesDataWithLogs(
+          await AaveMoneyMarketsRegistry.getInstance().getUserReservesDataWithLogs(
             {
               accountAddress: account.boundEvmAddress!,
               blockNumber: processingBlockHeader.height,
@@ -282,14 +362,24 @@ export async function handleAllAccountBalancesInit({
           const [accountId, accountBoundEvmAddress] = accountKey.split('-');
           if (accountBoundEvmAddress === 'null') return;
 
-          const balance =
-            await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
+          // const balance =
+          //   await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
+          //     {
+          //       contractAddress: reserveAddress,
+          //       accountAddress: accountBoundEvmAddress,
+          //       blockNumber: processingBlockHeader.height,
+          //     }
+          //   );
+
+          const balance = (
+            await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
               {
                 contractAddress: reserveAddress,
                 accountAddress: accountBoundEvmAddress,
                 blockNumber: processingBlockHeader.height,
               }
-            );
+            )
+          )?.value;
 
           initMmAssetsBalancesIndexedByAccountIdSlot(accountId);
 
@@ -359,6 +449,13 @@ export async function handleAllAccountBalancesInit({
         assetBalanceHistData.id,
         assetBalanceHistData
       );
+
+      await getOrCreateAccountOwnedAsset({
+        ctx,
+        accountId: account.id,
+        assetId: asset.id,
+        firstSeenParaBlockHeight: processingBlockHeader.height,
+      });
     }
   }
 
@@ -406,29 +503,16 @@ export async function handleAllAccountBalancesInit({
         assetBalanceHistData.id,
         assetBalanceHistData
       );
+
+      await getOrCreateAccountOwnedAsset({
+        ctx,
+        accountId: account.id,
+        assetId: asset.id,
+        firstSeenParaBlockHeight: processingBlockHeader.height,
+      });
     }
   }
 
-  /**
-   * Aggregate Account Total Balances
-   */
-  await handleAccountTotalBalance({ ctx });
-
-  /**
-   * Include Liquidity Balances in Total Balances.
-   */
-  await handleLiquidityBalancesInTotalBalances({
-    ctx,
-    allProcessedAccountsPerBlock: accountsPerBlock,
-  });
-
-  await updateAccountProcessingStatusOnTotalBalanceChange({ ctx });
-
-  const processedTotalBalances: Set<string> = new Set(
-    Array.from(ctx.batchState.state.accountTotalBalanceHistoricalData.keys())
-  );
-
   clearInterval(keepDbConnectionAliveInterval);
-
-  return processedTotalBalances;
+  return accountsPerBlock;
 }

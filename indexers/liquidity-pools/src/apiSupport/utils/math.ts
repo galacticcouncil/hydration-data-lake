@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from '../../utils/bignumber';
 import { YieldMetricsInterval } from '../types';
 import { getPeriodsNumberFromInterval } from './aggregationUtils';
 

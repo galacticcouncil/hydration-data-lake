@@ -14,7 +14,6 @@ import { getAssetHistDataWithUniqueData } from '../assets/assetHistoricalData/as
 import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoricalData/assetSpotPrices';
 import {
   AddMultiplePricesPayload,
-  RedisTimeSeriesManager,
   RedisTimeSeriesName,
 } from '../../utils/redisTimeSeriesManager';
 import { ProcessorStatusManager } from '../../processorStatusManager';
@@ -22,14 +21,12 @@ import {
   getProcessingMode,
   ProcessingMode,
 } from '../../processorHelpers/getProcessingMode';
-import { MultiFlowProcessingPhase } from '../../utils/types';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
 import { getAccountAssetBalancesLatest } from '../balances/accountAssetBalanceLatest';
 import { getOmnipoolAssetsHistDataLatest } from '../pools/pools/omnipool/historicalDataLatest';
 import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/historicalDataLatest';
-import { ApiSupportPgClient } from '../../utils/redisTimeSeriesSupport/apiSupportPgClient';
 import { getXykpoolHistDataWithUniqueData } from '../pools/pools/xykPool/historicalData';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../utils/bignumber';
 import { getXykpoolsHistDataLatest } from '../pools/pools/xykPool/historicalDataLatest';
 import { TimeSeriesDataCommitManager } from '../../utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
 import { DataCommitterJobName } from '../../utils/redisTimeSeriesSupport/queueClient';
@@ -172,13 +169,13 @@ export class HistoricalDataManager {
   }
 
   static async saveGeneralHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
+    /**
+     *  === Omnipool Historical Data ===
+     */
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
     );
 
-    /**
-     *  === OmnipoolAssetHistoricalData ===
-     */
     const omnipoolAssetAllHistoricalDataList = Array.from(
       ctx.batchState.state.omnipoolAssetAllHistoricalData.values()
     );
@@ -192,13 +189,13 @@ export class HistoricalDataManager {
      * ======
      */
 
+    /**
+     *  === Stableswap Historical Data ===
+     */
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
     );
 
-    /**
-     *  === StableswapAssetHistoricalData ===
-     */
     const stableswapAssetAllHistoricalDataList = Array.from(
       ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
     );
@@ -229,9 +226,9 @@ export class HistoricalDataManager {
       const latestProcessedDataCacheManagerInstance =
         LatestProcessedDataCacheManager.getInstance();
 
-      await latestProcessedDataCacheManagerInstance.prefetchLastXykpoolHistDataItem(
-        ctx
-      );
+      // await latestProcessedDataCacheManagerInstance.prefetchLastXykpoolHistDataItem(
+      //   ctx
+      // );
 
       xykpoolHistDataToSaveList = Array.from(
         (
@@ -337,17 +334,11 @@ export class HistoricalDataManager {
       return;
     }
 
-    await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetHistDataItem(
-      ctx
-    );
-    await LatestProcessedDataCacheManager.getInstance().prefetchLastAssetSpotPriceHistDataItem(
-      { ctx }
-    );
     const assetHistDataToSaveMap = await getAssetHistDataWithUniqueData(
       ctx.batchState.state.assetsHistoricalDataBatch,
       ctx
     );
-    const assetSpotPriceHistDataToSaveList =
+    const assetSpotPriceHistDataToSaveListDeduped =
       await getAssetSpotPriceHistDataWithUniqueData(
         ctx.batchState.state.assetsSpotPriceHistoricalDataBatch,
         ctx
@@ -357,13 +348,6 @@ export class HistoricalDataManager {
       ctx.batchState.state.assetsPairVolumeHistoricalDataBatch.values()
     );
 
-    // AssetHistoricalData is managed separately - assetInHistData relation was removed
-    // for (const priceHistData of assetSpotPriceHistDataToSaveList) {
-    //   assetHistDataToSaveMap.set(
-    //     priceHistData.assetInHistData.id,
-    //     priceHistData.assetInHistData
-    //   );
-    // }
     for (const junctionRecord of ctx.batchState.state.assetAssetsPairVolumesBatch.values()) {
       assetHistDataToSaveMap.set(
         junctionRecord.assetHistoricalData.id,
@@ -383,10 +367,14 @@ export class HistoricalDataManager {
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.priceRoutes.values())
     );
-    await ctx.storeUtils.upsertWithBatches(assetSpotPriceHistDataToSaveList);
+    await ctx.storeUtils.upsertWithBatches(
+      assetSpotPriceHistDataToSaveListDeduped
+    );
 
     LatestProcessedDataCacheManager.getInstance().setLastAssetSpotPriceHistoricalDataItem(
-      assetSpotPriceHistDataToSaveList
+      Array.from(
+        ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+      )
     );
 
     await ctx.storeUtils.upsertWithBatches(assetsPairVolumesHistDataToSaveList);
@@ -401,24 +389,28 @@ export class HistoricalDataManager {
     const accountAssetBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountAssetBalanceHistoricalData.values()
     );
+
+    LatestProcessedDataCacheManager.getInstance().setLastAccountAssetBalance(
+      accountAssetBalanceHistoricalDataList
+    );
+
     const accountAssetBalancesLatest = getAccountAssetBalancesLatest({
       balances: accountAssetBalanceHistoricalDataList,
       ctx,
     });
+
+    if (!ctx.appConfig.ENABLE_PERSISTENT_ACCOUNT_ASSET_BALANCES_NORMALISED) {
+      for (const entity of accountAssetBalanceHistoricalDataList) {
+        entity.transferableInRefAssetNorm = null;
+        entity.totalLockedInRefAssetNorm = null;
+      }
+    }
+
     const accountTotalBalanceHistoricalDataList = Array.from(
       ctx.batchState.state.accountTotalBalanceHistoricalData.values()
     );
     const accountTotalBalancesLatest = getAccountTotalBalancesLatest({
       balances: accountTotalBalanceHistoricalDataList,
-      ctx,
-    });
-
-    const accountLiquidityBalanceHistoricalDataList = Array.from(
-      ctx.batchState.state.accountLiquidityBalanceHistoricalData.values()
-    );
-
-    const accountLiquidityBalancesLatest = getAccountLiquidityBalancesLatest({
-      balances: accountLiquidityBalanceHistoricalDataList,
       ctx,
     });
 
@@ -428,17 +420,33 @@ export class HistoricalDataManager {
       ctx.storeUtils.upsertWithBatches(accountTotalBalanceHistoricalDataList),
       ctx.storeUtils.upsertWithBatches(accountTotalBalancesLatest),
       ctx.storeUtils.upsertWithBatches(
-        accountLiquidityBalanceHistoricalDataList
-      ),
-      ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest),
-      ctx.storeUtils.upsertWithBatches(
         Array.from(ctx.batchState.state.accountProcessingStatuses.values())
+      ),
+      ctx.storeUtils.upsertWithBatches(
+        Array.from(ctx.batchState.state.accountOwnedAssets.values())
       ),
       this.commitAccountTotalBalancesToRedisTimeSeries(
         accountTotalBalanceHistoricalDataList,
         ctx
       ),
     ]);
+
+    if (ctx.appConfig.ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED) {
+      const accountLiquidityBalanceHistoricalDataList = Array.from(
+        ctx.batchState.state.accountLiquidityBalanceHistoricalData.values()
+      );
+
+      const accountLiquidityBalancesLatest = getAccountLiquidityBalancesLatest({
+        balances: accountLiquidityBalanceHistoricalDataList,
+        ctx,
+      });
+      await Promise.all([
+        ctx.storeUtils.upsertWithBatches(
+          accountLiquidityBalanceHistoricalDataList
+        ),
+        ctx.storeUtils.upsertWithBatches(accountLiquidityBalancesLatest),
+      ]);
+    }
 
     await BalancesLoggerManager.getInstance().flushLogs(ctx);
   }
@@ -463,35 +471,43 @@ export class HistoricalDataManager {
 
     let latestBlock = 0;
 
-    const pricesData = src
-      .filter((item) => {
-        // Get assets to check if they have registry IDs
-        const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId);
-        const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId);
-        return !!assetIn?.assetRegistryId && !!assetOut?.assetRegistryId;
-      })
-      .map((item) => {
-        if (item.paraBlockHeight > latestBlock)
-          latestBlock = item.paraBlockHeight;
+    const pricesData = await Promise.all(
+      src
+        .filter((item) => {
+          // Get assets to check if they have registry IDs
+          const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId);
+          const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId);
+          return !!assetIn?.assetRegistryId && !!assetOut?.assetRegistryId;
+        })
+        .map(async (item) => {
+          if (item.paraBlockHeight > latestBlock)
+            latestBlock = item.paraBlockHeight;
 
-        const block = ctx.batchState.getParaBlockFromCacheByHeight(
-          item.paraBlockHeight
-        );
-        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+          const block =
+            await ctx.batchState.getParaBlockByHeightWithFallbackFetch(
+              item.paraBlockHeight,
+              ctx
+            );
+          if (!block)
+            throw new Error(
+              `Block entity not found for paraBlockHeight ${item.paraBlockHeight} (commitAssetPricesToRedisTimeSeries)`
+            );
+          const timestamp = block.timestamp.getTime();
 
-        // Get asset registry IDs from the Asset entities
-        const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId)!;
-        const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId)!;
+          // Get asset registry IDs from the Asset entities
+          const assetIn = ctx.batchState.state.assetsAll.get(item.assetInId)!;
+          const assetOut = ctx.batchState.state.assetsAll.get(item.assetOutId)!;
 
-        return {
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.price,
-          assetAId: assetIn.assetRegistryId!,
-          assetBId: assetOut.assetRegistryId!,
-          timestamp,
-          value: BigNumber(item.priceNormalised).toNumber(),
-        };
-      });
+          return {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.price,
+            assetAId: assetIn.assetRegistryId!,
+            assetBId: assetOut.assetRegistryId!,
+            timestamp,
+            value: BigNumber(item.priceNormalised).toNumber(),
+          };
+        })
+    );
 
     await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
       actionName: DataCommitterJobName.commitAssetPriceVolume,
@@ -518,33 +534,41 @@ export class HistoricalDataManager {
 
     let latestBlock = 0;
 
-    const volumesData = src
-      .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
-      .map((item): AddMultiplePricesPayload => {
-        if (item.paraBlockHeight > latestBlock)
-          latestBlock = item.paraBlockHeight;
+    const volumesData = await Promise.all(
+      src
+        .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
+        .map(async (item): Promise<AddMultiplePricesPayload> => {
+          if (item.paraBlockHeight > latestBlock)
+            latestBlock = item.paraBlockHeight;
 
-        const block = ctx.batchState.getParaBlockFromCacheByHeight(
-          item.paraBlockHeight
-        );
-        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+          const block =
+            await ctx.batchState.getParaBlockByHeightWithFallbackFetch(
+              item.paraBlockHeight,
+              ctx
+            );
+          if (!block)
+            throw new Error(
+              `Block entity not found for paraBlockHeight ${item.paraBlockHeight} (commitAssetsPairVolumeToRedisTimeSeries)`
+            );
+          const timestamp = block.timestamp.getTime();
 
-        return {
-          keyPrefix: ctx.appConfig.INDEXER_ID,
-          name: RedisTimeSeriesName.volume,
-          assetAId:
-            +item.assetRegistryAId! < +item.assetRegistryBId!
-              ? item.assetRegistryAId!
-              : item.assetRegistryBId!,
-          assetBId:
-            +item.assetRegistryAId! < +item.assetRegistryBId!
-              ? item.assetRegistryBId!
-              : item.assetRegistryAId!,
+          return {
+            keyPrefix: ctx.appConfig.INDEXER_ID,
+            name: RedisTimeSeriesName.volume,
+            assetAId:
+              +item.assetRegistryAId! < +item.assetRegistryBId!
+                ? item.assetRegistryAId!
+                : item.assetRegistryBId!,
+            assetBId:
+              +item.assetRegistryAId! < +item.assetRegistryBId!
+                ? item.assetRegistryBId!
+                : item.assetRegistryAId!,
 
-          timestamp,
-          value: BigNumber(item.totalVolumeNormalised).toNumber(),
-        };
-      });
+            timestamp,
+            value: BigNumber(item.totalVolumeNormalised).toNumber(),
+          };
+        })
+    );
 
     await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
       actionName: DataCommitterJobName.commitAssetPriceVolume,
@@ -575,39 +599,47 @@ export class HistoricalDataManager {
     )) {
       let latestBlock = 0;
 
-      const balancesData = srcBatch.map((item) => {
-        if (item.paraBlockHeight > latestBlock)
-          latestBlock = item.paraBlockHeight;
+      const balancesData = await Promise.all(
+        srcBatch.map(async (item) => {
+          if (item.paraBlockHeight > latestBlock)
+            latestBlock = item.paraBlockHeight;
 
-        const block = ctx.batchState.getParaBlockFromCacheByHeight(
-          item.paraBlockHeight
-        );
-        const timestamp = block?.timestamp.getTime() ?? new Date().getTime();
+          const block =
+            await ctx.batchState.getParaBlockByHeightWithFallbackFetch(
+              item.paraBlockHeight,
+              ctx
+            );
+          if (!block)
+            throw new Error(
+              `Block entity not found for paraBlockHeight ${item.paraBlockHeight} (commitAccountTotalBalancesToRedisTimeSeries)`
+            );
+          const timestamp = block.timestamp.getTime();
 
-        return [
-          {
-            keyPrefix: ctx.appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.acc_bal_tot_tns,
-            accountId: item.accountId,
-            timestamp,
-            value: +item.totalTransferableNorm,
-          },
-          {
-            keyPrefix: ctx.appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.acc_bal_tot_loc,
-            accountId: item.accountId,
-            timestamp,
-            value: +item.totalLockedNorm,
-          },
-          {
-            keyPrefix: ctx.appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.acc_bal_tot_debt,
-            accountId: item.accountId,
-            timestamp,
-            value: +(item.totalDebtNorm ?? '0'),
-          },
-        ];
-      });
+          return [
+            {
+              keyPrefix: ctx.appConfig.INDEXER_ID,
+              name: RedisTimeSeriesName.acc_bal_tot_tns,
+              accountId: item.accountId,
+              timestamp,
+              value: +item.totalTransferableNorm,
+            },
+            {
+              keyPrefix: ctx.appConfig.INDEXER_ID,
+              name: RedisTimeSeriesName.acc_bal_tot_loc,
+              accountId: item.accountId,
+              timestamp,
+              value: +item.totalLockedNorm,
+            },
+            {
+              keyPrefix: ctx.appConfig.INDEXER_ID,
+              name: RedisTimeSeriesName.acc_bal_tot_debt,
+              accountId: item.accountId,
+              timestamp,
+              value: +(item.totalDebtNorm ?? '0'),
+            },
+          ];
+        })
+      );
 
       await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
         actionName: DataCommitterJobName.commitAccountTotalBalance,

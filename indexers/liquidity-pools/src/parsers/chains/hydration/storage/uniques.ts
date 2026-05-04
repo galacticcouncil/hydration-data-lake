@@ -15,7 +15,7 @@ async function getAssetsData({
   block,
 }: UniquesGetAssetsDataInput): Promise<UniquesAssetDataWithId[] | null> {
   return measureStorageFetch({
-    storageName: 'uniques.asset',
+    storageName: 'uniques.asset.getMany',
     originFn: 'getAssetsData',
     blockHeight: block.height,
     args: { collectionId, assetIds },
@@ -62,8 +62,8 @@ async function getAllAssetsData({
   block,
 }: UniquesGetAllAssetsDataInput): Promise<UniquesAssetDataWithId[] | null> {
   return measureStorageFetch({
-    storageName: 'uniques.asset',
-    originFn: 'getAllUniques',
+    storageName: 'uniques.asset.getPairsPaged',
+    originFn: 'getAllAssetsData',
     blockHeight: block.height,
     args: { collectionId },
     fn: async () => {
