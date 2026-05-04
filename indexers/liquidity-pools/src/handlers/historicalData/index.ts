@@ -169,13 +169,13 @@ export class HistoricalDataManager {
   }
 
   static async saveGeneralHistoricalDataBulk(ctx: SqdProcessorContext<Store>) {
+    /**
+     *  === Omnipool Historical Data ===
+     */
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
     );
 
-    /**
-     *  === OmnipoolAssetHistoricalData ===
-     */
     const omnipoolAssetAllHistoricalDataList = Array.from(
       ctx.batchState.state.omnipoolAssetAllHistoricalData.values()
     );
@@ -189,13 +189,13 @@ export class HistoricalDataManager {
      * ======
      */
 
+    /**
+     *  === Stableswap Historical Data ===
+     */
     await ctx.storeUtils.upsertWithBatches(
       Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
     );
 
-    /**
-     *  === StableswapAssetHistoricalData ===
-     */
     const stableswapAssetAllHistoricalDataList = Array.from(
       ctx.batchState.state.stablepoolAssetsAllHistoricalData.values()
     );

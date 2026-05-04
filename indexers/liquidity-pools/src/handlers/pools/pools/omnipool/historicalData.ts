@@ -205,12 +205,12 @@ export async function handleOmnipoolHistoricalData(
       .map((item) => [item.id, item])
   );
 
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values())
-  );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.omnipoolAllHistoricalData.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.omnipoolAssetAllHistoricalData.values())
+  // );
 }
 
 export async function getOmnipoolHistDataWithUniqueData({
@@ -224,24 +224,6 @@ export async function getOmnipoolHistDataWithUniqueData({
 }) {
   const poolsResult: Map<string, OmnipoolHistoricalData> = new Map();
   const poolAssetsResult: Map<string, OmnipoolAssetHistoricalData> = new Map();
-
-  // const poolsHistoryIndex = new Map<string, OmnipoolHistoricalData[]>();
-  //
-  // for (const i of (
-  //   poolsData || ctx.batchState.state.omnipoolAllHistoricalData
-  // ).values()) {
-  //   if (!poolsHistoryIndex.has(i.pool.id)) {
-  //     poolsHistoryIndex.set(i.pool.id, []);
-  //   }
-  //   poolsHistoryIndex.get(i.pool.id)!.push(i);
-  // }
-  //
-  // for (const [poolAddress, list] of poolsHistoryIndex.entries()) {
-  //   poolsHistoryIndex.set(
-  //     poolAddress,
-  //     list.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
-  //   );
-  // }
 
   const poolAssetsHistoryIndex = new Map<
     string,
@@ -264,34 +246,6 @@ export async function getOmnipoolHistDataWithUniqueData({
       list.sort((a, b) => b.paraBlockHeight - a.paraBlockHeight)
     );
   }
-
-  // await pMap(
-  //   Array.from(poolsData.values()),
-  //   async (item) => {
-  //     if (
-  //       await isOmnipoolHistoricalDataUniqueRegardingPreviousRecord({
-  //         currentRecord: item,
-  //         cachedPoolsIndexedRecords: poolsHistoryIndex,
-  //         ctx,
-  //       })
-  //     ) {
-  //       poolsResult.set(item.id, item);
-  //
-  //       /**
-  //        * We need to add all pool's assets data if pool's data is unique to keep
-  //        * data in API consistent
-  //        */
-  //       for (const assetId of poolAssetsHistoryIndex.keys()) {
-  //         const pairAssetRecordId = `${item.poolAddress}-${assetId}-${item.paraBlockHeight}`;
-  //         poolAssetsResult.set(
-  //           pairAssetRecordId,
-  //           poolAssetsData.get(pairAssetRecordId)!
-  //         );
-  //       }
-  //     }
-  //   },
-  //   { concurrency: concurrencyLimit }
-  // );
 
   await pMap(
     Array.from(poolAssetsData.values()).filter(
@@ -335,47 +289,6 @@ export async function getOmnipoolHistDataWithUniqueData({
     poolAssets: poolAssetsResult,
   };
 }
-//
-// export async function isOmnipoolHistoricalDataUniqueRegardingPreviousRecord({
-//   currentRecord,
-//   cachedPoolsIndexedRecords,
-//   ctx,
-// }: {
-//   currentRecord: Omnipool;
-//   cachedPoolsIndexedRecords: Map<string, Omnipool[]>;
-//   ctx: ProcessorContext<Store>;
-// }) {
-//   let previousItem = (
-//     cachedPoolsIndexedRecords.get(currentRecord.poolAddress)! || []
-//   ).find((i) => i.paraBlockHeight < currentRecord.paraBlockHeight);
-//
-//   if (!previousItem) {
-//     previousItem = await ctx.store.findOne(Omnipool, {
-//       where: {
-//         paraBlockHeight: LessThan(currentRecord.paraBlockHeight),
-//       },
-//       order: {
-//         paraBlockHeight: 'DESC',
-//       },
-//     });
-//   }
-//
-//   if (!previousItem) {
-//     return true;
-//   }
-//
-//   let isEqual = true;
-//
-//   if (
-//     previousItem.hubAssetTradability !== currentRecord.hubAssetTradability ||
-//     previousItem.hubAssetTradability.bits !==
-//       currentRecord.hubAssetTradability.bits
-//   ) {
-//     isEqual = false;
-//   }
-//
-//   return !isEqual;
-// }
 
 export async function isOmnipoolAssetHistoricalDataUniqueRegardingPreviousRecord({
   currentRecord,

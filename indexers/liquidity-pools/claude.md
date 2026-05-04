@@ -2,6 +2,10 @@
 
 Substrate blockchain indexer for **Hydration** (Polkadot parachain, 6s block time). Built on the [Subsquid (SQD) framework](https://docs.sqd.ai/).
 
+## Resources
+https://github.com/galacticcouncil/hydration/blob/main/general/hydration.md
+https://github.com/galacticcouncil/hydration/blob/main/general/omnipool.md
+
 ## Stack
 
 - **Framework**: Subsquid (`@subsquid/substrate-processor`)
@@ -40,6 +44,10 @@ Substrate blockchain indexer for **Hydration** (Polkadot parachain, 6s block tim
 8. **Prices in batch**: During batch processing, `ctx.batchState` contains prices for all blocks in the batch — they are always calculated regardless. At DB save time, prices are deduped so only blocks where a price actually changed are persisted.
 9. **`correlateAssetSpotPrices`**: Not used in the normal processing flow. Only needed in reaggregation flows where prices are fetched from DB instead of being calculated during block processing.
 10. **Money market asset pricing**: Within the same money market reserve, the underlying asset, aToken, and Debt token all share the same spot price. Debt tokens (`resourceType = Debt`) cannot be priced by the Router — their price is always taken from the underlying asset. aTokens (`resourceType = aToken`) can be priced by the Router, but if the Router doesn't return a price, the underlying asset's price is used as fallback.
+11. **`account_owned_asset` lookup table**: Thin table (`<accountId>-<assetId>`, deterministic id) tracking which assets each account has ever held. Used by the events-driven balance flow to discover an account's `(account, asset)` pair set without scanning `account_asset_balance_historical_data` (which has hundreds of thousands of rows per pair on prod and made discovery dominate batch time).
+    - **Semantics**: ownership-only. A pair returning to a zero balance is NOT removed — the account may receive the asset again, and the historical lookup chain must remain intact.
+    - **Write path**: every snapshot in `processBalanceEventsSequentially` and every pair created by `initManyAccountAssetBalancesFromOnChainData` calls `getOrCreateAccountOwnedAsset`. Idempotent on reorg re-runs (deterministic id, `firstSeenParaBlockHeight` set on creation only).
+    - **Read path**: `prefetchAccountOwnedAssetsByAccountIds` loads ownership for the batch's accounts; the resulting pair set then feeds the LATERAL-join query in `prefetchLastAccountAssetBalances` (correct in both head and reaggregation modes — lookup with `para_block_height < $blockHeight` returns zero rows for pairs not yet owned at that block).
 
 ## Asset IDs
 

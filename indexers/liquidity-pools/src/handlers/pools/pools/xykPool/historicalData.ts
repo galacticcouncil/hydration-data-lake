@@ -1,7 +1,5 @@
 import pMap from 'p-map';
-import { In, LessThan } from 'typeorm';
-
-import { BlockHeader } from '@subsquid/substrate-processor';
+import { LessThan } from 'typeorm';
 import { Store } from '@subsquid/typeorm-store';
 
 import {
@@ -12,8 +10,6 @@ import {
 import parsers from '../../../../parsers';
 import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
 import { SqdProcessorContext } from '../../../../processor';
-import { splitIntoBatches } from '../../../../utils/helpers';
-import { getOrCreateXykPool } from './xykPool';
 import { LatestProcessedDataCacheManager } from '../../../../utils/latestProcessedDataCacheManager';
 import { StorageResolver } from '../../../../parsers/storageResolver';
 import { getOrCreateAsset } from '../../../assets/asset';
@@ -335,10 +331,6 @@ export async function ensureXykpoolHisDataFromLatestPersistedData({
 
   return newHistData;
 
-  // ctx.batchState.state.xykPoolAllHistoricalData.set(
-  //   newHistData.id,
-  //   newHistData
-  // );
 }
 
 export async function getXykpoolHistDataWithUniqueData(

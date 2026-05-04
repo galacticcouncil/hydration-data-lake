@@ -1,3 +1,37 @@
+/**
+ * account_owned_asset — thin lookup table mapping (accountId, assetId) pairs.
+ *
+ * Purpose: avoid scanning account_asset_balance_historical_data to discover
+ * which assets an account holds. The historical table has hundreds of
+ * thousands of rows per (account, asset) pair on prod; a discovery query
+ * over it dominated batch time (measured at ~9 minutes for ~500 accounts).
+ * This table holds one row per pair (~5–10 per account), so the same
+ * discovery becomes a millisecond indexed lookup.
+ *
+ * Semantics:
+ *  - Tracks ownership ("ever held"), not current balance. A pair returning
+ *    to zero is NOT removed — the account may receive the asset again, and
+ *    the historical lookup chain must remain intact.
+ *  - Deterministic id `<accountId>-<assetId>` makes upserts idempotent across
+ *    reorg re-runs and works the same in head and reaggregation modes.
+ *  - `firstSeenParaBlockHeight` is informational only. Set on creation and
+ *    never overwritten; no read path depends on its exact value.
+ *
+ * Write path: every snapshot in `processBalanceEventsSequentially` and every
+ * pair created by `initManyAccountAssetBalancesFromOnChainData` calls
+ * `getOrCreateAccountOwnedAsset`. The batchState map is flushed via
+ * `HistoricalDataManager.saveAccountBalancesRelatedDataBulk`.
+ *
+ * Read path: `prefetchAccountOwnedAssetsByAccountIds` loads ownership for the
+ * batch's involved accounts; the resulting pair set feeds the LATERAL-join
+ * query in `prefetchLastAccountAssetBalances`.
+ *
+ * Reaggregation safety: ownership returned for a given account is a superset
+ * of what existed at any historical block being reaggregated. The downstream
+ * LATERAL lookup with `para_block_height < $reaggBlock` returns zero rows for
+ * pairs not yet owned at that block, and the snapshot logic already handles
+ * "no prior history" by starting from 0n.
+ */
 import { In } from 'typeorm';
 
 import { Store } from '@subsquid/typeorm-store';

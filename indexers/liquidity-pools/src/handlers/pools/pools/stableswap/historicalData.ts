@@ -53,13 +53,6 @@ async function getStableswapDataPromise({
 
   if (!poolStorageData) return null;
 
-  // const poolPegsData =
-  //   poolPegs ??
-  //   (await parsers.storage.stableswap.getPoolPegs({
-  //     poolId,
-  //     block: blockHeader,
-  //   }));
-
   const poolPegsData = poolPegs;
 
   const poolAssetsStorageDataMap = new Map(
@@ -76,12 +69,6 @@ async function getStableswapDataPromise({
         block: blockHeader,
         poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
       }),
-      // storageData: await parsers.storage.stableswap.getPoolAssetStorageData({
-      //   poolId,
-      //   assetId,
-      //   block: blockHeader,
-      //   poolAddress: blake2AsHex(StableMath.getPoolAddress(poolId)),
-      // }),
       storageData: poolAssetsStorageDataMap.get(assetId),
     }),
     {
@@ -311,10 +298,10 @@ export async function handleStableswapHistoricalData(
     }
   }
 
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
-  );
-  await ctx.storeUtils.upsertWithBatches(
-    Array.from(ctx.batchState.state.stablepoolAssetsAllHistoricalData.values())
-  );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.stablepoolAllHistoricalData.values())
+  // );
+  // await ctx.storeUtils.upsertWithBatches(
+  //   Array.from(ctx.batchState.state.stablepoolAssetsAllHistoricalData.values())
+  // );
 }
