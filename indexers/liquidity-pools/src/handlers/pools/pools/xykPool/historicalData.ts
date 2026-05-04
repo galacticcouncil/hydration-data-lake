@@ -150,7 +150,7 @@ export async function handleXykPoolHistoricalData(
                 ensure: false,
               });
               const assetB = await getOrCreateAsset({
-                id: pool.assetAId,
+                id: pool.assetBId,
                 ctx,
                 ensure: false,
               });
@@ -330,7 +330,6 @@ export async function ensureXykpoolHisDataFromLatestPersistedData({
   });
 
   return newHistData;
-
 }
 
 export async function getXykpoolHistDataWithUniqueData(
