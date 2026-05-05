@@ -838,7 +838,7 @@ export function getAssetsPairPrice({
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
       assetOutEntity.underlyingAssetId
     );
-    assetOutIdEnsured = underlyingAsset?.id ?? assetInId;
+    assetOutIdEnsured = underlyingAsset?.id ?? assetOutId;
   }
 
   return getAssetsPairPrice({
