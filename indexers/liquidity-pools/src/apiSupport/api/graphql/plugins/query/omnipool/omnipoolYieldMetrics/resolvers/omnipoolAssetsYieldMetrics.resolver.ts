@@ -27,11 +27,13 @@ export async function omnipoolAssetsYieldMetricsResolver(
   const cacheKey = `OMNIPOOL_ASSETS_YIELD_METRICS::${crypto
     .createHash('md5')
     .update(
-      JSON.stringify(
-        filter && filter.assetIds && filter.assetIds.length > 0
-          ? filter
-          : YieldMetricsInterval['1MON']
-      )
+      JSON.stringify({
+        interval: filter.interval || YieldMetricsInterval['1MON'],
+        assetIds:
+          filter.assetIds && filter.assetIds.length > 0
+            ? [...filter.assetIds].sort()
+            : null,
+      })
     )
     .digest('hex')}`;
 
