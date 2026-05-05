@@ -924,14 +924,6 @@ async function fetchSingleBalanceFromRpc({
   const account = await getOrCreateAccount({ ctx, id: accountId });
 
   if (asset.resourceType === AssetResourceType.Debt || !asset.assetRegistryId) {
-    // const balance =
-    //   await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
-    //     {
-    //       contractAddress: asset.evmAddress,
-    //       accountAddress: account.boundEvmAddress!,
-    //       blockNumber: blockHeader.height,
-    //     }
-    //   );
     const balance = (
       await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
         {
@@ -957,12 +949,6 @@ async function fetchSingleBalanceFromRpc({
       totalLocked: tokenBalance?.reserved ?? 0n,
     };
 
-  // const balance =
-  //   await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs({
-  //     contractAddress: asset.evmAddress,
-  //     accountAddress: account.boundEvmAddress!,
-  //     blockNumber: blockHeader.height,
-  //   });
   const balance = (
     await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
       {

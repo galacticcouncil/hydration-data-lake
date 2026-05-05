@@ -174,16 +174,6 @@ export async function handleAccountMmPositionDataOnMmEvent({
     blockHeader: blockHeader,
   });
 
-  // const positionData =
-  //   StorageResolver.getInstance().storageDictionaryManager?.getAccountMmPositionData(
-  //     { accountId: account.id, block: blockHeader }
-  //   ) ??
-  //   (await AaveMoneyMarketManager.getInstance().getAccountMmPositionDataWithLogs(
-  //     {
-  //       accountAddress: accountEvmAddress,
-  //       blockNumber: blockHeader.height,
-  //     }
-  //   ));
   let positionsData: WithMarketTag<AccountMmPositionDataContractData>[] = [];
   const positionDataStorageDictionary =
     StorageResolver.getInstance().storageDictionaryManager?.getAccountMmPositionData(

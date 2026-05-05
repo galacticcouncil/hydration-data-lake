@@ -366,14 +366,6 @@ export async function getOrCreateAsset({
     return null;
   }
 
-  // const evmTokenContractData =
-  //   storageData.assetType === AssetType.Erc20 &&
-  //   (evmAddress || erc20AssetContractAddress)
-  //     ? await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
-  //         evmAddress ?? erc20AssetContractAddress ?? ''
-  //       )
-  //     : null;
-
   const evmTokenContractData =
     storageData.assetType === AssetType.Erc20 &&
     (evmAddress || erc20AssetContractAddress)
@@ -512,11 +504,6 @@ export async function getOrCreateMoneyMarketAsset({
    */
 
   if (!evmAddress) return null; //TODO fix this
-
-  // const contractData =
-  //   await AaveMoneyMarketManager.getInstance().getReserveDetailsWithLogs(
-  //     evmAddress
-  //   );
 
   const contractData =
     await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(

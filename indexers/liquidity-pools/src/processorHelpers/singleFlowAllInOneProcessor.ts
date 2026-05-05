@@ -112,16 +112,6 @@ export async function singleFlowAllInOneProcessor(
         getParsedEventsData(ctx)
       );
 
-      // await mt.track('AaveMoneyMarketManager.initContractInstances', () =>
-      //   AaveMoneyMarketManager.getInstance().initContractInstances({
-      //     ctx: ctx,
-      //     blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-      //     invalidateReservesCache:
-      //       AaveMoneyMarketManager.getInstance().isMmReservesCacheInvalidationRequired(
-      //         parsedData
-      //       ),
-      //   })
-      // );
       await mt.track('AaveMoneyMarketsRegistry.initContractInstances', () =>
         AaveMoneyMarketsRegistry.getInstance().initContractInstances({
           ctx: ctx,

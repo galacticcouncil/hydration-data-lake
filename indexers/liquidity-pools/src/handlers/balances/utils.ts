@@ -292,14 +292,6 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
 
               // if (assetEntity.assetType === AssetType.Erc20) {
               if (assetEntity.resourceType === AssetResourceType.Debt) {
-                // totalTransferableBalance =
-                //   (await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
-                //     {
-                //       contractAddress: assetEntity.evmAddress!,
-                //       accountAddress: accountEntity.boundEvmAddress!,
-                //       blockNumber,
-                //     }
-                //   )) ?? 0n;
                 const totalTransferableBalance =
                   (
                     await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(

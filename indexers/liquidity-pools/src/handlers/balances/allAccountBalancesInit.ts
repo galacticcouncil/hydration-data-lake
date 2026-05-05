@@ -256,7 +256,6 @@ export async function initManyAccountAssetBalancesFromOnChainData({
   };
 
   if (
-    // AaveMoneyMarketManager.getInstance().moneyMarketReservesDetailsMap
     AaveMoneyMarketsRegistry.getInstance().moneyMarketReservesDetailsMap.size >
     0
   ) {
@@ -264,13 +263,6 @@ export async function initManyAccountAssetBalancesFromOnChainData({
       allInitializedAccounts,
       async (account) => {
         const accountKey = `${account.id}-${account.boundEvmAddress ?? 'null'}`;
-        // const accountReserves =
-        //   await AaveMoneyMarketManager.getInstance().getUserReservesDataWithLogs(
-        //     {
-        //       accountAddress: account.boundEvmAddress!,
-        //       blockNumber: processingBlockHeader.height,
-        //     }
-        //   );
         const accountReserves =
           await AaveMoneyMarketsRegistry.getInstance().getUserReservesDataWithLogs(
             {
@@ -361,15 +353,6 @@ export async function initManyAccountAssetBalancesFromOnChainData({
         async (accountKey) => {
           const [accountId, accountBoundEvmAddress] = accountKey.split('-');
           if (accountBoundEvmAddress === 'null') return;
-
-          // const balance =
-          //   await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
-          //     {
-          //       contractAddress: reserveAddress,
-          //       accountAddress: accountBoundEvmAddress,
-          //       blockNumber: processingBlockHeader.height,
-          //     }
-          //   );
 
           const balance = (
             await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(

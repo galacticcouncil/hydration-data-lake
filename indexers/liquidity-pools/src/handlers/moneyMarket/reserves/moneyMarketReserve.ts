@@ -55,10 +55,6 @@ export async function getOrCreateMoneyMarketReserve({
   let reserveDataToProcess = reserveData ?? null;
 
   if (!reserveData) {
-    // const allReservesData =
-    //   await AaveMoneyMarketManager.getInstance().getReservesData({
-    //     blockNumber: blockHeader.height,
-    //   });
     const allReservesData =
       await AaveMoneyMarketsRegistry.getInstance().getAllMarketsReservesData({
         blockNumber: blockHeader.height,
@@ -218,7 +214,6 @@ export async function actualizeMoneyMarketReserves({
     reserves ??
     Array.from(
       AaveMoneyMarketsRegistry.getInstance().moneyMarketReservesDetailsMap.values()
-      // AaveMoneyMarketManager.getInstance().moneyMarketReservesDetailsMap.values()
     );
 
   for (const reserveData of reservesToProcess) {

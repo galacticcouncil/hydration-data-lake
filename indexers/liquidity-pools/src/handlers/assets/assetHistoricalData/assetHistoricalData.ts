@@ -13,9 +13,7 @@ import parsers from '../../../parsers';
 import { SqdProcessorContext } from '../../../processor';
 import { AaveMoneyMarketManager } from '../../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
-import {
-  AaveMoneyMarketsRegistry
-} from '../../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
+import { AaveMoneyMarketsRegistry } from '../../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -42,30 +40,6 @@ export async function processAssetsHistoricalDataAtBlock({
     }
   }
 
-  // const totalIssuancePerAssetMapByAssetId = new Map(
-  //   (
-  //     await parsers.storage.tokens.getManyTokensTotalIssuance({
-  //       block,
-  //       tokenIds: otherAssets.map((asset) => asset.assetRegistryId!),
-  //     })
-  //   )
-  //     .filter((res) => res.amount !== null)
-  //     .map((res) => [indexedAssets.get(res.tokenId)!, res.amount])
-  // );
-  //
-  // totalIssuancePerAssetMapByAssetId.set(
-  //   '0',
-  //   await parsers.storage.balances.getTotalIssuance({ block })
-  // );
-  //
-  // const mmAssetsTotalSupply =
-  //   await AaveMoneyMarketManager.getInstance().getManyTokensTotalSupplyWithLogs(
-  //     {
-  //       addresses: mmAssets.map((a) => a.evmAddress!),
-  //       blockNumber: block.height,
-  //     }
-  //   );
-
   const [
     otherAssetsTotalIssuance,
     nativeTokenTotalIssuance,
@@ -77,10 +51,6 @@ export async function processAssetsHistoricalDataAtBlock({
       tokenIds: otherAssets.map((asset) => asset.assetRegistryId!),
     }),
     parsers.storage.balances.getTotalIssuance({ block }),
-    // AaveMoneyMarketManager.getInstance().getManyTokensTotalSupplyWithLogs({
-    //   addresses: mmAssets.map((a) => a.evmAddress!),
-    //   blockNumber: block.height,
-    // }),
     AaveMoneyMarketsRegistry.getInstance().getManyTokensTotalSupplyWithLogs({
       addresses: mmAssets.map((a) => a.evmAddress!),
       blockNumber: block.height,

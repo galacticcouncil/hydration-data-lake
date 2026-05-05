@@ -87,13 +87,6 @@ export async function handleMmAssetAccountBalancesPerBlock({
               accountStorageDictionaryBalancesPerAssetMap.get(
                 asset?.assetRegistryId ?? ''
               ) ??
-              // (await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
-              //   {
-              //     contractAddress: asset.evmAddress!,
-              //     accountAddress: accountAssetsMap.account.boundEvmAddress!,
-              //     blockNumber: blockSlotData.block.height,
-              //   }
-              // )) ??
               (
                 await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
                   {
@@ -427,14 +420,6 @@ export async function handleMoneyMarketAssetBalancesForAccounts({
               continue;
             }
 
-            // const balance =
-            //   await AaveMoneyMarketManager.getInstance().getAccountTokenBalanceWithLogs(
-            //     {
-            //       contractAddress: mmAsset.evmAddress!,
-            //       accountAddress: account.boundEvmAddress!,
-            //       blockNumber: blockHeight,
-            //     }
-            //   );
             const balance = (
               await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
                 {
@@ -645,7 +630,6 @@ async function getAccountMmAssetsPerBlock({
   await pMap(
     allAccountsForMmReserveBalancesInitList,
     async (account) => {
-      // const mmContractsManagerInst = AaveMoneyMarketManager.getInstance();
       const mmContractsManagerInst = AaveMoneyMarketsRegistry.getInstance();
 
       const accountReserves =
@@ -747,11 +731,6 @@ async function getAccountATokensOnBorrowEvents({
   if (mmEventName !== EvmEventName.Borrow && mmEventName !== EvmEventName.Repay)
     return [];
 
-  // const accountReserves =
-  //   await AaveMoneyMarketManager.getInstance().getUserReservesDataWithLogs({
-  //     accountAddress: accountH160Address,
-  //     blockNumber,
-  //   });
   const accountReserves =
     await AaveMoneyMarketsRegistry.getInstance().getUserReservesDataWithLogs({
       accountAddress: accountH160Address,

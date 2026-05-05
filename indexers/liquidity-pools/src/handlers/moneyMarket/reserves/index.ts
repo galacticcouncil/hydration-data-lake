@@ -35,10 +35,6 @@ export async function handleMmReservesConfigsHistoricalData(
   }
 
   for (const blockHeader of blocksToBeProcessed.values()) {
-    // const reservesData =
-    //   await AaveMoneyMarketManager.getInstance().getReservesData({
-    //     blockNumber: blockHeader.height,
-    //   });
     const reservesData =
       await AaveMoneyMarketsRegistry.getInstance().getAllMarketsReservesData({
         blockNumber: blockHeader.height,
