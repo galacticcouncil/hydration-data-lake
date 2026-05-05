@@ -45,6 +45,7 @@ import { ProcessingPoolManagerRedis } from '../../../utils/multiProcPoolManager/
 import { processPreprocessedDataBuckets } from '../../../handlers/preprocessedDataBucket';
 import { handleEvm } from '../../../handlers/evmLog';
 import { initAllXykPools } from '../../../handlers/pools/pools/xykPool/xykPool';
+import { AaveMoneyMarketsRegistry } from '../../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function execCoreProcessorHandlers(
   ctx: SqdProcessorContext<Store>
@@ -95,7 +96,7 @@ export async function execCoreProcessorHandlers(
   console.timeEnd('prefetchOrInitAllBatchAccounts');
 
   console.time('initContractInstances');
-  await AaveMoneyMarketManager.getInstance().initContractInstances({
+  await AaveMoneyMarketsRegistry.getInstance().initContractInstances({
     ctx: ctx,
     blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
   });

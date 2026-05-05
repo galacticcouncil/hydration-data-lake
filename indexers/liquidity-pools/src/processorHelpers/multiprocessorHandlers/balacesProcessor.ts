@@ -89,6 +89,7 @@ import { fetchAndCorrelateAssetSpotPrices } from '../utils';
 import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/pools/hsmpool';
 import { createMetricsTracker } from '../../utils/prometheusMetrics';
 import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function balancesProcessorHandler(
   ctx: SqdProcessorContext<Store>
@@ -134,6 +135,17 @@ export async function balancesProcessorHandler(
         getParsedEventsData(ctx)
       );
 
+      await mt.track('initContractInstances', () =>
+        AaveMoneyMarketsRegistry.getInstance().initContractInstances({
+          ctx: ctx,
+          blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+          invalidateReservesCache:
+            AaveMoneyMarketsRegistry.getInstance().isMmReservesCacheInvalidationRequired(
+              parsedData
+            ),
+        })
+      );
+
       await StorageResolver.getInstance().init({
         ctx: ctx,
         blockNumberFrom: ctx.blocks[0].header.height,
@@ -142,15 +154,6 @@ export async function balancesProcessorHandler(
 
       await prefetchOrInitAllBatchAccounts(ctx);
       await prefetchOrInitAllAccountProcessingStatuses(ctx);
-    })(),
-    (async () => {
-      await mt.track('initContractInstances', () =>
-        AaveMoneyMarketManager.getInstance().initContractInstances({
-          ctx: ctx,
-          blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-        })
-      );
-      return null;
     })(),
     prefetchGenericPersistentDataWithLogs(ctx, false),
     fetchAndCorrelateAssetSpotPrices(ctx),

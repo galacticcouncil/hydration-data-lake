@@ -32,6 +32,7 @@ import {
   initAllOmnipoolLiquidityMiningDeposits
 } from '../../handlers/liquidity/omnipool/liquidityMining/depositHandlers';
 import { handleMoneyMarketAssetBalancesForAccounts } from '../../handlers/balances/moneyMarketAssetBalances';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function accountBalancesAndLiquidityPositionsReaggregation(
   ctx: SqdProcessorContext<Store>
@@ -59,6 +60,15 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
       parsedData = await getParsedEventsData(ctx);
       console.timeEnd('getParsedEventsData');
 
+      await AaveMoneyMarketsRegistry.getInstance().initContractInstances({
+        ctx: ctx,
+        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+        invalidateReservesCache:
+          AaveMoneyMarketsRegistry.getInstance().isMmReservesCacheInvalidationRequired(
+            parsedData
+          ),
+      });
+
       await StorageResolver.getInstance().init({
         ctx: ctx,
         blockNumberFrom: ctx.blocks[0].header.height,
@@ -66,15 +76,6 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
       });
 
       await prefetchOrInitAllBatchAccounts(ctx);
-    })(),
-    (async () => {
-      console.time('initContractInstances');
-      await AaveMoneyMarketManager.getInstance().initContractInstances({
-        ctx: ctx,
-        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-      });
-      console.timeEnd('initContractInstances');
-      return null;
     })(),
     prefetchGenericPersistentDataWithLogs(ctx, false),
   ]);

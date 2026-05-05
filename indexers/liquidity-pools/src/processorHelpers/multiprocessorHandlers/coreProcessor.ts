@@ -78,6 +78,7 @@ import { handleHsmAssetHistoricalDataOnAllSwaps } from '../../handlers/pools/poo
 import { createMetricsTracker } from '../../utils/prometheusMetrics';
 import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
 import { PoolVolumesCacheManager } from '../../handlers/pools/volumes/poolVolumesCacheManager';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
   let parsedData: BatchBlocksParsedDataManager | null = null;
@@ -138,9 +139,13 @@ export async function coreProcessorHandler(ctx: SqdProcessorContext<Store>) {
   await prefetchOrInitAllAccountProcessingStatuses(ctx);
 
   await mt.track('initContractInstances', () =>
-    AaveMoneyMarketManager.getInstance().initContractInstances({
+    AaveMoneyMarketsRegistry.getInstance().initContractInstances({
       ctx: ctx,
       blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+      invalidateReservesCache:
+        AaveMoneyMarketsRegistry.getInstance().isMmReservesCacheInvalidationRequired(
+          parsedData
+        ),
     })
   );
 

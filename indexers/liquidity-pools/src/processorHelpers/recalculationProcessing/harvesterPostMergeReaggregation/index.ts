@@ -67,6 +67,9 @@ import { handleUniquesEvents } from '../../../handlers/uniques';
 import { getOrCreateAsset } from '../../../handlers/assets/asset';
 import { getAssetsPairPrice } from '../../../handlers/assets/assetHistoricalData/assetSpotPrices';
 import { calcPriceNormalized } from '../../../utils/helpers';
+import {
+  AaveMoneyMarketsRegistry
+} from '../../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 /**
  *  Current reaggregation logic normalize and reaggregate data after merging from
@@ -160,6 +163,15 @@ export async function handleHarvesterPostMergeReaggregation(
       parsedData = await getParsedEventsData(ctx);
       console.timeEnd('getParsedEventsData');
 
+      await AaveMoneyMarketsRegistry.getInstance().initContractInstances({
+        ctx: ctx,
+        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+        invalidateReservesCache:
+          AaveMoneyMarketsRegistry.getInstance().isMmReservesCacheInvalidationRequired(
+            parsedData
+          ),
+      });
+
       await StorageResolver.getInstance().init({
         ctx: ctx,
         blockNumberFrom: ctx.blocks[0].header.height,
@@ -167,15 +179,6 @@ export async function handleHarvesterPostMergeReaggregation(
       });
 
       await prefetchOrInitAllBatchAccounts(ctx);
-    })(),
-    (async () => {
-      console.time('initContractInstances');
-      await AaveMoneyMarketManager.getInstance().initContractInstances({
-        ctx: ctx,
-        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-      });
-      console.timeEnd('initContractInstances');
-      return null;
     })(),
     prefetchGenericPersistentDataWithLogs(ctx, false),
   ]);

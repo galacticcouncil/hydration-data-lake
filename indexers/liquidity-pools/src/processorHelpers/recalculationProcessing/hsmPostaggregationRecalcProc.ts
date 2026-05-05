@@ -2,27 +2,17 @@ import { Between } from 'typeorm/find-options/operator/Between';
 
 import { Store } from '@subsquid/typeorm-store';
 
-import {
-  ChainActivityTraceManager,
-} from '../../chainActivityTracingManagers';
+import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { saveAllBatchAccounts } from '../../handlers/accounts';
 import { handleBuySellOperations } from '../../handlers/buySellOperations';
 import { handleEvm } from '../../handlers/evmLog';
 import { ensureAaveFacilitators } from '../../handlers/facilitator';
 import { HistoricalDataManager } from '../../handlers/historicalData';
-import {
-  processHsmpoolAssetNormalizedVolumes,
-} from '../../handlers/pools/normalizedVolumesInBaseAsset/hsmpoolAssetVolumesNormalized';
-import {
-  handleHsmCollateralEvents,
-} from '../../handlers/pools/pools/hsmpool/collaterals';
-import {
-  ensureHsmCollaterals,
-} from '../../handlers/pools/pools/hsmpool/collaterals/hsmCollateral';
+import { processHsmpoolAssetNormalizedVolumes } from '../../handlers/pools/normalizedVolumesInBaseAsset/hsmpoolAssetVolumesNormalized';
+import { handleHsmCollateralEvents } from '../../handlers/pools/pools/hsmpool/collaterals';
+import { ensureHsmCollaterals } from '../../handlers/pools/pools/hsmpool/collaterals/hsmCollateral';
 import { ensureHsmpool } from '../../handlers/pools/pools/hsmpool/hsmPool';
-import {
-  processHsmpoolAssetBalanceHistoricalData,
-} from '../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
+import { processHsmpoolAssetBalanceHistoricalData } from '../../handlers/pools/pools/hsmpool/hsmpoolAssetHistData';
 import { handleRelayChainBlocks } from '../../handlers/relayChain';
 import { handleBroadcastSwappedEvents } from '../../handlers/swap';
 import {
@@ -34,10 +24,9 @@ import { getParsedEventsData } from '../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../parsers/storageResolver';
 import { SqdProcessorContext } from '../../processor';
 import { ProcessorStatusManager } from '../../processorStatusManager';
-import {
-  AaveMoneyMarketManager,
-} from '../../utils/evmTools/aave/aaveMoneyMarketManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { prefetchGenericPersistentData } from '../prefetchHelpers';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function aggregateHsmRelatedDataOnPostAggregationMode(
   ctx: SqdProcessorContext<Store>
@@ -74,9 +63,13 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
   console.timeEnd('prefetchGenericPersistentData');
 
   console.time('initContractInstances');
-  await AaveMoneyMarketManager.getInstance().initContractInstances({
+  await AaveMoneyMarketsRegistry.getInstance().initContractInstances({
     ctx: ctx,
     blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+    invalidateReservesCache:
+      AaveMoneyMarketsRegistry.getInstance().isMmReservesCacheInvalidationRequired(
+        parsedData
+      ),
   });
   console.timeEnd('initContractInstances');
 
@@ -88,37 +81,49 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
 
   ctx.batchState.state.assetsAll = new Map(
     (
-      await ctx.storeUtils.findWithLogs(Asset, {
-        where: {},
-        relations: {},
-      }, { className: 'Asset' })
+      await ctx.storeUtils.findWithLogs(
+        Asset,
+        {
+          where: {},
+          relations: {},
+        },
+        { className: 'Asset' }
+      )
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.assetsSpotPriceHistoricalDataBatch = new Map(
     (
-      await ctx.storeUtils.findWithLogs(AssetSpotPriceHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        AssetSpotPriceHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {},
         },
-        relations: {},
-      }, { className: 'AssetSpotPriceHistoricalData' })
+        { className: 'AssetSpotPriceHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 
   ctx.batchState.state.accountAssetBalanceHistoricalData = new Map(
     (
-      await ctx.storeUtils.findWithLogs(AccountAssetBalanceHistoricalData, {
-        where: {
-          paraBlockHeight: Between(
-            ctx.blocks[0].header.height,
-            ctx.blocks[ctx.blocks.length - 1].header.height
-          ),
+      await ctx.storeUtils.findWithLogs(
+        AccountAssetBalanceHistoricalData,
+        {
+          where: {
+            paraBlockHeight: Between(
+              ctx.blocks[0].header.height,
+              ctx.blocks[ctx.blocks.length - 1].header.height
+            ),
+          },
+          relations: {},
         },
-        relations: {},
-      }, { className: 'AccountAssetBalanceHistoricalData' })
+        { className: 'AccountAssetBalanceHistoricalData' }
+      )
     ).map((p) => [p.id, p])
   );
 

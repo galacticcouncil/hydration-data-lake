@@ -91,6 +91,7 @@ import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
 import { AppConfig } from '../../appConfig';
 import { correlateAssetSpotPrices } from '../utils';
 import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 const appConfig = AppConfig.getInstance();
 
@@ -126,6 +127,15 @@ export async function whitelistedAccountBalancesTrackingProcessor(
       parsedData = await getParsedEventsData(ctx);
       console.timeEnd('getParsedEventsData');
 
+      await AaveMoneyMarketsRegistry.getInstance().initContractInstances({
+        ctx: ctx,
+        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
+        invalidateReservesCache:
+          AaveMoneyMarketsRegistry.getInstance().isMmReservesCacheInvalidationRequired(
+            parsedData
+          ),
+      });
+
       await StorageResolver.getInstance().init({
         ctx: ctx,
         blockNumberFrom: ctx.blocks[0].header.height,
@@ -134,15 +144,6 @@ export async function whitelistedAccountBalancesTrackingProcessor(
 
       await prefetchOrInitAllBatchAccounts(ctx);
       await prefetchOrInitAllAccountProcessingStatuses(ctx);
-    })(),
-    (async () => {
-      console.time('initContractInstances');
-      await AaveMoneyMarketManager.getInstance().initContractInstances({
-        ctx: ctx,
-        blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
-      });
-      console.timeEnd('initContractInstances');
-      return null;
     })(),
     prefetchGenericPersistentDataWithLogs(ctx, false),
   ]);
