@@ -16,7 +16,7 @@ export async function initAllAccountsOnColdStart({
     {
       where: {},
     },
-    { className: 'Account' }
+    { className: 'Account', originCallFn: 'initAllAccountsOnColdStart' }
   );
 
   if (hasAnyRecord) return;

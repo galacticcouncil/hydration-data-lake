@@ -37,7 +37,10 @@ export async function waitForSpotPricesRelatedHistoricalData(
           paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
         },
       },
-      { className: 'ConstantsHistoricalData' }
+      {
+        className: 'ConstantsHistoricalData',
+        originCallFn: 'prefetchConstantsHistoricalData',
+      }
     );
 
     ctx.batchState.state.constantsHistoricalData = new Map(
@@ -61,7 +64,10 @@ export async function waitForSpotPricesRelatedHistoricalData(
           paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
         },
       },
-      { className: 'AssetHistoricalData' }
+      {
+        className: 'AssetHistoricalData',
+        originCallFn: 'prefetchAssetHistoricalData',
+      }
     );
 
     ctx.batchState.state.assetsHistoricalDataBatch = new Map(
@@ -86,7 +92,10 @@ export async function waitForSpotPricesRelatedHistoricalData(
         },
         relations: {},
       },
-      { className: 'EmaOracleEntryHistoricalData' }
+      {
+        className: 'EmaOracleEntryHistoricalData',
+        originCallFn: 'prefetchEmaOracleHistoricalData',
+      }
     );
 
     ctx.batchState.state.emaOracleEntriesHistoricalData = new Map(
@@ -113,7 +122,10 @@ export async function waitForSpotPricesRelatedHistoricalData(
           pool: true,
         },
       },
-      { className: 'XykpoolHistoricalData' }
+      {
+        className: 'XykpoolHistoricalData',
+        originCallFn: 'prefetchXykpoolsHistoricalData',
+      }
     );
 
     ctx.batchState.state.xykPoolAllHistoricalData = new Map(
@@ -220,7 +232,10 @@ export async function checkAndWaitForCoreProcStatus(
         id: 'squid_processor',
       },
     },
-    { className: 'ProcessorStatus' }
+    {
+      className: 'ProcessorStatus',
+      originCallFn: 'checkAndWaitForCoreProcStatus',
+    }
   );
 
   const coreProcLatestProcessedBlock = coreProcStatus?.latestProcessedBlock;

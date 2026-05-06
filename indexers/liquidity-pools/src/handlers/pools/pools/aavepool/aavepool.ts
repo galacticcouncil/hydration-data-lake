@@ -37,7 +37,7 @@ export async function getOrCreateAavepool({
       where: { id: poolId },
       relations,
     },
-    { className: 'Aavepool' }
+    { className: 'Aavepool', originCallFn: 'getOrCreateAavepool' }
   );
 
   if (pool) {

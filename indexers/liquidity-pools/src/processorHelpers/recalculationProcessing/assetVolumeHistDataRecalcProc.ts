@@ -37,7 +37,7 @@ export async function assetVolumeHistDataRecalcProc(
           relations: {
           },
         },
-        { className: 'Asset' }
+        { className: 'Asset', originCallFn: 'assetVolumeHistDataRecalcProc' }
       )
     ).map((p) => [p.id, p])
   );
@@ -54,7 +54,7 @@ export async function assetVolumeHistDataRecalcProc(
             ),
           },
         },
-        { className: 'Block' }
+        { className: 'Block', originCallFn: 'assetVolumeHistDataRecalcProc' }
       )
     ).map((p) => [p.id, p])
   );
@@ -72,7 +72,10 @@ export async function assetVolumeHistDataRecalcProc(
           },
           relations: {},
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'AssetSpotPriceHistoricalData',
+          originCallFn: 'assetVolumeHistDataRecalcProc',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -96,7 +99,7 @@ export async function assetVolumeHistDataRecalcProc(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        { className: 'Swap', originCallFn: 'assetVolumeHistDataRecalcProc' }
       )
     ).map((p) => [p.id, p])
   );

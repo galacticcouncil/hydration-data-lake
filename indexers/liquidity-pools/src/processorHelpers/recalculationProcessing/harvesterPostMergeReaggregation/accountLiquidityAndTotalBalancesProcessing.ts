@@ -35,7 +35,10 @@ export async function accountLiquidityAndTotalBalancesProcessing(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'MoneyMarketEvent' }
+        {
+          className: 'AccountAssetBalanceHistoricalData',
+          originCallFn: 'accountLiquidityAndTotalBalancesProcessing',
+        }
       ),
       ctx.storeUtils.findWithLogs(
         OmnipoolAssetHistoricalData,
@@ -50,7 +53,10 @@ export async function accountLiquidityAndTotalBalancesProcessing(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'OmnipoolAssetHistoricalData' }
+        {
+          className: 'OmnipoolAssetHistoricalData',
+          originCallFn: 'accountLiquidityAndTotalBalancesProcessing',
+        }
       ),
     ]);
 

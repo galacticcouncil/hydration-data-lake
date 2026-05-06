@@ -40,7 +40,7 @@ export async function prefetchAllAvailableRoutedTradesForBlocksRange({
         fees: {},
       },
     },
-  }, { className: 'RoutedTrade' });
+  }, { className: 'RoutedTrade', originCallFn: 'prefetchAllAvailableRoutedTradesForBlocksRange' });
 
   for (const route of routes) {
     for (const swap of route.swaps) {
@@ -72,7 +72,7 @@ export async function prefetchAllAvailableXykpoolVolumesForBlocksRange({
     relations: {
       pool: true,
     },
-  }, { className: 'XykpoolVolumeHistoricalData' });
+  }, { className: 'XykpoolVolumeHistoricalData', originCallFn: 'prefetchAllAvailableXykpoolVolumesForBlocksRange' });
 
   ctx.batchState.state.xykPoolVolumes = new Map(records.map((r) => [r.id, r]));
 }
@@ -93,7 +93,7 @@ export async function prefetchAllAvailableLbppoolVolumesForBlocksRange({
     relations: {
       pool: true,
     },
-  }, { className: 'LbppoolVolumeHistoricalData' });
+  }, { className: 'LbppoolVolumeHistoricalData', originCallFn: 'prefetchAllAvailableLbppoolVolumesForBlocksRange' });
 
   ctx.batchState.state.lbpPoolVolumes = new Map(records.map((r) => [r.id, r]));
 }
@@ -115,7 +115,7 @@ export async function prefetchAllAvailableOmnipoolAssetVolumesForBlocksRange({
       omnipoolAsset: true,
       
     },
-  }, { className: 'OmnipoolAssetVolumeHistoricalData' });
+  }, { className: 'OmnipoolAssetVolumeHistoricalData', originCallFn: 'prefetchAllAvailableOmnipoolAssetVolumesForBlocksRange' });
 
   ctx.batchState.state.omnipoolAssetVolumes = new Map(
     records.map((r) => [r.id, r])
@@ -142,7 +142,7 @@ export async function prefetchAllAvailableStableswapVolumesForBlocksRange({
       },
       
     },
-  }, { className: 'StableswapVolumeHistoricalData' });
+  }, { className: 'StableswapVolumeHistoricalData', originCallFn: 'prefetchAllAvailableStableswapVolumesForBlocksRange' });
 
   ctx.batchState.state.stablepoolAssetVolumes = new Map(
     records
@@ -174,7 +174,7 @@ export async function prefetchAllAvailableXykpoolHistDataForBlocksRange({
     relations: {
       pool: true,
     },
-  }, { className: 'XykpoolHistoricalData' });
+  }, { className: 'XykpoolHistoricalData', originCallFn: 'prefetchAllAvailableXykpoolHistDataForBlocksRange' });
 
   ctx.batchState.state.xykPoolAllHistoricalData = new Map(
     records.map((r) => [r.id, r])
@@ -197,7 +197,7 @@ export async function prefetchAllAvailableLbppoolHistDataForBlocksRange({
     relations: {
       pool: true,
     },
-  }, { className: 'LbppoolHistoricalData' });
+  }, { className: 'LbppoolHistoricalData', originCallFn: 'prefetchAllAvailableLbppoolHistDataForBlocksRange' });
 
   ctx.batchState.state.lbpPoolAllHistoricalData = new Map(
     records.map((r) => [r.id, r])
@@ -221,7 +221,7 @@ export async function prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange({
       pool: true,
       
     },
-  }, { className: 'OmnipoolHistoricalData' });
+  }, { className: 'OmnipoolHistoricalData', originCallFn: 'prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange' });
   const assetsData = await ctx.storeUtils.findWithLogs(OmnipoolAssetHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
@@ -230,7 +230,7 @@ export async function prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange({
       poolHistoricalData: true,
       omnipoolAsset: true,
     },
-  }, { className: 'OmnipoolAssetHistoricalData' });
+  }, { className: 'OmnipoolAssetHistoricalData', originCallFn: 'prefetchAllAvailableOmnipoolAssetHistDataForBlocksRange' });
 
   ctx.batchState.state.omnipoolAllHistoricalData = new Map(
     poolData.map((r) => [r.id, r])
@@ -257,7 +257,7 @@ export async function prefetchAllAvailableStableswapHistDataForBlocksRange({
       pool: true,
       
     },
-  }, { className: 'StableswapHistoricalData' });
+  }, { className: 'StableswapHistoricalData', originCallFn: 'prefetchAllAvailableStableswapHistDataForBlocksRange' });
   const poolAssetsData = await ctx.storeUtils.findWithLogs(StableswapAssetHistoricalData, {
     where: {
       paraBlockHeight: Between(fromBlockNumber, toBlockNumber),
@@ -265,7 +265,7 @@ export async function prefetchAllAvailableStableswapHistDataForBlocksRange({
     relations: {
       stableswapAsset: true,
     },
-  }, { className: 'StableswapAssetHistoricalData' });
+  }, { className: 'StableswapAssetHistoricalData', originCallFn: 'prefetchAllAvailableStableswapHistDataForBlocksRange' });
 
   ctx.batchState.state.stablepoolAssetsAllHistoricalData = new Map(
     poolAssetsData.map((r) => [r.id, r])

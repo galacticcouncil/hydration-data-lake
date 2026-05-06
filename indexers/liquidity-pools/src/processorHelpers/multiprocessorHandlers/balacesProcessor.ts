@@ -185,7 +185,10 @@ export async function balancesProcessorHandler(
               paraBlockHeight: 'ASC',
             },
           },
-          { className: 'MoneyMarketEvent' }
+          {
+            className: 'MoneyMarketEvent',
+            originCallFn: 'balancesProcessorHandler',
+          }
         )
       ).map((p) => [p.id, p])
     );
@@ -205,7 +208,10 @@ export async function balancesProcessorHandler(
               paraBlockHeight: 'ASC',
             },
           },
-          { className: 'OmnipoolAssetHistoricalData' }
+          {
+            className: 'OmnipoolAssetHistoricalData',
+            originCallFn: 'balancesProcessorHandler',
+          }
         )
       ).map((p) => [p.id, p])
     );

@@ -87,7 +87,10 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
           where: {},
           relations: {},
         },
-        { className: 'Asset' }
+        {
+          className: 'Asset',
+          originCallFn: 'aggregateHsmRelatedDataOnPostAggregationMode',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -104,7 +107,10 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
           },
           relations: {},
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'AssetSpotPriceHistoricalData',
+          originCallFn: 'aggregateHsmRelatedDataOnPostAggregationMode',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -122,7 +128,10 @@ export async function aggregateHsmRelatedDataOnPostAggregationMode(
           },
           relations: {},
         },
-        { className: 'AccountAssetBalanceHistoricalData' }
+        {
+          className: 'AccountAssetBalanceHistoricalData',
+          originCallFn: 'aggregateHsmRelatedDataOnPostAggregationMode',
+        }
       )
     ).map((p) => [p.id, p])
   );

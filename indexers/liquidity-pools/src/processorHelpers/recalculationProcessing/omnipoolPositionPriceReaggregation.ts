@@ -43,7 +43,10 @@ export async function handleOmnipoolPositionPriceReaggregation(
             status: OmnipoolLiquidityPositionStatus.PositionCreated,
           },
         },
-        { className: 'OmnipoolLiquidityPosition' }
+        {
+          className: 'OmnipoolLiquidityPosition',
+          originCallFn: 'handleOmnipoolPositionPriceReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -56,7 +59,10 @@ export async function handleOmnipoolPositionPriceReaggregation(
       },
       relations: { position: true },
     },
-    { className: 'OmnipoolLiquidityPositionEvent' }
+    {
+      className: 'OmnipoolLiquidityPositionEvent',
+      originCallFn: 'handleOmnipoolPositionPriceReaggregation',
+    }
   );
 
   const positionEventsWithoutPrice = positionEvents.filter((e) => !e.price);

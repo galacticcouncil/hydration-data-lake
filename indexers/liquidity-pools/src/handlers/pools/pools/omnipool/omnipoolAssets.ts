@@ -51,7 +51,10 @@ export async function getOrCreateOmnipoolAsset({
       where: { assetId: `${assetEntity.id}` },
       relations: { pool: true },
     },
-    { className: 'OmnipoolAsset' }
+    {
+      className: 'OmnipoolAsset',
+      originCallFn: 'getOrCreateOmnipoolAsset',
+    }
   );
 
   if (omnipoolAsset) {

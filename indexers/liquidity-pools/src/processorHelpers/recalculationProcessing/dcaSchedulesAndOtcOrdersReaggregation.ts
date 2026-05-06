@@ -98,7 +98,10 @@ export async function handleDcaSchedulesAndOtcOrders(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'Swap',
+          originCallFn: 'handleDcaSchedulesAndOtcOrders',
+        }
       )
     ).map((p) => [p.id, p])
   );

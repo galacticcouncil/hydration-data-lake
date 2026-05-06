@@ -286,7 +286,10 @@ export async function getOldHsmAssetHistDataEntity({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'HsmpoolAssetHistoricalData' }
+    {
+      className: 'HsmpoolAssetHistoricalData',
+      originCallFn: 'getOldHsmAssetHistDataEntity',
+    }
   );
 }
 

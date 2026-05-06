@@ -174,7 +174,7 @@ async function prefetchEntities(
           //   executions: true,
           // },
         },
-        { className: 'DcaSchedule' }
+        { className: 'DcaSchedule', originCallFn: 'prefetchEntities' }
       )
     );
   } else {
@@ -196,7 +196,10 @@ async function prefetchEntities(
             // },
           },
         },
-        { className: 'DcaScheduleExecution' }
+        {
+          className: 'DcaScheduleExecution',
+          originCallFn: 'prefetchEntities',
+        }
       )
     );
   } else {

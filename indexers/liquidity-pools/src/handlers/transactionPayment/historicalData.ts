@@ -129,6 +129,9 @@ async function getPreviousPersistedTransactionPaymentHistDataEntity({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'TransactionPaymentHistoricalData' }
+    {
+      className: 'TransactionPaymentHistoricalData',
+      originCallFn: 'getPreviousPersistedTransactionPaymentHistDataEntity',
+    }
   );
 }

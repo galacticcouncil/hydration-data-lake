@@ -40,7 +40,7 @@ export async function getOldLbpVolume({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'LbppoolVolumeHistoricalData' }
+    { className: 'LbppoolVolumeHistoricalData', originCallFn: 'getOldLbpVolume' }
   );
 }
 
@@ -69,7 +69,7 @@ export async function getOldXykVolume({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'XykpoolVolumeHistoricalData' }
+    { className: 'XykpoolVolumeHistoricalData', originCallFn: 'getOldXykVolume' }
   );
 }
 
@@ -98,7 +98,7 @@ export async function getOldOmnipoolAssetVolume({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'OmnipoolAssetVolumeHistoricalData' }
+    { className: 'OmnipoolAssetVolumeHistoricalData', originCallFn: 'getOldOmnipoolAssetVolume' }
   );
 }
 
@@ -130,7 +130,7 @@ export async function getOldStablepoolAssetVolume({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'StableswapAssetVolumeHistoricalData' }
+    { className: 'StableswapAssetVolumeHistoricalData', originCallFn: 'getOldStablepoolAssetVolume' }
   );
 }
 
@@ -159,7 +159,7 @@ export async function getOldStablepoolVolume({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'StableswapVolumeHistoricalData' }
+    { className: 'StableswapVolumeHistoricalData', originCallFn: 'getOldStablepoolVolume' }
   );
 }
 

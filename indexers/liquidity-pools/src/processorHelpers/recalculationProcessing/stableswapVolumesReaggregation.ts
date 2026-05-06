@@ -56,7 +56,10 @@ export async function handleStableSwapVolumesReaggregation(
             height: 'ASC',
           },
         },
-        { className: 'Block' }
+        {
+          className: 'Block',
+          originCallFn: 'handleStableSwapVolumesReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -76,7 +79,10 @@ export async function handleStableSwapVolumesReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'AssetSpotPriceHistoricalData',
+          originCallFn: 'handleStableSwapVolumesReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -115,7 +121,10 @@ export async function handleStableSwapVolumesReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'StableswapVolumeHistoricalData' }
+        {
+          className: 'StableswapVolumeHistoricalData',
+          originCallFn: 'handleStableSwapVolumesReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -138,7 +147,10 @@ export async function handleStableSwapVolumesReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'StableswapAssetVolumeHistoricalData' }
+        {
+          className: 'StableswapAssetVolumeHistoricalData',
+          originCallFn: 'handleStableSwapVolumesReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );

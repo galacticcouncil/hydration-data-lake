@@ -138,7 +138,10 @@ export async function handleAccountBalancesReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'MoneyMarketEvent',
+          originCallFn: 'handleAccountBalancesReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -158,7 +161,10 @@ export async function handleAccountBalancesReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'AssetSpotPriceHistoricalData',
+          originCallFn: 'handleAccountBalancesReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );

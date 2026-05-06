@@ -262,6 +262,10 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
             MoreThanOrEqual(ctx.blocks[0].header.height)
           ),
         },
+      },
+      {
+        className: 'OmnipoolYieldFarmDeposit',
+        originCallFn: 'getOmnipoolLiquidityMiningDepositsForAccounts',
       }
     );
 
@@ -302,6 +306,10 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
       where: {
         id: In(Array.from(allDepositsIndexedByPositionId.keys())),
       },
+    },
+    {
+      className: 'OmnipoolLiquidityPosition',
+      originCallFn: 'getOmnipoolLiquidityMiningDepositsForAccounts',
     }
   );
 
@@ -351,6 +359,10 @@ export async function getOmnipoolLiquidityMiningDepositsForAccounts({
       relations: {
         position: true,
       },
+    },
+    {
+      className: 'OmnipoolLiquidityPositionEvent',
+      originCallFn: 'getOmnipoolLiquidityMiningDepositsForAccounts',
     }
   );
 

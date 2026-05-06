@@ -21,7 +21,7 @@ export async function getAssetsByStablepool(
         relations: {
           pool: true,
         },
-      }, { className: 'StableswapAsset' })
+      }, { className: 'StableswapAsset', originCallFn: 'getAssetsByStablepool' })
     : [];
 
   const compiledMap = new Map(
@@ -38,7 +38,7 @@ export async function getAssetsByStablepool(
     if (!asset) {
       asset = await ctx.storeUtils.findOneWithLogs(Asset, {
         where: { id: stableswapAsset.assetId },
-      }, { className: 'Asset' });
+      }, { className: 'Asset', originCallFn: 'getAssetsByStablepool' });
 
       // Add to cache if found
       if (asset) {

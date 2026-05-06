@@ -335,6 +335,9 @@ export async function getOldAssetVolume({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'XykpoolVolumeHistoricalData' }
+    {
+      className: 'AssetVolumeHistoricalData',
+      originCallFn: 'getOldAssetVolume',
+    }
   );
 }

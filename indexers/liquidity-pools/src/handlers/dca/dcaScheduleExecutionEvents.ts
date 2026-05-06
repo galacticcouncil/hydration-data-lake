@@ -56,7 +56,10 @@ export async function getDcaScheduleExecutionEvent({
       },
       relations,
     },
-    { className: 'DcaScheduleExecutionEvent' }
+    {
+      className: 'DcaScheduleExecutionEvent',
+      originCallFn: 'getDcaScheduleExecutionEvent',
+    }
   );
 
   if (!executionAction) return null;

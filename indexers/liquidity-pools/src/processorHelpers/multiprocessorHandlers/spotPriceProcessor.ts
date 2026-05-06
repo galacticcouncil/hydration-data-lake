@@ -118,7 +118,7 @@ export async function spotPriceProcessorHandler(
               height: 'ASC',
             },
           },
-          { className: 'Block' }
+          { className: 'Block', originCallFn: 'spotPriceProcessorHandler' }
         )
       ).map((p) => [p.id, p])
     );
@@ -146,7 +146,7 @@ export async function spotPriceProcessorHandler(
               paraBlockHeight: 'ASC',
             },
           },
-          { className: 'AssetSpotPriceHistoricalData' }
+          { className: 'Swap', originCallFn: 'spotPriceProcessorHandler' }
         )
       ).map((p) => [p.id, p])
     );
@@ -187,7 +187,10 @@ export async function spotPriceProcessorHandler(
               paraBlockHeight: 'ASC',
             },
           },
-          { className: 'AssetSpotPriceHistoricalData' }
+          {
+            className: 'RoutedTrade',
+            originCallFn: 'spotPriceProcessorHandler',
+          }
         )
       ).map((p) => [p.id, p])
     );

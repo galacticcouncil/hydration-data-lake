@@ -44,7 +44,10 @@ export async function getOrCreateMoneyMarketReserve({
         aavePool: true,
       },
     },
-    { className: 'MoneyMarketReserve' }
+    {
+      className: 'MoneyMarketReserve',
+      originCallFn: 'getOrCreateMoneyMarketReserve',
+    }
   );
 
   if (reserveEntity) {
@@ -195,7 +198,10 @@ export async function actualizeMoneyMarketReserves({
               aavePool: true,
             },
           },
-          { className: 'MoneyMarketReserve' }
+          {
+            className: 'MoneyMarketReserve',
+            originCallFn: 'actualizeMoneyMarketReserves',
+          }
         )
       ).map((r) => [r.id, r])
     );

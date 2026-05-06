@@ -141,7 +141,7 @@ export async function batchGetOrCreateAssets({
             whereConditions.length === 1 ? whereConditions[0] : whereConditions, // TypeORM automatically ORs array elements
           ...(relations ? { relations } : {}),
         },
-        { className: 'Asset' }
+        { className: 'Asset', originCallFn: 'batchGetOrCreateAssets' }
       );
 
       // Add found assets to both caches
@@ -260,7 +260,7 @@ export async function getOrCreateAsset({
       },
       ...(relations ? { relations } : {}),
     },
-    { className: 'Asset' }
+    { className: 'Asset', originCallFn: 'getOrCreateAsset' }
   );
 
   if (asset) {
@@ -487,7 +487,7 @@ export async function getOrCreateMoneyMarketAsset({
         ...(assetRegistryId ? { assetRegistryId } : {}),
       },
     },
-    { className: 'Asset' }
+    { className: 'Asset', originCallFn: 'getOrCreateMoneyMarketAsset' }
   );
 
   if (asset) {

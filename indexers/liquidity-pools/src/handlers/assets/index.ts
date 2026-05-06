@@ -45,7 +45,7 @@ export async function handleAssetRegistry(
           ),
         },
       },
-      { className: 'Asset' }
+      { className: 'Asset', originCallFn: 'handleAssetRegistry' }
     );
 
     existingAssets.forEach((asset) => assetsAllBatch.set(asset.id, asset));

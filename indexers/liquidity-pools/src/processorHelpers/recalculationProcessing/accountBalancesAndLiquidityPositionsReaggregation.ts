@@ -89,7 +89,10 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
         {
           where: {},
         },
-        { className: 'Asset' }
+        {
+          className: 'Asset',
+          originCallFn: 'accountBalancesAndLiquidityPositionsReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -106,7 +109,10 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
             ),
           },
         },
-        { className: 'Block' }
+        {
+          className: 'Block',
+          originCallFn: 'accountBalancesAndLiquidityPositionsReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -123,7 +129,10 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
             ),
           },
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'AssetSpotPriceHistoricalData',
+          originCallFn: 'accountBalancesAndLiquidityPositionsReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -148,7 +157,10 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'MoneyMarketEvent' }
+        {
+          className: 'MoneyMarketEvent',
+          originCallFn: 'accountBalancesAndLiquidityPositionsReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -167,7 +179,10 @@ export async function accountBalancesAndLiquidityPositionsReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'MoneyMarketEvent' }
+        {
+          className: 'AccountAssetBalanceHistoricalData',
+          originCallFn: 'accountBalancesAndLiquidityPositionsReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );

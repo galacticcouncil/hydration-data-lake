@@ -315,7 +315,10 @@ export async function isOmnipoolAssetHistoricalDataUniqueRegardingPreviousRecord
           paraBlockHeight: 'DESC',
         },
       },
-      { className: 'OmnipoolAssetHistoricalData' }
+      {
+        className: 'OmnipoolAssetHistoricalData',
+        originCallFn: 'isOmnipoolAssetHistoricalDataUniqueRegardingPreviousRecord',
+      }
     );
   }
 

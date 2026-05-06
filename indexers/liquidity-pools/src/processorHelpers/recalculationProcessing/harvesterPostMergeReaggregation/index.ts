@@ -202,7 +202,10 @@ export async function handleHarvesterPostMergeReaggregation(
             height: 'ASC',
           },
         },
-        { className: 'Block' }
+        {
+          className: 'Block',
+          originCallFn: 'handleHarvesterPostMergeReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -224,7 +227,10 @@ export async function handleHarvesterPostMergeReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'AssetsPairVolumeHistoricalData',
+          originCallFn: 'handleHarvesterPostMergeReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -247,7 +253,10 @@ export async function handleHarvesterPostMergeReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'LbppoolVolumeHistoricalData' }
+        {
+          className: 'LbppoolVolumeHistoricalData',
+          originCallFn: 'handleHarvesterPostMergeReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -270,7 +279,10 @@ export async function handleHarvesterPostMergeReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'XykpoolVolumeHistoricalData' }
+        {
+          className: 'XykpoolVolumeHistoricalData',
+          originCallFn: 'handleHarvesterPostMergeReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -292,7 +304,10 @@ export async function handleHarvesterPostMergeReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'OmnipoolAssetVolumeHistoricalData' }
+        {
+          className: 'OmnipoolAssetVolumeHistoricalData',
+          originCallFn: 'handleHarvesterPostMergeReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -315,7 +330,10 @@ export async function handleHarvesterPostMergeReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'StableswapVolumeHistoricalData' }
+        {
+          className: 'StableswapVolumeHistoricalData',
+          originCallFn: 'handleHarvesterPostMergeReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -338,7 +356,10 @@ export async function handleHarvesterPostMergeReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'StableswapAssetVolumeHistoricalData' }
+        {
+          className: 'StableswapAssetVolumeHistoricalData',
+          originCallFn: 'handleHarvesterPostMergeReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -358,7 +379,10 @@ export async function handleHarvesterPostMergeReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'AssetVolumeHistoricalData' }
+        {
+          className: 'AssetVolumeHistoricalData',
+          originCallFn: 'handleHarvesterPostMergeReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -378,7 +402,10 @@ export async function handleHarvesterPostMergeReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'HsmpoolAssetHistoricalData' }
+        {
+          className: 'HsmpoolAssetHistoricalData',
+          originCallFn: 'handleHarvesterPostMergeReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -417,7 +444,10 @@ export async function handleHarvesterPostMergeReaggregation(
                 paraBlockHeight: 'ASC',
               },
             },
-            { className: 'AssetSpotPriceHistoricalData' }
+            {
+              className: 'Swap',
+              originCallFn: 'handleHarvesterPostMergeReaggregation',
+            }
           )
         ).map((p) => [p.id, p])
       );

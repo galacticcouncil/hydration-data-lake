@@ -135,7 +135,7 @@ export async function getOrCreateStableswap({
       where: { id: `${poolId}` },
       relations: { assets: true },
     },
-    { className: 'Stableswap' }
+    { className: 'Stableswap', originCallFn: 'getOrCreateStableswap' }
   );
 
   if (pool || (!pool && !ensure)) return pool ?? null;

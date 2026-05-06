@@ -110,7 +110,10 @@ export async function handlePreprocDataBuckets({
         {
           where: { id: preprocData.block },
         },
-        { className: 'BlockEntity' }
+        {
+          className: 'BlockEntity',
+          originCallFn: 'handlePreprocDataBuckets',
+        }
       ));
 
     const newEntity = new AssetHistoricalData({
@@ -152,7 +155,10 @@ export async function handlePreprocDataBuckets({
         {
           where: { id: preprocData.block },
         },
-        { className: 'BlockEntity' }
+        {
+          className: 'BlockEntity',
+          originCallFn: 'handlePreprocDataBuckets',
+        }
       ));
 
     if (!block) continue;
@@ -188,7 +194,10 @@ export async function handlePreprocDataBuckets({
         {
           where: { id: preprocData.block },
         },
-        { className: 'BlockEntity' }
+        {
+          className: 'BlockEntity',
+          originCallFn: 'handlePreprocDataBuckets',
+        }
       ));
     if (!block) continue;
 
@@ -444,7 +453,7 @@ export async function getPrefetchedCache({
       {
         where: { id: In(bockIdsToPrefetch) },
       },
-      { className: 'BlockEntity' }
+      { className: 'BlockEntity', originCallFn: 'getPrefetchedCache' }
     ),
     ctx.storeUtils.findWithLogs(
       XykpoolVolumeHistoricalData,
@@ -452,7 +461,7 @@ export async function getPrefetchedCache({
         where: { id: In(xykpoolVolIdsToPrefetch) },
         relations: { pool: true },
       },
-      { className: 'XykpoolVolumeHistoricalData' }
+      { className: 'XykpoolVolumeHistoricalData', originCallFn: 'getPrefetchedCache' }
     ),
     ctx.storeUtils.findWithLogs(
       LbppoolVolumeHistoricalData,
@@ -460,7 +469,7 @@ export async function getPrefetchedCache({
         where: { id: In(lbppoolVolIdsToPrefetch) },
         relations: { pool: true },
       },
-      { className: 'LbppoolVolumeHistoricalData' }
+      { className: 'LbppoolVolumeHistoricalData', originCallFn: 'getPrefetchedCache' }
     ),
     ctx.storeUtils.findWithLogs(
       OmnipoolAssetVolumeHistoricalData,
@@ -468,7 +477,7 @@ export async function getPrefetchedCache({
         where: { id: In(omnipoolAssetVolIdsToPrefetch) },
         relations: { omnipoolAsset: true },
       },
-      { className: 'OmnipoolAssetVolumeHistoricalData' }
+      { className: 'OmnipoolAssetVolumeHistoricalData', originCallFn: 'getPrefetchedCache' }
     ),
     ctx.storeUtils.findWithLogs(
       StableswapVolumeHistoricalData,
@@ -476,7 +485,7 @@ export async function getPrefetchedCache({
         where: { id: In(stableswapVolIdsToPrefetch) },
         relations: { pool: true },
       },
-      { className: 'StableswapVolumeHistoricalData' }
+      { className: 'StableswapVolumeHistoricalData', originCallFn: 'getPrefetchedCache' }
     ),
     ctx.storeUtils.findWithLogs(
       StableswapAssetVolumeHistoricalData,
@@ -484,7 +493,7 @@ export async function getPrefetchedCache({
         where: { id: In(stableswapAssetVolIdsToPrefetch) },
         relations: { volumesCollection: true },
       },
-      { className: 'StableswapAssetVolumeHistoricalData' }
+      { className: 'StableswapAssetVolumeHistoricalData', originCallFn: 'getPrefetchedCache' }
     ),
   ]);
 

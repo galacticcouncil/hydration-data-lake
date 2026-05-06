@@ -51,9 +51,9 @@ export async function processAavepoolsNormalizedTvl({
       assetSpotPriceNorm = '1';
 
     if (!assetSpotPriceNorm) {
-      console.log(
-        `Spot price for asset ${reserveAsset.id} not found. Skipping.`
-      );
+      // console.log(
+      //   `Spot price for asset ${reserveAsset.id} not found. Skipping.`
+      // );
       continue;
     }
 

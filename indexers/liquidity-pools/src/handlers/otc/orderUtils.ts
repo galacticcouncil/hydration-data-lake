@@ -91,7 +91,7 @@ export async function getOtcOrder({
   order = await ctx.storeUtils.findOneWithLogs(OtcOrder, {
     where: { id },
     relations,
-  }, { className: 'OtcOrder' });
+  }, { className: 'OtcOrder', originCallFn: 'getOtcOrder' });
 
   if (order) {
     ctx.batchState.state.otcOrders.set(order.id, order);

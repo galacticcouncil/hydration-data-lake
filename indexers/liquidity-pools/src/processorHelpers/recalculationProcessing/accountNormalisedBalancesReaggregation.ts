@@ -47,7 +47,10 @@ export async function handleAccountNormalisedBalancesReaggregation(
             height: 'ASC',
           },
         },
-        { className: 'Block' }
+        {
+          className: 'Block',
+          originCallFn: 'handleAccountNormalisedBalancesReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -70,7 +73,10 @@ export async function handleAccountNormalisedBalancesReaggregation(
           paraBlockHeight: 'ASC',
         },
       },
-      { className: 'MoneyMarketEvent' }
+      {
+        className: 'AccountAssetBalanceHistoricalData',
+        originCallFn: 'handleAccountNormalisedBalancesReaggregation',
+      }
     ),
     ctx.storeUtils.findWithLogs(
       AccountTotalBalanceHistoricalData,
@@ -85,7 +91,10 @@ export async function handleAccountNormalisedBalancesReaggregation(
           paraBlockHeight: 'ASC',
         },
       },
-      { className: 'MoneyMarketEvent' }
+      {
+        className: 'AccountTotalBalanceHistoricalData',
+        originCallFn: 'handleAccountNormalisedBalancesReaggregation',
+      }
     ),
     ctx.storeUtils.findWithLogs(
       OmnipoolAssetHistoricalData,
@@ -100,7 +109,10 @@ export async function handleAccountNormalisedBalancesReaggregation(
           paraBlockHeight: 'ASC',
         },
       },
-      { className: 'OmnipoolAssetHistoricalData' }
+      {
+        className: 'OmnipoolAssetHistoricalData',
+        originCallFn: 'handleAccountNormalisedBalancesReaggregation',
+      }
     ),
   ]);
 
@@ -133,7 +145,10 @@ export async function handleAccountNormalisedBalancesReaggregation(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'AssetSpotPriceHistoricalData',
+          originCallFn: 'handleAccountNormalisedBalancesReaggregation',
+        }
       )
     ).map((p) => [p.id, p])
   );

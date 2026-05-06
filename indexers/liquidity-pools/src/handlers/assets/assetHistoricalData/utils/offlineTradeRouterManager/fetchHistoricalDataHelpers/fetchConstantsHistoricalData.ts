@@ -29,7 +29,10 @@ export async function fetchConstantsHistoricalData({
         paraBlockHeight: blockNumber,
       },
     },
-    { className: 'ConstantsHistoricalData' }
+    {
+      className: 'ConstantsHistoricalData',
+      originCallFn: 'fetchConstantsHistoricalData',
+    }
   );
 
   return persistedHistData;

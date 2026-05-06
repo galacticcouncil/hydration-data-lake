@@ -34,7 +34,7 @@ export async function recalculatePoolsNormalizedVolumes(
       await ctx.storeUtils.findWithLogs(Asset, {
         where: {},
         relations: {},
-      }, { className: 'Asset' })
+      }, { className: 'Asset', originCallFn: 'recalculatePoolsNormalizedVolumes' })
     ).map((p) => [p.id, p])
   );
 
@@ -47,7 +47,7 @@ export async function recalculatePoolsNormalizedVolumes(
             ctx.blocks[ctx.blocks.length - 1].header.height
           ),
         },
-      }, { className: 'Block' })
+      }, { className: 'Block', originCallFn: 'recalculatePoolsNormalizedVolumes' })
     ).map((p) => [p.id, p])
   );
 
@@ -61,7 +61,7 @@ export async function recalculatePoolsNormalizedVolumes(
           ),
         },
         relations: {},
-      }, { className: 'AssetSpotPriceHistoricalData' })
+      }, { className: 'AssetSpotPriceHistoricalData', originCallFn: 'recalculatePoolsNormalizedVolumes' })
     ).map((p) => [p.id, p])
   );
 
@@ -77,7 +77,7 @@ export async function recalculatePoolsNormalizedVolumes(
         relations: {
           pool: true,
         },
-      }, { className: 'XykpoolVolumeHistoricalData' })
+      }, { className: 'XykpoolVolumeHistoricalData', originCallFn: 'recalculatePoolsNormalizedVolumes' })
     ).map((p) => [p.id, p])
   );
   ctx.batchState.state.omnipoolAssetVolumes = new Map(
@@ -92,7 +92,7 @@ export async function recalculatePoolsNormalizedVolumes(
         relations: {
           omnipoolAsset: true,
         },
-      }, { className: 'OmnipoolAssetVolumeHistoricalData' })
+      }, { className: 'OmnipoolAssetVolumeHistoricalData', originCallFn: 'recalculatePoolsNormalizedVolumes' })
     ).map((p) => [p.id, p])
   );
 
@@ -108,7 +108,7 @@ export async function recalculatePoolsNormalizedVolumes(
         relations: {
           pool: true,
         },
-      }, { className: 'StableswapVolumeHistoricalData' })
+      }, { className: 'StableswapVolumeHistoricalData', originCallFn: 'recalculatePoolsNormalizedVolumes' })
     ).map((p) => [p.id, p])
   );
 
@@ -124,7 +124,7 @@ export async function recalculatePoolsNormalizedVolumes(
         relations: {
           volumesCollection: { pool: true },
         },
-      }, { className: 'StableswapAssetVolumeHistoricalData' })
+      }, { className: 'StableswapAssetVolumeHistoricalData', originCallFn: 'recalculatePoolsNormalizedVolumes' })
     ).map((p) => [p.id, p])
   );
 

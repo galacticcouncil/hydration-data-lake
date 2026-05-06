@@ -25,5 +25,8 @@ export async function getOldAaveFacilitatorHistDataEntity({
     order: {
       paraBlockHeight: 'DESC',
     },
-  }, { className: 'AaveFacilitatorHistoricalData' });
+  }, {
+    className: 'AaveFacilitatorHistoricalData',
+    originCallFn: 'getOldAaveFacilitatorHistDataEntity',
+  });
 }

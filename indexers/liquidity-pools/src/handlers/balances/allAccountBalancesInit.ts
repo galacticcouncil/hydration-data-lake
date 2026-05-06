@@ -47,7 +47,10 @@ export async function handleAllAccountBalancesInit({
     {
       where: {},
     },
-    { className: 'AccountAssetBalanceHistoricalData' }
+    {
+      className: 'AccountAssetBalanceHistoricalData',
+      originCallFn: 'handleAllAccountBalancesInit',
+    }
   );
 
   if (hasAnyRecord) {
@@ -121,7 +124,10 @@ export async function initManyAccountAssetBalancesFromOnChainData({
       {
         where: {},
       },
-      { className: 'Account' }
+      {
+        className: 'Account',
+        originCallFn: 'initManyAccountAssetBalancesFromOnChainData',
+      }
     );
 
     if (!hasAnyAccountRecord) {
@@ -146,6 +152,9 @@ export async function initManyAccountAssetBalancesFromOnChainData({
     allInitializedAccounts = (
       await ctx.storeUtils.findWithLogs(Account, {
         where: {},
+      }, {
+        className: 'Account',
+        originCallFn: 'initManyAccountAssetBalancesFromOnChainData',
       })
     ).filter((acc) => acc.id !== ZERO_ADDRESS_PK);
   }
@@ -171,7 +180,10 @@ export async function initManyAccountAssetBalancesFromOnChainData({
       await ctx.storeUtils.findOneWithLogs(
         Account,
         { where: {} },
-        { className: 'Account' }
+        {
+          className: 'Account',
+          originCallFn: 'initManyAccountAssetBalancesFromOnChainData',
+        }
       );
     } catch (error) {
       console.error('Keep-alive ping failed:', error);

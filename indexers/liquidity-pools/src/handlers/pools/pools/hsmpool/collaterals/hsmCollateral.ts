@@ -50,7 +50,7 @@ export async function getOrCreateHsmCollateral({
         stableswap: true,
       },
     },
-    { className: 'HsmCollateral' }
+    { className: 'HsmCollateral', originCallFn: 'getOrCreateHsmCollateral' }
   );
 
   // If we didn't find by id and need to search by assetRegistryId
@@ -66,7 +66,7 @@ export async function getOrCreateHsmCollateral({
         {
           where: { assetRegistryId },
         },
-        { className: 'Asset' }
+        { className: 'Asset', originCallFn: 'getOrCreateHsmCollateral' }
       );
 
       if (asset) {
@@ -85,7 +85,7 @@ export async function getOrCreateHsmCollateral({
             stableswap: true,
           },
         },
-        { className: 'HsmCollateral' }
+        { className: 'HsmCollateral', originCallFn: 'getOrCreateHsmCollateral' }
       );
     }
   }

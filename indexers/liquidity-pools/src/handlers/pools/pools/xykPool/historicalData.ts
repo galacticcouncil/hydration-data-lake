@@ -313,7 +313,11 @@ export async function ensureXykpoolHisDataFromLatestPersistedData({
 }) {
   const latestHistData = await ctx.storeUtils.findOneWithLogs(
     XykpoolHistoricalDataLatest,
-    { where: { id: poolId }, relations: { pool: true } }
+    { where: { id: poolId }, relations: { pool: true } },
+    {
+      className: 'XykpoolHistoricalDataLatest',
+      originCallFn: 'ensureXykpoolHisDataFromLatestPersistedData',
+    }
   );
 
   if (!latestHistData) return;
@@ -416,7 +420,10 @@ export async function isXykpoolHistoricalDataUniqueRegardingPreviousRecord({
           pool: true,
         },
       },
-      { className: 'XykpoolHistoricalData' }
+      {
+        className: 'XykpoolHistoricalData',
+        originCallFn: 'isXykpoolHistoricalDataUniqueRegardingPreviousRecord',
+      }
     );
 
     if (previousItem)

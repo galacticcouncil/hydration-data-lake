@@ -152,7 +152,7 @@ export async function getDcaSchedule({
       where: { id },
       relations,
     },
-    { className: 'DcaSchedule' }
+    { className: 'DcaSchedule', originCallFn: 'getDcaSchedule' }
   );
 
   if (!schedule) return null;

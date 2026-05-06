@@ -170,7 +170,10 @@ export async function initAllOmnipoolLiquidityMiningDeposits(
         createdAtParaBlockHeight: 'DESC',
       },
     },
-    { className: 'OmnipoolYieldFarmDeposit' }
+    {
+      className: 'OmnipoolYieldFarmDeposit',
+      originCallFn: 'initAllOmnipoolLiquidityMiningDeposits',
+    }
   );
 
   if (hasAnyRecord) return;

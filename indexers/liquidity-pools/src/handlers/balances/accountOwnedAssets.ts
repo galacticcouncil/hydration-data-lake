@@ -111,7 +111,10 @@ export async function prefetchAccountOwnedAssetsByAccountIds({
   const records = await ctx.storeUtils.findWithLogs(
     AccountOwnedAsset,
     { where: { accountId: In(accountIdsToFetch) } },
-    { className: 'AccountOwnedAsset' }
+    {
+      className: 'AccountOwnedAsset',
+      originCallFn: 'prefetchAccountOwnedAssetsByAccountIds',
+    }
   );
 
   for (const record of records) {

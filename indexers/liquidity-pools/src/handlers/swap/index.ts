@@ -112,7 +112,10 @@ async function prefetchChainActivityTracesForSwaps(
       //   parentTraces: true,
       // },
     },
-    { className: 'ChainActivityTrace' }
+    {
+      className: 'ChainActivityTrace',
+      originCallFn: 'prefetchChainActivityTracesForSwaps',
+    }
   );
 
   for (const entity of entities) {

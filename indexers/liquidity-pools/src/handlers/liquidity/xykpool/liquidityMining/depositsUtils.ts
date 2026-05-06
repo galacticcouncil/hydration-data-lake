@@ -263,6 +263,10 @@ export async function getXykLiquidityMiningDepositsForAccounts({
             MoreThanOrEqual(ctx.blocks[0].header.height)
           ),
         },
+      },
+      {
+        className: 'XykYieldFarmDeposit',
+        originCallFn: 'getXykLiquidityMiningDepositsForAccounts',
       }
     );
 
@@ -298,6 +302,10 @@ export async function getXykLiquidityMiningDepositsForAccounts({
         where: {
           depositId: In(depositIdsBatch),
         },
+      },
+      {
+        className: 'XykYieldFarmDepositEvent',
+        originCallFn: 'getXykLiquidityMiningDepositsForAccounts',
       }
     );
     for (const responseItem of batchResponse) {

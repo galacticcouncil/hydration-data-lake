@@ -36,7 +36,7 @@ export async function prefetchAllAssets(ctx: SqdProcessorContext<Store>) {
           where: {},
           relations: {},
         },
-        { className: 'Asset' }
+        { className: 'Asset', originCallFn: 'prefetchAllAssets' }
       )
     ).map((asset) => [asset.id, asset])
   );
@@ -149,7 +149,7 @@ export async function actualiseAssets(ctx: SqdProcessorContext<Store>) {
   let bondsStorageData: BondDetails[] = [];
 
   const allExistingAssets = new Map(
-    (await ctx.storeUtils.findWithLogs(Asset, {}, { className: 'Asset' })).map(
+    (await ctx.storeUtils.findWithLogs(Asset, {}, { className: 'Asset', originCallFn: 'actualiseAssets' })).map(
       (asset) => [asset.id, asset]
     )
   );

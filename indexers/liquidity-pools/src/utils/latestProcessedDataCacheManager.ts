@@ -404,7 +404,10 @@ export class LatestProcessedDataCacheManager {
     const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
       AssetHistoricalData,
       { where: {} },
-      { className: 'AssetHistoricalData' }
+      {
+        className: 'AssetHistoricalData',
+        originCallFn: 'prefetchLastAssetHistDataItem',
+      }
     );
 
     if (!hasAnyRecord) {
@@ -490,7 +493,10 @@ export class LatestProcessedDataCacheManager {
     const hasAnyRecord = await ctx.storeUtils.findOneWithLogs(
       AssetSpotPriceHistoricalData,
       { where: {} },
-      { className: 'AssetSpotPriceHistoricalData' }
+      {
+        className: 'AssetSpotPriceHistoricalData',
+        originCallFn: 'prefetchLastAssetSpotPriceHistDataItem',
+      }
     );
 
     if (!enforcePrefetch && !hasAnyRecord) {
@@ -604,7 +610,10 @@ export class LatestProcessedDataCacheManager {
           pool: true,
         },
       },
-      { className: 'XykpoolHistoricalData' }
+      {
+        className: 'XykpoolHistoricalData',
+        originCallFn: 'prefetchLastXykpoolHistDataItem',
+      }
     );
 
     if (!hasAnyRecord) {

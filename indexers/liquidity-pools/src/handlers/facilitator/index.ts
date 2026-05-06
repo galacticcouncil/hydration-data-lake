@@ -29,7 +29,7 @@ export async function getOrCreateAaveFacilitator({
         id,
       },
     },
-    { className: 'AaveFacilitator' }
+    { className: 'AaveFacilitator', originCallFn: 'getOrCreateAaveFacilitator' }
   );
 
   if (facilitator) {
@@ -179,6 +179,9 @@ export async function getOldAaveFacilitatorHistDataEntity({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'AaveFacilitatorHistoricalData' }
+    {
+      className: 'AaveFacilitatorHistoricalData',
+      originCallFn: 'getOldAaveFacilitatorHistDataEntity',
+    }
   );
 }

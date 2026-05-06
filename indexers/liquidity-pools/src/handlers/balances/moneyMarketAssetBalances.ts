@@ -620,6 +620,10 @@ async function getAccountMmAssetsPerBlock({
       where: {
         id: In(allAccountsForMmReserveBalancesInitList.map((acc) => acc.id)),
       },
+    },
+    {
+      className: 'AccountProcessingStatus',
+      originCallFn: 'handleMoneyMarketAssetBalancesForAccounts',
     }
   );
 

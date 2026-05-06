@@ -37,7 +37,11 @@ export async function getOrCreateAccountProcessingStatus({
 
   accountProcessingStatus = await ctx.storeUtils.findOneWithLogs(
     AccountProcessingStatus,
-    { where: { id } }
+    { where: { id } },
+    {
+      className: 'AccountProcessingStatus',
+      originCallFn: 'getOrCreateAccountProcessingStatus',
+    }
   );
 
   if (accountProcessingStatus) {
@@ -338,6 +342,7 @@ export async function prefetchOrInitAllAccountProcessingStatuses(
       },
       {
         className: 'AccountProcessingStatus',
+        originCallFn: 'prefetchOrInitAllAccountProcessingStatuses',
       }
     );
 
@@ -361,7 +366,10 @@ export async function initAllAccountProcessingStatusesOnColdStart({
     {
       where: {},
     },
-    { className: 'AccountProcessingStatus' }
+    {
+      className: 'AccountProcessingStatus',
+      originCallFn: 'initAllAccountProcessingStatusesOnColdStart',
+    }
   );
 
   if (!keepExistingStatuses && hasAnyRecord) return;
@@ -371,7 +379,10 @@ export async function initAllAccountProcessingStatusesOnColdStart({
     {
       where: {},
     },
-    { className: 'Account' }
+    {
+      className: 'Account',
+      originCallFn: 'initAllAccountProcessingStatusesOnColdStart',
+    }
   );
 
   const allExistingStatusIdsMap = keepExistingStatuses
@@ -382,7 +393,10 @@ export async function initAllAccountProcessingStatusesOnColdStart({
             {
               where: {},
             },
-            { className: 'AccountProcessingStatus' }
+            {
+              className: 'AccountProcessingStatus',
+              originCallFn: 'initAllAccountProcessingStatusesOnColdStart',
+            }
           )
         ).map((r) => [r.id, r])
       )

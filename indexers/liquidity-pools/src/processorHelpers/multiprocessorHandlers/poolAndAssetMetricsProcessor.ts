@@ -182,7 +182,10 @@ export async function poolAndAssetMetricsProcessorHandler(
               paraBlockHeight: 'ASC',
             },
           },
-          { className: 'AssetSpotPriceHistoricalData' }
+          {
+            className: 'Swap',
+            originCallFn: 'poolAndAssetMetricsProcessorHandler',
+          }
         )
       ).map((p) => [p.id, p])
     );

@@ -251,9 +251,23 @@ class EvmConfig {
 
   @IsNotEmpty()
   @IsString()
+  readonly HSMPOOL_FICILITATOR_ADDRESS: string =
+    '0x6d6f646c70792f68736d6f640000000000000000';
+
+  @IsNotEmpty()
   @IsString()
-  readonly ATOKEN_CONTRACT_ADDRESS: string =
-    '0xc0DF4c545BaFA1788a4Ee55f79704D12fC2c7B5C';
+  readonly HOLLAR_CONTRACT_ADDRESS: string =
+    '0x531a654d1696ed52e7275a8cede955e82620f99a';
+
+  /**
+   * Money market
+   */
+
+  // ===  Legacy variables for compatibility  ===
+  @IsNotEmpty()
+  @IsString()
+  readonly MM_TREASURY_ADDRESS: string =
+    '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9';
 
   @IsNotEmpty()
   @IsString()
@@ -269,21 +283,7 @@ class EvmConfig {
   @IsString()
   readonly POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS: string =
     '0x1b02e051683b5cfac5929c25e84adb26ecf87b38';
-
-  @IsNotEmpty()
-  @IsString()
-  readonly HSMPOOL_FICILITATOR_ADDRESS: string =
-    '0x6d6f646c70792f68736d6f640000000000000000';
-
-  @IsNotEmpty()
-  @IsString()
-  readonly HOLLAR_CONTRACT_ADDRESS: string =
-    '0x531a654d1696ed52e7275a8cede955e82620f99a';
-
-  @IsNotEmpty()
-  @IsString()
-  readonly MM_TREASURY_ADDRESS: string =
-    '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9';
+  // ==========
 
   @Transform(({ value }: { value: string }) => JSON.parse(value ?? ''))
   readonly AAVE_MONEY_MARKET_INSTANCES: AaveMoneyMarketInstanceConfig[] | null =
@@ -566,7 +566,7 @@ export class AppConfig {
   readonly PROCESS_TO_BLOCK: number = -1;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly BLOCKS_FINALITY_OFFSET: number = 0;
+  readonly BLOCKS_FINALITY_OFFSET: number = 50;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PROCESS_LBP_POOLS: boolean = true;

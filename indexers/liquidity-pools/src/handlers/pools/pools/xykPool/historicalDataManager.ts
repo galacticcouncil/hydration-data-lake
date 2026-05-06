@@ -279,7 +279,11 @@ export class XykpoolHistoricalDataManager {
 
     const latestHistDataForPools = await ctx.storeUtils.findWithLogs(
       XykpoolHistoricalDataLatest,
-      { where: { id: In(poolIdsToPrefill) }, relations: { pool: true } }
+      { where: { id: In(poolIdsToPrefill) }, relations: { pool: true } },
+      {
+        className: 'XykpoolHistoricalDataLatest',
+        originCallFn: 'prefillHistoricalDataForSkippedPools',
+      }
     );
 
     for (const lastHistData of latestHistDataForPools) {

@@ -72,7 +72,7 @@ export async function getOrCreateAccount({
   acc = await ctx.storeUtils.findOneWithLogs(
     Account,
     { where: { id }, relations },
-    { className: 'Account' }
+    { className: 'Account', originCallFn: 'getOrCreateAccount' }
   );
 
   if (
@@ -137,7 +137,7 @@ export async function getAccountByBoundEvmAddress({
       where: { boundEvmAddress: evmAddress },
       relations,
     },
-    { className: 'Account' }
+    { className: 'Account', originCallFn: 'getAccountByBoundEvmAddress' }
   );
 
   let accountPersisted =
@@ -212,6 +212,7 @@ export async function prefetchOrInitAllBatchAccounts(
     },
     {
       className: 'Account',
+      originCallFn: 'prefetchOrInitAllBatchAccounts',
     }
   );
 

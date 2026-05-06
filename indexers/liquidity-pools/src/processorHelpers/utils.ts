@@ -136,7 +136,10 @@ export async function fetchAndCorrelateAssetSpotPrices(
             paraBlockHeight: 'ASC',
           },
         },
-        { className: 'AssetSpotPriceHistoricalData' }
+        {
+          className: 'AssetSpotPriceHistoricalData',
+          originCallFn: 'fetchAndCorrelateAssetSpotPrices',
+        }
       )
     ).map((p) => [p.id, p])
   );

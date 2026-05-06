@@ -123,7 +123,10 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
         where: { id: entityId },
         relations,
       },
-      { className: 'AccountTotalBalanceHistoricalData' }
+      {
+        className: 'AccountTotalBalanceHistoricalData',
+        originCallFn: 'getAccountTotalBalanceHistoricalData',
+      }
     );
 
     if (dataEntity) {

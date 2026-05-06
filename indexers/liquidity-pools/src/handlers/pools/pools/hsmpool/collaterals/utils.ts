@@ -55,5 +55,8 @@ export async function getOldCollateralHistDataEntity({
     order: {
       paraBlockHeight: 'DESC',
     },
-  }, { className: 'HsmCollateralConfigHistoricalData' });
+  }, {
+    className: 'HsmCollateralConfigHistoricalData',
+    originCallFn: 'getOldCollateralHistDataEntity',
+  });
 }
