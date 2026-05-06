@@ -517,7 +517,7 @@ function getXykPoolsIndexedByShareAsset({
   for (const pool of Array.from(
     ctx.batchState.state.xykAllBatchPools.values()
   )) {
-    if (!pool?.shareTokenId) continue;
+    if (!pool?.shareTokenId || pool.isDestroyed) continue;
 
     pools.set(pool.shareTokenId, pool);
   }
@@ -590,10 +590,24 @@ async function processXykInvolvedAssetSpotPrices({
     assetB.decimals
   );
 
+  if (
+    assetABalanceNormalised.isLessThanOrEqualTo(0) ||
+    assetBBalanceNormalised.isLessThanOrEqualTo(0)
+  ) {
+    return;
+  }
+
   const priceInInterimAssetNormalised =
     assetXykPool.assetAId === assetId
       ? assetBBalanceNormalised.div(assetABalanceNormalised)
       : assetABalanceNormalised.div(assetBBalanceNormalised);
+
+  if (
+    !priceInInterimAssetNormalised.isFinite() ||
+    priceInInterimAssetNormalised.isNaN()
+  ) {
+    return;
+  }
 
   const calcAssetSpotPrices = async () => {
     for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
@@ -912,6 +926,8 @@ async function processXykShareAssetSpotPrices({
     return;
   }
 
+  if (originXykpool.isDestroyed) return;
+
   let xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
     `${originXykpool.accountId}-${blockHeader.height}`
   );
@@ -997,9 +1013,9 @@ async function processXykShareAssetSpotPrices({
         return;
       }
       if (!assetHistData.totalIssuance) {
-        console.log(
-          `processXykShareAssetSpotPrices :: totalIssuance not found for asset ${assetHistData.assetId}`
-        );
+        // console.log(
+        //   `processXykShareAssetSpotPrices :: totalIssuance not found for asset ${assetHistData.assetId}`
+        // );
         return;
       }
       const shareAssetPriceNormalised = originPoolTvlInRefAssetNormalised.div(
@@ -1014,9 +1030,9 @@ async function processXykShareAssetSpotPrices({
         !shareAssetPriceNormalised.isFinite() ||
         shareAssetPriceNormalised.isNaN()
       ) {
-        console.log(
-          `Invalid share price for asset ${asset.id} at block ${blockHeader.height}: ${shareAssetPriceNormalised?.toString()}. Skipping...`
-        );
+        // console.log(
+        //   `Invalid share price for asset ${asset.id} at block ${blockHeader.height}: ${shareAssetPriceNormalised?.toString()}. Skipping...`
+        // );
         continue;
       }
 
