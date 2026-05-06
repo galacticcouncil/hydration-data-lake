@@ -432,14 +432,19 @@ export async function collectBalanceEvents(
 async function prefetchPreviousBalances({
   ctx,
   balanceEvents,
+  accountIdsInvolvedToLiquidityProvidingByBlock,
 }: {
   ctx: SqdProcessorContext<Store>;
   balanceEvents: BalanceEvent[];
+  accountIdsInvolvedToLiquidityProvidingByBlock: Map<number, Set<string>>;
 }): Promise<void> {
   const uniqueAccountIds = new Set<string>();
 
   for (const event of balanceEvents) {
     uniqueAccountIds.add(event.accountId);
+  }
+  for (const accounts of accountIdsInvolvedToLiquidityProvidingByBlock.values()) {
+    for (const accountId of accounts) uniqueAccountIds.add(accountId);
   }
 
   if (uniqueAccountIds.size === 0) return;
@@ -558,25 +563,76 @@ function findLatestBalanceState({
 }
 
 /**
- * Process all balance events sequentially in on-chain order.
+ * Process all balance events sequentially in on-chain order and produce
+ * AccountAssetBalanceHistoricalData snapshots that downstream total balance
+ * aggregation consumes.
  *
- * Flow per the plan:
+ * Main flow:
  * 1. Prefetch latest balances from DB into cache (blocks[0].height - 1)
  * 2. Collect all involved accounts, find those with no history (first activity)
  * 3. Init all balances for first-activity accounts via handleManyAccountBalancesInitCore
  * 4. Process events: skip delta at first-activity block, apply delta otherwise
  * 5. For balance lookup: check both batchState and cacheManager, prefer newer
+ *
+ * Edge cases handled:
+ *
+ * - Reorg / SQD rollback: SQD's in-memory account-asset balance cache survives
+ *   across batches but is NOT invalidated when the DB is rolled back for a
+ *   re-orged block range. If the incoming batch starts at or before the
+ *   highest cached height, those cached entries reflect a now-rolled-back
+ *   future and would double-apply deltas on re-processing. The cache is
+ *   wiped at function entry and refilled from DB by prefetch.
+ *
+ * - First-encounter accounts (no history in cacheManager nor batchState):
+ *   routed through initManyAccountAssetBalancesFromOnChainData with
+ *   forceFetch=true so all of their balances at the first-activity block are
+ *   read from on-chain storage. Their balance events at that same block are
+ *   then skipped in the delta loop (the storage snapshot is the final state).
+ *
+ * - Negative balance after delta application: indicates a missed prior event
+ *   or a stale prefetch. The function falls back to a single RPC read for
+ *   that (account, asset, block) and overwrites the snapshot with the
+ *   on-chain value.
+ *
+ * - Scheduled reaggregation accounts (ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH):
+ *   force-injected as first-encounter at blocks[0].height so their full
+ *   balance set is refetched from storage even when no balance event fires.
+ *
+ * - Cold-start init accounts (preProcessedTotalBalancesOnGlobalInit): merged
+ *   into accountsWithFirstBalancesInitPerBlock for blocks[0].height so events
+ *   in that block are not double-applied on top of the just-initialized
+ *   storage snapshot.
+ *
+ * - Liquidity-providing recipients with no balance event at block H
+ *   (LP-only accounts): an LP NFT transfer (Uniques.Transferred) does not
+ *   emit any fungible balance event for the recipient, so without special
+ *   handling the recipient would have no AccountAssetBalanceHistoricalData
+ *   row at block H. handleAccountTotalBalanceEventsDriven would then skip
+ *   the recipient at block H, and handleLiquidityBalancesInTotalBalances
+ *   would later create a fresh totals row containing only the LP position
+ *   amount (missing every other asset balance the recipient holds). To
+ *   prevent this, accountIdsInvolvedToLiquidityProvidingByBlock is intersected
+ *   against balanceEvents per block; for LP-only (account, block) pairs the
+ *   function emits synthetic snapshots — one per asset the account owns,
+ *   each carrying the latest known balance from findLatestBalanceState —
+ *   so handleAccountTotalBalanceEventsDriven sees the account at block H
+ *   and reconstructs the full total before liquidity amounts are layered on
+ *   top. Zero balances are filtered (total balance aggregation ignores them
+ *   anyway), and accounts already RPC-initialized at H are skipped (their
+ *   per-asset snapshots are already complete).
  */
 export async function processBalanceEventsSequentially({
   ctx,
   balanceEvents,
   preProcessedTotalBalancesOnGlobalInit,
   accountsForScheduledReaggregation,
+  accountIdsInvolvedToLiquidityProvidingByBlock = new Map(),
 }: {
   ctx: SqdProcessorContext<Store>;
   balanceEvents: BalanceEvent[];
   preProcessedTotalBalancesOnGlobalInit?: Set<string> | null;
   accountsForScheduledReaggregation?: Set<string>;
+  accountIdsInvolvedToLiquidityProvidingByBlock?: Map<number, Set<string>>;
 }): Promise<{
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }> {
@@ -593,12 +649,20 @@ export async function processBalanceEventsSequentially({
     ctx.blocks[0].header.height
   );
 
-  if (balanceEvents.length === 0) {
+  if (
+    balanceEvents.length === 0 &&
+    accountsForScheduledReaggregation.size === 0 &&
+    accountIdsInvolvedToLiquidityProvidingByBlock.size === 0
+  ) {
     return { allProcessedAccountsPerBlock: new Map() };
   }
 
   // Step 1: Prefetch previous balances from DB
-  await prefetchPreviousBalances({ ctx, balanceEvents });
+  await prefetchPreviousBalances({
+    ctx,
+    balanceEvents,
+    accountIdsInvolvedToLiquidityProvidingByBlock,
+  });
 
   const cacheManager = LatestProcessedDataCacheManager.getInstance();
   const allProcessedAccountsPerBlock = new Map<number, Set<string>>();
@@ -623,6 +687,45 @@ export async function processBalanceEventsSequentially({
     }
   }
 
+  // LP-only accounts: involved in liquidity providing at block H but with no
+  // balance event at block H. These need synthetic per-asset snapshots so
+  // handleAccountTotalBalanceEventsDriven reconstructs a complete total at H
+  // before handleLiquidityBalancesInTotalBalances adds the LP amount on top.
+  // Without this, transferred LP NFT recipients end up with totals containing
+  // only the position amount and missing all other asset balances.
+  const accountsWithEventActivityPerBlock = new Map<number, Set<string>>();
+  for (const event of balanceEvents) {
+    let s = accountsWithEventActivityPerBlock.get(event.blockHeight);
+    if (!s) {
+      s = new Set();
+      accountsWithEventActivityPerBlock.set(event.blockHeight, s);
+    }
+    s.add(event.accountId);
+  }
+
+  const lpOnlyAccountsByBlock = new Map<number, Set<string>>();
+  for (const [
+    blockHeight,
+    lpAccounts,
+  ] of accountIdsInvolvedToLiquidityProvidingByBlock) {
+    const eventAccounts = accountsWithEventActivityPerBlock.get(blockHeight);
+    for (const accountId of lpAccounts) {
+      if (eventAccounts?.has(accountId)) continue;
+      let s = lpOnlyAccountsByBlock.get(blockHeight);
+      if (!s) {
+        s = new Set();
+        lpOnlyAccountsByBlock.set(blockHeight, s);
+      }
+      s.add(accountId);
+
+      // Track first-activity so first-encounter init covers them too.
+      const existing = accountsFirstActivityAtBlock.get(accountId);
+      if (existing === undefined || existing > blockHeight) {
+        accountsFirstActivityAtBlock.set(accountId, blockHeight);
+      }
+    }
+  }
+
   // Step 3: Identify accounts with NO prior DB history (check cache manager)
   // These need full RPC init via handleManyAccountBalancesInitCore.
   // Inject accounts for reaggregation.
@@ -636,13 +739,11 @@ export async function processBalanceEventsSequentially({
   ] of accountsFirstActivityAtBlock.entries()) {
     let hasAnyHistory = false;
 
-    // Check if this account has any cached balance from previous batches
-    for (const event of balanceEvents) {
-      if (event.accountId !== accountId) continue;
-      if (cacheManager.getLastAccountAssetBalance(accountId, event.assetId)) {
-        hasAnyHistory = true;
-        break;
-      }
+    // Check cacheManager: any cached balance for any asset of this account
+    // means we have prior history. Works for LP-only accounts (no balanceEvents
+    // to iterate) too.
+    if (cacheManager.getAllAccountAssetBalances(accountId).size > 0) {
+      hasAnyHistory = true;
     }
 
     // Also check batchState (e.g., from handleAllAccountBalancesInit on cold start)
@@ -814,6 +915,76 @@ export async function processBalanceEventsSequentially({
       });
       currentBalance.transferable = rpcBalance.transferable;
       currentBalance.totalLocked = rpcBalance.totalLocked;
+    }
+  }
+
+  // Step 5b: Synthetic snapshots for LP-only accounts.
+  // For each owned asset of an LP-only (account, block) pair, replay the
+  // latest known balance at that block. This materializes a full per-asset
+  // snapshot set so handleAccountTotalBalanceEventsDriven can compute the
+  // complete total at block H — without it, the recipient of a transferred
+  // LP NFT would end up with a total covering only the LP position amount.
+  // Accounts already RPC-initialized at this block are skipped (they already
+  // have full snapshots). Zero balances are skipped — total balance
+  // aggregation ignores them anyway.
+  for (const [blockHeight, accountIds] of lpOnlyAccountsByBlock) {
+    for (const accountId of accountIds) {
+      if (
+        accountsWithFirstBalancesInitPerBlock.get(blockHeight)?.has(accountId)
+      ) {
+        continue;
+      }
+
+      const ownedAssetIds = new Set<string>();
+      for (const ownedAsset of ctx.batchState.state.accountOwnedAssets.values()) {
+        if (ownedAsset.accountId === accountId) {
+          ownedAssetIds.add(ownedAsset.assetId);
+        }
+      }
+
+      if (ownedAssetIds.size === 0) continue;
+
+      const blockHeader =
+        ctx.batchState.getBlockHeaderByBlockHeight(blockHeight);
+
+      for (const assetId of ownedAssetIds) {
+        const snapshotKey = `${accountId}-${assetId}-${blockHeight}`;
+        if (snapshotsToCreate.has(snapshotKey)) continue;
+
+        const previousBalance = findLatestBalanceState({
+          accountId,
+          assetId,
+          processingBlockHeight: blockHeight,
+          balanceSnapshotsAccumulator: snapshotsToCreate,
+          ctx,
+        });
+
+        if (!previousBalance) continue;
+
+        if (
+          previousBalance.transferable === 0n &&
+          previousBalance.totalLocked === 0n
+        ) {
+          continue;
+        }
+
+        snapshotsToCreate.set(snapshotKey, {
+          accountId,
+          assetId,
+          isEvmAsset: false,
+          blockHeight,
+          blockHeader,
+          transferable: previousBalance.transferable,
+          totalLocked: previousBalance.totalLocked,
+        });
+      }
+
+      let s = allProcessedAccountsPerBlock.get(blockHeight);
+      if (!s) {
+        s = new Set();
+        allProcessedAccountsPerBlock.set(blockHeight, s);
+      }
+      s.add(accountId);
     }
   }
 

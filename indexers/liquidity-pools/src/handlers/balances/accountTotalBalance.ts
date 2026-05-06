@@ -16,9 +16,7 @@ import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/
 import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
 import { getOmnipoolLiquidityMiningDepositsForAccounts } from '../liquidity/omnipool/liquidityMining/depositUtils';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
-import {
-  getPreviousAssetAccountBalancesForListOfAccountsSql,
-} from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
+import { getPreviousAssetAccountBalancesForListOfAccountsSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
 import {
   createAccountAssetBalancesForOutdatedBalances,
   ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData,
@@ -491,92 +489,6 @@ async function addLiquidityBalancesToTotalBalance({
   }
 }
 
-//
-// async function addLiquidityMiningWorthToTotalBalance({
-//   preProcessedTotalBalances,
-//   lmWorthData,
-//   refAssetId,
-//   dataSource,
-//   ctx,
-// }: {
-//   ctx: SqdProcessorContext<Store>;
-//   preProcessedTotalBalances?: Set<string> | null;
-//   refAssetId: string;
-//   lmWorthData: AccountPositionBalancesPerBlockPerAsset;
-//   dataSource?: string;
-// }) {
-//   for (const blockData of lmWorthData.values()) {
-//     for (const [accountId, accountAssetData] of blockData.data.entries()) {
-//       if (
-//         preProcessedTotalBalances &&
-//         preProcessedTotalBalances.has(
-//           `${accountId}-${blockData.blockHeader.height}`
-//         )
-//       )
-//         continue;
-//
-//       const accountTotalBalance =
-//         await getOrCreateAccountTotalBalanceHistoricalData({
-//           accountId,
-//           refAssetId,
-//           blockHeader: blockData.blockHeader,
-//           ctx,
-//         });
-//
-//       for (const [assetId, balanceBn] of accountAssetData.entries()) {
-//         const asset = await getOrCreateAsset({
-//           id: assetId,
-//           ctx,
-//           ensure: true,
-//           blockHeader: blockData.blockHeader,
-//         });
-//         if (!asset) continue;
-//
-//         const assetSpotPrice = getAssetsPairPrice({
-//           ctx,
-//           assetInId: asset.id,
-//           blockHeight: blockData.blockHeader.height,
-//         });
-//
-//         const portionAmountNorm =
-//           assetSpotPrice && asset.decimals
-//             ? calcPriceNormalized({
-//                 amount: BigInt(balanceBn.toFixed() ?? '0'),
-//                 assetDecimals: asset.decimals,
-//                 spotPrice: assetSpotPrice,
-//               })
-//             : '0';
-//
-//         /**
-//          * Account total balance calculation
-//          */
-//         accountTotalBalance.totalTransferableNorm = BigNumber(
-//           accountTotalBalance.totalTransferableNorm
-//         )
-//           .plus(portionAmountNorm)
-//           .toFixed();
-//
-//         BalancesLoggerManager.getInstance().addLog({
-//           accountId: accountTotalBalance.accountId,
-//           assetId: asset.id,
-//           source:
-//             (dataSource as BalanceLogInput['source']) ??
-//             'ASSET_BALANCE_IMPLICIT',
-//           memo: 'fn :: addLiquidityMiningWorthToTotalBalance',
-//           paraBlockHeight: accountTotalBalance.paraBlockHeight,
-//           transferable: BigInt(balanceBn.toFixed() ?? '0'),
-//           transferableNorm: portionAmountNorm,
-//         });
-//       }
-//
-//       ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-//         accountTotalBalance.id,
-//         accountTotalBalance
-//       );
-//     }
-//   }
-// }
-
 /**
  * Reconciles account asset balances across blocks by backfilling unchanged assets.
  *
@@ -625,9 +537,6 @@ export async function handleUnchangedAccountAssetBalances({
   });
 
   const pgPool = CommonPgPool.getInstance();
-  // console.time(
-  //   'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: loop'
-  // );
 
   /**
    * LOOP L1 :: Iterating block by block. Only blocks are involved where there is at least
@@ -771,13 +680,6 @@ export async function handleUnchangedAccountAssetBalances({
       unchangedAssetBalancesFromPrevBlockIndexedByAccount
     );
   }
-  // console.timeEnd(
-  //   'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: loop'
-  // );
-
-  // console.time(
-  //   'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData'
-  // );
   const ensuredUnchangedAccountAssetBalancesPerBlock =
     await ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData({
       unchangedAccountAssetBalancesPerBlock,

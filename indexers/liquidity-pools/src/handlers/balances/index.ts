@@ -27,6 +27,7 @@ import {
   processBalanceEventsSequentially,
 } from './eventsDrivenBalances';
 import { handleAccountTotalBalanceEventsDriven } from './eventsDrivenTotalBalance';
+import { getAccountsInvolvedToLiquidityProviding } from './accountLiquidityBalance';
 
 /**
  * This function requires the following data, so it should be executed only after
@@ -86,33 +87,19 @@ export async function handleAssetAccountBalances(
         ),
       });
 
+    const accountIdsInvolvedToLiquidityProvidingByBlock =
+      getAccountsInvolvedToLiquidityProviding({ ctx });
+
     console.time('handleAssetAccountBalances:: eventsDriven:: process');
     const result = await processBalanceEventsSequentially({
       ctx,
       balanceEvents,
       preProcessedTotalBalancesOnGlobalInit: preProcessedTotalBalances,
       accountsForScheduledReaggregation,
+      accountIdsInvolvedToLiquidityProvidingByBlock,
     });
     allProcessedAccountsPerBlock = result.allProcessedAccountsPerBlock;
     console.timeEnd('handleAssetAccountBalances:: eventsDriven:: process');
-
-    /**
-     * handleMoneyMarketAssetBalancesForAccounts is still needed because it
-     * tracks balances for MM-related assets (underlying tokens like EWT)
-     * that may not appear in Tokens pallet storage via getPairsPaged but
-     * are accessible via MM contract calls. It skips pairs already processed
-     * by the delta flow (checks batchState cache at line 426).
-     */
-    console.time(
-      'handleAssetAccountBalances:: eventsDriven:: handleMoneyMarketAssetBalancesForAccounts'
-    );
-    // await handleMoneyMarketAssetBalancesForAccounts({
-    //   allProcessedAccountsPerBlock,
-    //   ctx,
-    // });
-    console.timeEnd(
-      'handleAssetAccountBalances:: eventsDriven:: handleMoneyMarketAssetBalancesForAccounts'
-    );
   } else {
     /**
      * OLD: RPC-based balance tracking flow (unchanged).
