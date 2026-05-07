@@ -44,8 +44,15 @@ const buildId = (accountId: string, assetId: string) =>
 
 // Persists across batches. Prevents re-querying the DB for the same account's
 // ownership set in a later batch. Mirrors the cross-batch lifetime of
-// LatestProcessedDataCacheManager.
+// LatestProcessedDataCacheManager — and MUST be reset whenever that cache is
+// invalidated (reorg), otherwise prefetchAccountOwnedAssetsByAccountIds will
+// skip the account and prefetchLastAccountAssetBalances will leave the wiped
+// balance cache empty for it, breaking total balance composition.
 const prefetchedAccountIds = new Set<string>();
+
+export function resetPrefetchedAccountIds(): void {
+  prefetchedAccountIds.clear();
+}
 
 export async function getOrCreateAccountOwnedAsset({
   ctx,

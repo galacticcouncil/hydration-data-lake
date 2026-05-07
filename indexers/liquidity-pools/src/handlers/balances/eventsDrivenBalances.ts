@@ -43,6 +43,7 @@ import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMar
 import {
   getOrCreateAccountOwnedAsset,
   prefetchAccountOwnedAssetsByAccountIds,
+  resetPrefetchedAccountIds,
 } from './accountOwnedAssets';
 
 export type BalanceEvent = {
@@ -659,9 +660,19 @@ export async function processBalanceEventsSequentially({
   // block height we have cached, those cached entries reflect a now-rolled-back
   // future — using them as "previous balance" would double-apply the deltas
   // when the same blocks are re-processed. Wipe and let prefetch refill from DB.
-  LatestProcessedDataCacheManager.getInstance().invalidateAccountAssetBalanceCacheOnReorg(
-    ctx.blocks[0].header.height
-  );
+  const balanceCacheWiped =
+    LatestProcessedDataCacheManager.getInstance().invalidateAccountAssetBalanceCacheOnReorg(
+      ctx.blocks[0].header.height
+    );
+
+  // The ownership-prefetch dedup set has the same cross-batch lifetime as the
+  // balance cache. If we wipe the cache without resetting this set, subsequent
+  // batches would skip ownership prefetch for accounts that "look already
+  // prefetched" — leaving the wiped balance cache empty for them and causing
+  // total balance composition to drop those assets.
+  if (balanceCacheWiped) {
+    resetPrefetchedAccountIds();
+  }
 
   if (
     balanceEvents.length === 0 &&
