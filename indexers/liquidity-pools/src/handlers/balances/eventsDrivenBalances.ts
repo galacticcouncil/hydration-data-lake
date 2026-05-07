@@ -15,6 +15,7 @@ import {
   BalancesUnreservedEventParams,
 } from '../../parsers/types/events';
 import {
+  Account,
   AccountAssetBalanceHistoricalData,
   AssetResourceType,
   EvmEventName,
@@ -577,6 +578,25 @@ function findLatestBalanceState({
   return null;
 }
 
+async function getAccountsForBalancesRefresh(ctx: SqdProcessorContext<Store>) {
+  if (!ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH) return new Set<string>();
+
+  if (
+    !ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH.has('__ALL_ACCOUNTS_REFRESH__')
+  )
+    return ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH || new Set<string>();
+
+  const allAccounts = await ctx.storeUtils.findWithLogs(
+    Account,
+    { where: {} },
+    { className: 'Account', originCallFn: 'getAccountsForBalancesRefresh' }
+  );
+
+  console.warn('[ IMPORTANT ] ALL ACCOUNTS REFRESH ');
+
+  return new Set(allAccounts.map((a) => a.id) || []);
+}
+
 /**
  * Process all balance events sequentially in on-chain order and produce
  * AccountAssetBalanceHistoricalData snapshots that downstream total balance
@@ -651,8 +671,7 @@ export async function processBalanceEventsSequentially({
 }): Promise<{
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }> {
-  accountsForScheduledReaggregation =
-    ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH || new Set();
+  accountsForScheduledReaggregation = await getAccountsForBalancesRefresh(ctx);
 
   // Reorg/rollback safety: SQD's in-memory account-asset balance cache survives
   // across batches but is NOT invalidated when SQD rolls back DB state for a
@@ -825,6 +844,7 @@ export async function processBalanceEventsSequentially({
             blockHeight,
             whitelistedAccountIds: accountIds,
             forceFetch: true,
+            fillOwnershipGapsWithZeros: true,
           });
         accountsWithFirstBalancesInitPerBlock.set(
           blockHeight,

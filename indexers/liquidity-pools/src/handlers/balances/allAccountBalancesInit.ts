@@ -112,11 +112,23 @@ export async function initManyAccountAssetBalancesFromOnChainData({
   blockHeight,
   whitelistedAccountIds,
   forceFetch = false,
+  // When true, after the storage-driven init pass, also write zero-balance
+  // AccountAssetBalanceHistoricalData rows for any asset that
+  // ctx.batchState.state.accountOwnedAssets says the whitelisted account owns
+  // but storage did not return (tokens.accounts and similar storage maps omit
+  // zero-balance entries). Without this, an account's first-encounter init at
+  // a block where it has fully sold some previously-held asset leaves no
+  // tombstone row, and downstream delta math / total composition keep using
+  // the stale non-zero "latest" row from DB. Default off to preserve existing
+  // behavior for cold-start / reaggregation callers that must not synthesize
+  // zero rows for assets the account did not yet own at the processing block.
+  fillOwnershipGapsWithZeros = false,
 }: {
   ctx: SqdProcessorContext<Store>;
   blockHeight?: number;
   whitelistedAccountIds?: string[];
   forceFetch?: boolean;
+  fillOwnershipGapsWithZeros?: boolean;
 }) {
   if (!coldStartDone) {
     const hasAnyAccountRecord = await ctx.storeUtils.findOneWithLogs(
@@ -150,12 +162,16 @@ export async function initManyAccountAssetBalancesFromOnChainData({
     }
   } else {
     allInitializedAccounts = (
-      await ctx.storeUtils.findWithLogs(Account, {
-        where: {},
-      }, {
-        className: 'Account',
-        originCallFn: 'initManyAccountAssetBalancesFromOnChainData',
-      })
+      await ctx.storeUtils.findWithLogs(
+        Account,
+        {
+          where: {},
+        },
+        {
+          className: 'Account',
+          originCallFn: 'initManyAccountAssetBalancesFromOnChainData',
+        }
+      )
     ).filter((acc) => acc.id !== ZERO_ADDRESS_PK);
   }
 
@@ -505,6 +521,66 @@ export async function initManyAccountAssetBalancesFromOnChainData({
         assetId: asset.id,
         firstSeenParaBlockHeight: processingBlockHeader.height,
       });
+    }
+  }
+
+  // Second pass: zero-balance ownership gap fill.
+  // Storage maps (tokens.accounts, AAVE reserves) omit zero-balance entries,
+  // so the storage-driven loop above never produces an AABHD for an asset the
+  // account fully sold. This pass cross-references batchState ownership and
+  // writes a zero AABHD for every owned (account, asset) pair the storage
+  // pass did not cover, so the tombstone row lands and downstream delta math
+  // / total composition stop reading the stale non-zero "latest" row from DB.
+  if (fillOwnershipGapsWithZeros) {
+    for (const account of allInitializedAccounts) {
+      const ownedAssetIds = new Set<string>();
+      for (const ownedAsset of ctx.batchState.state.accountOwnedAssets.values()) {
+        if (ownedAsset.accountId === account.id) {
+          ownedAssetIds.add(ownedAsset.assetId);
+        }
+      }
+      if (ownedAssetIds.size === 0) continue;
+
+      for (const assetId of ownedAssetIds) {
+        const entityId = `${account.id}-${assetId}-${processingBlockHeader.height}`;
+        if (
+          ctx.batchState.state.accountAssetBalanceHistoricalData.has(entityId)
+        ) {
+          continue;
+        }
+
+        const asset = await getOrCreateAsset({
+          id: assetId,
+          ctx,
+          ensure: false,
+        });
+        if (!asset) continue;
+
+        const entity = await getOrCreateAccountAssetBalanceHistoricalData({
+          ctx,
+          assetId,
+          account,
+          blockHeader: processingBlockHeader,
+          fetchFromDb: false,
+        });
+        // Zero balance — price math is skipped; norm fields stay at '0'.
+        entity.transferable = 0n;
+        entity.totalLocked = 0n;
+        entity.transferableInRefAssetNorm = '0';
+        entity.totalLockedInRefAssetNorm = '0';
+
+        ctx.batchState.state.accountAssetBalanceHistoricalData.set(
+          entity.id,
+          entity
+        );
+
+        await getOrCreateAccountOwnedAsset({
+          ctx,
+          accountId: account.id,
+          assetId,
+          firstSeenParaBlockHeight: processingBlockHeader.height,
+        });
+      }
     }
   }
 
