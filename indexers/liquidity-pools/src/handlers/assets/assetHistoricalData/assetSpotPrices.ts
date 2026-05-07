@@ -486,6 +486,7 @@ function getXykPoolsIndexedByInterimAssetPair({
   for (const pool of Array.from(
     ctx.batchState.state.xykAllBatchPools.values()
   )) {
+    if (pool.isDestroyed) continue;
     if (
       (pool.assetAId === interimAssetId && xykPoolAssets.has(pool.assetBId)) ||
       (pool.assetBId === interimAssetId && xykPoolAssets.has(pool.assetAId))
@@ -550,7 +551,8 @@ async function processXykInvolvedAssetSpotPrices({
 
   const assetXykPool = xykPoolsIndexedByInterimAssetPair.get(assetId);
 
-  if (!assetXykPool || !assetXykPool.accountId) return;
+  if (!assetXykPool || !assetXykPool.accountId || assetXykPool.isDestroyed)
+    return;
 
   const interimAssetId =
     assetXykPool.assetAId === asset.id
