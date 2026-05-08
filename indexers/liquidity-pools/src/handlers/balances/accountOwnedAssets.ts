@@ -38,6 +38,13 @@ import { Store } from '@subsquid/typeorm-store';
 
 import { AccountOwnedAsset } from '../../model';
 import { SqdProcessorContext } from '../../processor';
+import { batchArray } from '../../utils/helpers';
+
+// Postgres caps bind parameters at 65535 per query. Each id in IN(...) costs
+// one placeholder, and the refresh path can pass tens of thousands of account
+// ids. Chunk well below the limit to leave headroom for any other params the
+// query builder adds.
+const PREFETCH_ACCOUNT_IDS_CHUNK_SIZE = 1000;
 
 const buildId = (accountId: string, assetId: string) =>
   `${accountId}-${assetId}`;
@@ -115,18 +122,26 @@ export async function prefetchAccountOwnedAssetsByAccountIds({
   );
   if (accountIdsToFetch.length === 0) return;
 
-  const records = await ctx.storeUtils.findWithLogs(
-    AccountOwnedAsset,
-    { where: { accountId: In(accountIdsToFetch) } },
-    {
-      className: 'AccountOwnedAsset',
-      originCallFn: 'prefetchAccountOwnedAssetsByAccountIds',
-    }
-  );
+  // Chunk the IN(...) list so we never exceed Postgres' 65535-parameter
+  // bind limit. Refresh mode can pass tens of thousands of account ids in
+  // a single call.
+  for (const chunk of batchArray(
+    accountIdsToFetch,
+    PREFETCH_ACCOUNT_IDS_CHUNK_SIZE
+  )) {
+    const records = await ctx.storeUtils.findWithLogs(
+      AccountOwnedAsset,
+      { where: { accountId: In(chunk) } },
+      {
+        className: 'AccountOwnedAsset',
+        originCallFn: 'prefetchAccountOwnedAssetsByAccountIds',
+      }
+    );
 
-  for (const record of records) {
-    if (!batchState.accountOwnedAssets.has(record.id)) {
-      batchState.accountOwnedAssets.set(record.id, record);
+    for (const record of records) {
+      if (!batchState.accountOwnedAssets.has(record.id)) {
+        batchState.accountOwnedAssets.set(record.id, record);
+      }
     }
   }
 
