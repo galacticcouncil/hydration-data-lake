@@ -24,7 +24,11 @@ import { updateAccountProcessingStatusOnTotalBalanceChange } from '../accounts/a
 import { getOrCreateAccount } from '../accounts';
 import { ZERO_ADDRESS_PK } from '../../utils/types';
 import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
-import { getOrCreateAccountOwnedAsset } from './accountOwnedAssets';
+import {
+  getOrCreateAccountOwnedAsset,
+  prefetchAccountOwnedAssetsByAccountIds,
+  resetPrefetchedAccountIds,
+} from './accountOwnedAssets';
 
 let coldStartDone = false;
 
@@ -554,6 +558,16 @@ export async function initManyAccountAssetBalancesFromOnChainData({
   // pass did not cover, so the tombstone row lands and downstream delta math
   // / total composition stop reading the stale non-zero "latest" row from DB.
   if (fillOwnershipGapsWithZeros) {
+    // Reset the cross-batch dedup set so the prefetch actually hits DB even if
+    // the events-driven flow has already loaded these accounts in a prior batch.
+    // Refresh must see the full historical ownership set, not the in-memory
+    // residue from earlier prefetches.
+    resetPrefetchedAccountIds();
+    await prefetchAccountOwnedAssetsByAccountIds({
+      ctx,
+      accountIds: accountIdsList,
+    });
+
     for (const account of allInitializedAccounts) {
       const ownedAssetIds = new Set<string>();
       for (const ownedAsset of ctx.batchState.state.accountOwnedAssets.values()) {
