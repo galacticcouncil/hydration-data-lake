@@ -563,20 +563,6 @@ function findLatestBalanceState({
     };
   }
 
-  // Issue 2 detector: pair has NO prior state in any source. Expected for
-  // legitimate first-encounter (account, asset). Suspicious when the account
-  // has other cached balances — that means cache/ownership is incomplete and
-  // delta will start from 0n, likely producing a wrong (or negative) result.
-  const accountHasOtherCached =
-    cacheManager.getAllAccountAssetBalances(accountId).size > 0;
-  if (accountHasOtherCached) {
-    console.warn(
-      `[balance-lookup-miss] no prior state for ${accountId}-${assetId} ` +
-        `at block ${processingBlockHeight} but account has other cached balances ` +
-        `— cache/ownership likely incomplete for this pair`
-    );
-  }
-
   return null;
 }
 
@@ -792,12 +778,6 @@ export async function processBalanceEventsSequentially({
     }
   }
 
-  if (firstEncounterAccountIdsSet.size > 0) {
-    console.log(
-      `[first-encounter] ${firstEncounterAccountIdsSet.size} account(s) need RPC init at batch ${firstBatchBlockHeight}`
-    );
-  }
-
   // Step 4: Init balances for first-encounter accounts using handleManyAccountBalancesInitCore
   // with forceFetch=true to bypass the hasAnyRecord guard (which skips init when DB has data).
 
@@ -901,15 +881,6 @@ export async function processBalanceEventsSequentially({
       ) {
         continue;
       }
-
-      // Issue 1 detector: first-encounter init ran for the account at this
-      // block but did NOT cover this asset (RPC tokens.accounts omits zero
-      // balances). Falling through to delta to produce a zero snapshot.
-      console.warn(
-        `[init-asset-miss] first-encounter init missed asset for ` +
-          `${event.accountId}-${event.assetId} at block ${event.blockHeight} ` +
-          `— delta path will produce snapshot`
-      );
     }
 
     // DELTA MODE: find latest balance state and apply delta
@@ -951,7 +922,7 @@ export async function processBalanceEventsSequentially({
         };
       }
 
-      snapshotsToCreate.set(snapshotKey, currentBalance); // TODO
+      snapshotsToCreate.set(snapshotKey, currentBalance);
     }
 
     // Apply delta
@@ -976,20 +947,6 @@ export async function processBalanceEventsSequentially({
       });
       currentBalance.transferable = rpcBalance.transferable;
       currentBalance.totalLocked = rpcBalance.totalLocked;
-    }
-
-    // Issue 1 detector: balance reached exact zero at this block — this is
-    // the tombstone row prod was missing. Logging it confirms the snapshot
-    // was queued for persistence and lets us spot the inverse (events that
-    // should have produced a tombstone but didn't reach this point).
-    if (
-      currentBalance.transferable === 0n &&
-      currentBalance.totalLocked === 0n
-    ) {
-      console.log(
-        `[zero-tombstone] ${event.accountId}-${event.assetId} ` +
-          `at block ${event.blockHeight}`
-      );
     }
   }
 
