@@ -68,6 +68,8 @@ export type AccountBalanceBlockSnapshot = {
   totalLocked: bigint;
 };
 
+type AccountTotalBalanceHistDataId = string;
+
 /** Safely convert any numeric value (bigint, BigNumber, string, number) to native bigint */
 function toBigInt(value: any): bigint {
   if (typeof value === 'bigint') return value;
@@ -578,25 +580,6 @@ function findLatestBalanceState({
   return null;
 }
 
-async function getAccountsForBalancesRefresh(ctx: SqdProcessorContext<Store>) {
-  if (!ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH) return new Set<string>();
-
-  if (
-    !ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH.has('__ALL_ACCOUNTS_REFRESH__')
-  )
-    return ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH || new Set<string>();
-
-  const allAccounts = await ctx.storeUtils.findWithLogs(
-    Account,
-    { where: {} },
-    { className: 'Account', originCallFn: 'getAccountsForBalancesRefresh' }
-  );
-
-  console.warn('[ IMPORTANT ] ALL ACCOUNTS REFRESH ');
-
-  return new Set(allAccounts.map((a) => a.id) || []);
-}
-
 /**
  * Process all balance events sequentially in on-chain order and produce
  * AccountAssetBalanceHistoricalData snapshots that downstream total balance
@@ -665,13 +648,14 @@ export async function processBalanceEventsSequentially({
 }: {
   ctx: SqdProcessorContext<Store>;
   balanceEvents: BalanceEvent[];
-  preProcessedTotalBalancesOnGlobalInit?: Set<string> | null;
+  preProcessedTotalBalancesOnGlobalInit?: Set<AccountTotalBalanceHistDataId> | null;
   accountsForScheduledReaggregation?: Set<string>;
   accountIdsInvolvedToLiquidityProvidingByBlock?: Map<number, Set<string>>;
 }): Promise<{
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }> {
-  accountsForScheduledReaggregation = await getAccountsForBalancesRefresh(ctx);
+  accountsForScheduledReaggregation =
+    ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH || new Set<string>();
 
   // Reorg/rollback safety: SQD's in-memory account-asset balance cache survives
   // across batches but is NOT invalidated when SQD rolls back DB state for a
@@ -871,12 +855,18 @@ export async function processBalanceEventsSequentially({
       accountsWithFirstBalancesInitPerBlock.get(ctx.blocks[0].header.height) ||
       new Set();
 
+    // preProcessedTotalBalancesOnGlobalInit holds AccountTotalBalanceHistoricalData
+    // entity ids in the form `${accountId}-${blockHeight}`. accountsWithFirstBalancesInitPerBlock
+    // is a Set of plain account ids, so the trailing `-<blockHeight>` must be
+    // stripped before merging — otherwise the entries are inert and the
+    // intended cold-start skip in the delta loop never fires.
+    const preProcessedAccountIds = Array.from(
+      preProcessedTotalBalancesOnGlobalInit.values()
+    ).map((entityId) => entityId.replace(/-\d+$/, ''));
+
     accountsWithFirstBalancesInitPerBlock.set(
       ctx.blocks[0].header.height,
-      new Set([
-        ...Array.from(accumulator.values()),
-        ...Array.from(preProcessedTotalBalancesOnGlobalInit.values()),
-      ])
+      new Set([...Array.from(accumulator.values()), ...preProcessedAccountIds])
     );
   }
 

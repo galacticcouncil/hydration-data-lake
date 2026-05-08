@@ -21,7 +21,10 @@ import {
   updateAccountProcessingStatusOnTotalBalanceChange,
 } from '../accounts/accountProcessingStatus';
 import { prefetchBalancesForAccountsInvolvedToMmEvents } from './utils';
-import { handleAllAccountBalancesInit } from './allAccountBalancesInit';
+import {
+  handleAllAccountBalancesInit,
+  handleAllAccountBalancesRefresh,
+} from './allAccountBalancesInit';
 import {
   collectBalanceEvents,
   processBalanceEventsSequentially,
@@ -60,13 +63,30 @@ export async function handleAssetAccountBalances(
    *    (Check function "handleMoneyMarketAssetBalancesForAccounts")
    */
 
-  let preProcessedTotalBalances = null;
+  let preProcessedTotalBalances: Set<string> = new Set();
   let allProcessedAccountsPerBlock: Map<number, Set<string>> = new Map();
 
   if (ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_INIT) {
     console.time('handleAllAccountBalancesInit');
     preProcessedTotalBalances = await handleAllAccountBalancesInit({ ctx });
     console.timeEnd('handleAllAccountBalancesInit');
+  }
+
+  /**
+   * Refresh all account balances for all assets from storage or contracts
+   * even if DB contains already processed balances. This is useful for
+   * reconsolidation of the balances.
+   */
+  if (ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_REFRESH) {
+    const result = await handleAllAccountBalancesRefresh({
+      ctx,
+      blockHeight: ctx.blocks[0].header.height,
+    });
+    if (result)
+      preProcessedTotalBalances = new Set([
+        ...Array.from(preProcessedTotalBalances.values()),
+        ...Array.from(result.values()),
+      ]);
   }
 
   if (ctx.appConfig.USE_EVENTS_DRIVEN_BALANCE_TRACKING) {

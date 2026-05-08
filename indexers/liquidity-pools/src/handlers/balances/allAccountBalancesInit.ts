@@ -37,7 +37,7 @@ export async function handleAllAccountBalancesInit({
   blockHeight?: number;
   whitelistedAccountIds?: string[];
 }) {
-  if (!ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_INIT) return;
+  if (!ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_INIT) return new Set<string>();
   console.log(
     `[ allAccountBalancesInit ] :: Initializing all account balances.`
   );
@@ -57,7 +57,7 @@ export async function handleAllAccountBalancesInit({
     console.log(
       `[ allAccountBalancesInit ] :: DB contains historical data. Skipping allAccountBalancesInit.`
     );
-    return;
+    return new Set<string>();
   }
 
   return handleManyAccountBalancesInitCore({
@@ -67,22 +67,44 @@ export async function handleAllAccountBalancesInit({
   });
 }
 
+export async function handleAllAccountBalancesRefresh({
+  ctx,
+  blockHeight,
+}: {
+  ctx: SqdProcessorContext<Store>;
+  blockHeight?: number;
+}) {
+  if (!ctx.appConfig.ENABLE_ALL_ACCOUNT_BALANCES_REFRESH) return;
+  console.log(
+    `[ ALL_ACCOUNT_BALANCES_REFRESH ] :: Initializing all account balances.`
+  );
+
+  return handleManyAccountBalancesInitCore({
+    ctx,
+    blockHeight,
+    fillOwnershipGapsWithZeros: true,
+  });
+}
+
 export async function handleManyAccountBalancesInitCore({
   ctx,
   blockHeight,
   whitelistedAccountIds,
   forceFetch = false,
+  fillOwnershipGapsWithZeros,
 }: {
   ctx: SqdProcessorContext<Store>;
   blockHeight?: number;
   whitelistedAccountIds?: string[];
   forceFetch?: boolean;
+  fillOwnershipGapsWithZeros?: boolean;
 }) {
   const accountsPerBlock = await initManyAccountAssetBalancesFromOnChainData({
     ctx,
     blockHeight,
     whitelistedAccountIds,
     forceFetch,
+    fillOwnershipGapsWithZeros,
   });
 
   /**

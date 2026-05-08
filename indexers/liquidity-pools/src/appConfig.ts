@@ -753,6 +753,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => new Set(value.split(',')))
   readonly ACCOUNTS_FOR_BALANCES_REFRESH: Set<string> = new Set([]);
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_ALL_ACCOUNT_BALANCES_REFRESH: boolean = false;
+
   @Transform(({ value }: { value: string }) => +value)
   readonly ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE: number = 20;
 
