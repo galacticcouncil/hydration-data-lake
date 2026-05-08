@@ -757,6 +757,10 @@ async function processXykUntradableAssetSpotPrices({
   });
   if (!asset) return;
 
+  const router = OfflineTradeRouterManager.getInstance().getRouterForBlock(
+    blockHeader.height
+  );
+
   for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
     const assetOut = await getOrCreateAsset({
       assetRegistryId: assetOutId,
@@ -767,6 +771,53 @@ async function processXykUntradableAssetSpotPrices({
     if (!assetOut) continue;
 
     const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
+
+    /**
+     * The asset was classified as XYK-only with all known XYK pools destroyed.
+     * It can still be priceable via the router (e.g. through omnipool/stableswap
+     * indirect routes that aren't captured by direct membership checks in
+     * getXykOnlyAssets). Try the router first and only fall back to a 0/empty-route
+     * record when no route exists.
+     */
+    if (router && asset.assetRegistryId && assetOutId !== asset.assetRegistryId) {
+      try {
+        const priceWithRoute =
+          await OfflineTradeRouterManager.getInstance().getBestSpotPriceWitRoute(
+            {
+              assetInId: asset.assetRegistryId,
+              assetOutId,
+              router,
+            }
+          );
+
+        if (priceWithRoute) {
+          const { price, route } = priceWithRoute;
+          const decoratedRoute = getPriceRouteDecorated(route);
+          const priceRoute = getOrCreatePriceRoute(decoratedRoute, ctx);
+
+          ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
+            histDataItemId,
+            new AssetSpotPriceHistoricalData({
+              id: histDataItemId,
+              assetInId: asset.id,
+              assetOutId: assetOut.id,
+              price: BigInt(price.amount.toFixed(0, BigNumber.ROUND_HALF_UP)),
+              priceNormalised: toFixedTrimmed(
+                fromExponentialToDecimalNotation(
+                  toFixedTrimmed(price.amount),
+                  price.decimals
+                )
+              ),
+              priceRoute,
+              paraBlockHeight: blockHeader.height,
+            })
+          );
+          continue;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
 
     const priceRoute = getOrCreatePriceRoute([], ctx);
 
