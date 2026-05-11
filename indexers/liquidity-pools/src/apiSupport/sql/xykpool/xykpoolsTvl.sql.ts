@@ -17,6 +17,8 @@ export const getAllXykpoolsTvl = `
     xykpool_historical_data_latest xhdl
       JOIN asset asset_a ON asset_a.id = xhdl.asset_a_id
       JOIN asset asset_b ON asset_b.id = xhdl.asset_b_id
+      JOIN xykpool xp ON xp.id = xhdl.pool_id
   WHERE
-    (asset_a.existential_deposit > 1 OR asset_b.existential_deposit > 1);
+    (asset_a.existential_deposit > 1 OR asset_b.existential_deposit > 1)
+    AND xp.is_destroyed IS NOT TRUE;
 `;

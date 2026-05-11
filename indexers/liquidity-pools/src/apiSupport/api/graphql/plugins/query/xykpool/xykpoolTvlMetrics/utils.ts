@@ -1,6 +1,9 @@
 import type * as pg from 'pg';
 import { XykpoolLatestTvl } from './resolvers';
-import { getAllXykpoolIds } from '../../../../../../sql/xykpool/xykpool.sql';
+import {
+  getAllActiveXykpoolIds,
+  getAllXykpoolIds,
+} from '../../../../../../sql/xykpool/xykpool.sql';
 import { getXykpoolsTvl } from '../../../../../../sql/xykpool/xykpoolsTvl.sql';
 import { AppConfig } from '../../../../../../../appConfig';
 
@@ -19,7 +22,7 @@ export async function handleXykpoolsLatestTvlAggregation({
     poolIdsToProcess = (
       await pgClient.query<{
         pool_id: string;
-      }>(getAllXykpoolIds)
+      }>(getAllActiveXykpoolIds)
     ).rows.map((row) => row.pool_id);
 
   if (!poolIdsToProcess || poolIdsToProcess.length === 0) return [];
