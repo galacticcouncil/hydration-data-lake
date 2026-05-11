@@ -629,7 +629,7 @@ export async function processBalanceEventsSequentially({
   ctx,
   balanceEvents,
   preProcessedTotalBalancesOnGlobalInit,
-  accountsForScheduledReaggregation,
+  accountsForScheduledReaggregation = new Set(),
   accountIdsInvolvedToLiquidityProvidingByBlock = new Map(),
 }: {
   ctx: SqdProcessorContext<Store>;
@@ -640,8 +640,14 @@ export async function processBalanceEventsSequentially({
 }): Promise<{
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }> {
-  accountsForScheduledReaggregation =
-    ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH || new Set<string>();
+  if (
+    ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH &&
+    ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH.size > 0
+  )
+    accountsForScheduledReaggregation = new Set([
+      ...Array.from(accountsForScheduledReaggregation.values()),
+      ...Array.from(ctx.appConfig.ACCOUNTS_FOR_BALANCES_REFRESH.values()),
+    ]);
 
   // Reorg/rollback safety: SQD's in-memory account-asset balance cache survives
   // across batches but is NOT invalidated when SQD rolls back DB state for a
