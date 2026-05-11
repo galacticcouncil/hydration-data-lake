@@ -1,40 +1,4 @@
-import {
-  EvmEventName,
-  MmBorrowEventParams,
-  MmLiquidationCallEventParams,
-  MmRepayEventParams,
-  MmReserveUsedAsCollateralDisabledEventParams,
-  MmReserveUsedAsCollateralEnabledEventParams,
-  MmSupplyEventParams,
-  MmTransferEventParams,
-  MmUserEModeSetEventParams,
-  MmWithdrawEventParams,
-  OracleUpdateEventParams,
-} from '../../parsers/types/events';
-import { AssetResourceType } from '../../model';
-
-export type EvmEventParamsTypeDecorated<N extends EvmEventName> =
-  N extends EvmEventName.Transfer
-    ? MmTransferEventParams
-    : N extends EvmEventName.Supply
-      ? MmSupplyEventParams
-      : N extends EvmEventName.Withdraw
-        ? MmWithdrawEventParams
-        : N extends EvmEventName.Borrow
-          ? MmBorrowEventParams
-          : N extends EvmEventName.Repay
-            ? MmRepayEventParams
-            : N extends EvmEventName.UserEModeSet
-              ? MmUserEModeSetEventParams
-              : N extends EvmEventName.LiquidationCall
-                ? MmLiquidationCallEventParams
-                : N extends EvmEventName.ReserveUsedAsCollateralEnabled
-                  ? MmReserveUsedAsCollateralEnabledEventParams
-                  : N extends EvmEventName.ReserveUsedAsCollateralDisabled
-                    ? MmReserveUsedAsCollateralDisabledEventParams
-                    : N extends EvmEventName.OracleUpdate
-                      ? OracleUpdateEventParams
-                      : never;
+import { AssetResourceType } from '../../../model';
 
 export type AccountMmPositionDataContractData = {
   totalCollateralBase: string;
@@ -44,6 +8,24 @@ export type AccountMmPositionDataContractData = {
   ltv: string;
   healthFactor: string;
   pool: string;
+};
+
+export type UserReserveDataContractData = {
+  underlyingAsset: string;
+  scaledATokenBalance: string;
+  usageAsCollateralEnabledOnUser: boolean;
+  stableBorrowRate: string;
+  scaledVariableDebt: string;
+  principalStableDebt: string;
+  stableBorrowLastUpdateTimestamp: string;
+};
+
+export type AaveMoneyMarketInstanceConfig = {
+  marketId: string;
+  treasuryAddress: string;
+  poolAddressProviderAddress: string;
+  poolDataProviderAddress: string;
+  poolImplementationProxyAddress: string;
 };
 
 export type MoneyMarketTokenDetails = {
@@ -60,7 +42,7 @@ export type MoneyMarketTokenTotalSupply = {
   value: string;
 };
 
-export type MoneyMarketReserveDetails = {
+export type MoneyMarketResourceDetails = {
   underlyingAssetAddress: string;
   aTokenAddress: string;
   variableDebtTokenAddress: string;
@@ -102,3 +84,9 @@ export type MoneyMarketReserveDetails = {
 
   lastUpdateTimestamp: string;
 };
+
+export type WithMarketTag<T> = T & {
+  poolImplementationProxyAddress: string;
+};
+
+export type ReservesDetailsRegistryKey = `${string}::${string}`;

@@ -419,6 +419,7 @@ export type GetHsmCollateralInput = {
 
 export type GetAccountMmPositionDataInput = {
   accountId: string;
+  mmPoolAddresses: string[];
   block: BlockHeader;
 };
 

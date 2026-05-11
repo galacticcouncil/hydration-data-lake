@@ -1,7 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {AssetType} from "./_assetType"
-import {ResourceType} from "./_resourceType"
+import {AssetResourceType} from "./_assetResourceType"
 
 @Entity_()
 export class Asset {
@@ -38,7 +38,7 @@ export class Asset {
   assetType!: AssetType
 
   @Column_("varchar", {length: 10, nullable: true})
-  resourceType!: ResourceType | undefined | null
+  resourceType!: AssetResourceType | undefined | null
 
   @Column_("text", {nullable: true})
   name!: string | undefined | null

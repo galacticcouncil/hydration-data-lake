@@ -81,7 +81,7 @@ type AccountAssetBalanceHistoricalData @entity {
 }
 
 type AccountMmPositionHistoricalData @entity {
-  "<address>-<paraBlockHeight>"
+  "<accountId>-<poolAddress>-<paraBlockHeight>"
   id: ID!
   accountId: String!
   accountBoundEvmAddress: String
@@ -111,10 +111,11 @@ enum AssetType {
   PoolShare
 }
 
-enum ResourceType {
+enum AssetResourceType {
   Underlying
   Collateral
   Debt
+  aToken
 }
 
 type Asset @entity {
@@ -128,7 +129,7 @@ type Asset @entity {
   variableDebtToken: Asset
 
   assetType: AssetType!
-  resourceType: ResourceType
+  resourceType: AssetResourceType
   name: String
   symbol: String
   decimals: Int

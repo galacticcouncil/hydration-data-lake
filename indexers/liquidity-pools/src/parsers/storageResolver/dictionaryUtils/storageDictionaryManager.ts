@@ -82,7 +82,10 @@ import {
 import { getStorageDictionaryItemsListByBlockNumber } from './helpers/common';
 import { MinifiedDataStructureManager } from './helpers/minifiedDataStructureManager';
 import { BatchStorageStateSectionCollection } from './helpers/batchStorageStateSectionCollection';
-import { AccountMmPositionDataContractData } from '../../../utils/evmTools/aave/types';
+import {
+  AccountMmPositionDataContractData,
+  WithMarketTag,
+} from '../../../utils/evmTools/aave/types';
 import { AppConfig } from '../../../appConfig';
 
 const appConfig = AppConfig.getInstance();
@@ -578,9 +581,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       fn: () => Promise<PalletDictionaryCollectedData[]>,
       fnName: string
     ): Promise<PalletDictionaryCollectedData[]> => {
-      // console.time(`:: >>> Dict. API call [${fnName}]`);
       const resp = await fn();
-      // console.timeEnd(`:: >>> Dict. API call [${fnName}]`);
       const fetchedResults = [];
       for (const respItem of resp) {
         fetchedResults.push(`${respItem.pallet}: ${respItem.data.length}`);
@@ -1192,16 +1193,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    // const node = this.getBatchStorageStatePart(ProcessingTopic.LBP).get(
-    //   `${poolAddress}-${block.height}`
-    // );
-    //
-    // if (!node) return null;
-    // const asset = node.lbppoolAssetsDataByPoolId.nodes.find(
-    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
-    // );
-    // if (!asset) return null;
-
     const asset = this.getBatchStorageStatePart(ProcessingTopic.LBP)
       .getAssetsByParentId(`${poolAddress}-${block.height}`)
       ?.get(assetId);
@@ -1315,29 +1306,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     block,
   }: TokensGetTokensTotalIssuanceInput): TokenTotalIssuance[] | null {
     const idsSet = new Set(tokenIds.map((id) => `${id}`));
-
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(
-    //     ProcessingTopic.ASSET_HIST_DATA
-    //   ).entries(),
-    // ].filter(
-    //   ([key, data]) =>
-    //     key.split('-')[1] === block.height.toString() &&
-    //     idsSet.has(key.split('-')[0])
-    // );
-
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
-    //     {
-    //       blockNumber: block.height,
-    //       fullData: this.getBatchStorageStatePart(
-    //         ProcessingTopic.ASSET_HIST_DATA
-    //       ),
-    //       additionalFilter: ([key, data]) => idsSet.has(key.split('-')[0]),
-    //     }
-    //   );
-    //
-    // if (nodes.length === 0) return null;
 
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.ASSET_HIST_DATA
@@ -1510,15 +1478,20 @@ export class StorageDictionaryManager extends QueriesHelper {
 
   getAccountMmPositionData({
     accountId,
+    mmPoolAddresses = [],
     block,
-  }: GetAccountMmPositionDataInput): AccountMmPositionDataContractData | null {
-    const node = this.getBatchStorageStatePart(
-      ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA
-    ).getEntityById(`${accountId}-${block.height}`);
+  }: GetAccountMmPositionDataInput):
+    | WithMarketTag<AccountMmPositionDataContractData>[]
+    | null {
+    const result: WithMarketTag<AccountMmPositionDataContractData>[] = [];
 
-    return !node
-      ? null
-      : ({
+    for (const pool of mmPoolAddresses) {
+      const node = this.getBatchStorageStatePart(
+        ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA
+      ).getEntityById(`${accountId}-${pool}-${block.height}`);
+
+      if (node)
+        result.push({
           totalCollateralBase: node.totalCollateralBase,
           totalDebtBase: node.totalDebtBase,
           availableBorrowsBase: node.availableBorrowsBase,
@@ -1526,6 +1499,10 @@ export class StorageDictionaryManager extends QueriesHelper {
           ltv: node.ltv,
           healthFactor: node.healthFactor,
           pool: node.poolAddress,
-        } as AccountMmPositionDataContractData);
+          poolImplementationProxyAddress: pool,
+        } as WithMarketTag<AccountMmPositionDataContractData>);
+    }
+
+    return result.length === mmPoolAddresses.length ? result : null;
   }
 }

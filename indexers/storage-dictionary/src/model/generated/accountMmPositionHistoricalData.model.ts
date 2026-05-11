@@ -7,7 +7,7 @@ export class AccountMmPositionHistoricalData {
   }
 
   /**
-   * <address>-<paraBlockHeight>
+   * <accountId>-<poolAddress>-<paraBlockHeight>
    */
   @PrimaryColumn_()
   id!: string

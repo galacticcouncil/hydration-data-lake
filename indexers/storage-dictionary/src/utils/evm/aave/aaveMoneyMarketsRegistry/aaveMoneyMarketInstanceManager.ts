@@ -1,11 +1,11 @@
-import { SqdProcessorContext } from '../../../../processor';
+import { ProcessorContext } from '../../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import aTokenHydration from '../../abi/aave/aTokenHydration.json';
 import variableDebtTokenHydration from '../../abi/aave/variableDebtTokenHydration.json';
 import uiPoolDataProviderV3 from '../../abi/aave/uiPoolDataProviderV3.json';
 import poolImplementation from '../../abi/aave/aavePoolImplementation.json';
 import { Contract, ContractInterface, ethers } from 'ethers';
-import { AssetResourceType, EvmEventName } from '../../../../model';
+import { AssetResourceType } from '../../../../model';
 import { AppConfig } from '../../../../appConfig';
 import {
   AaveMoneyMarketInstanceConfig,
@@ -15,13 +15,10 @@ import {
   MoneyMarketTokenTotalSupply,
   UserReserveDataContractData,
 } from '../types';
-import { BigNumber } from '../../../bignumber';
+import { BigNumber } from '@galacticcouncil/sdk';
 import pMap from 'p-map';
-import { getOrderedListByBlockNumber, retryAsync } from '../../../helpers';
-import { measureEvmContractCall } from '../../../hydratedLogger/utils';
+import { retryAsync } from '../../../helpers';
 import { ContractsPoolManager } from '../../contractsPoolManager';
-import { BatchBlocksParsedDataManager } from '../../../../parsers/batchBlocksParser';
-import { EventName } from '../../../../parsers/types/events';
 
 const appConfig = AppConfig.getInstance();
 
@@ -34,7 +31,9 @@ export class AaveMoneyMarketInstanceManager {
   private readonly poolAddressProviderAddressNormalized: string;
   private readonly poolDataProviderAddressNormalized: string;
 
-  // Track available money market token addresses and their ABIs
+  // Track available money market token addresses and their ABIs.
+  // Also serves as the routing index for hasToken() lookups so the registry
+  // can route per-token calls to the owning market.
   private moneyMarketTokenAddresses: Map<string, ContractInterface> = new Map();
 
   public moneyMarketReservesDetailsMap: Map<
@@ -88,16 +87,10 @@ export class AaveMoneyMarketInstanceManager {
     return this.moneyMarketTokenAddresses.has(normalized);
   }
 
-  /**
-   * Get the next contract instance from the pool for a given address and ABI
-   */
   private getContract(address: string, abi: ContractInterface): Contract {
     return this.contractsPoolManager.getContract(address, abi);
   }
 
-  /**
-   * Get a money market token contract from the pool
-   */
   private getMoneyMarketTokenContract(address: string): Contract | null {
     const addressNormalized = ethers.utils.getAddress(address);
     const abi = this.moneyMarketTokenAddresses.get(addressNormalized);
@@ -106,10 +99,6 @@ export class AaveMoneyMarketInstanceManager {
 
     return this.getContract(addressNormalized, abi);
   }
-
-  /**
-   * Convenience getters for frequently used contracts
-   */
 
   private get uiPoolDataProviderContractInstance(): Contract {
     return this.getContract(
@@ -131,26 +120,14 @@ export class AaveMoneyMarketInstanceManager {
     blockNumber?: number;
   }): Promise<MoneyMarketResourceDetails[] | null> {
     try {
-      const reservesData = await measureEvmContractCall({
-        call: `uiPoolDataProviderContractInstance.getReservesData`,
-        originFn: 'getReservesData',
-        blockHeight: blockNumber ?? 0,
-        args: {
-          POOL_ADDRESS_PROVIDER_CONTRACT_ADDRESS:
+      const reservesData = await retryAsync({
+        fn: async () =>
+          this.uiPoolDataProviderContractInstance.getReservesData(
             this.poolAddressProviderAddressNormalized,
-          poolImplementationProxyAddress:
-            this.poolImplementationProxyAddressNormalized,
-        },
-        fn: () =>
-          retryAsync({
-            fn: async () =>
-              this.uiPoolDataProviderContractInstance.getReservesData(
-                this.poolAddressProviderAddressNormalized,
-                { blockTag: blockNumber }
-              ),
-            fallbackResponse: [],
-            tag: `getReservesData[${this.poolImplementationProxyAddressNormalized}].at(${blockNumber})`,
-          }),
+            { blockTag: blockNumber }
+          ),
+        fallbackResponse: [],
+        tag: `getReservesData[${this.poolImplementationProxyAddressNormalized}].at(${blockNumber})`,
       });
 
       if (!reservesData || reservesData.length === 0) return null;
@@ -219,36 +196,13 @@ export class AaveMoneyMarketInstanceManager {
     return null;
   }
 
-  isMmReservesCacheInvalidationRequired(
-    parsedEvents?: BatchBlocksParsedDataManager | null
-  ) {
-    if (!parsedEvents) return true;
-
-    for (const eventData of getOrderedListByBlockNumber([
-      ...parsedEvents.getSectionByEventName(EventName.EVM_Log).values(),
-    ])) {
-      // Potentially can be tracked and checked event "Initialized" from aToken
-      // and Variable Debt Token contracts
-      if (
-        eventData.eventData.params?.eventName ===
-        EvmEventName.ReserveInitialized
-      ) {
-        console.log(
-          `[${this.config.marketId}] New MM reserve initialisation has been detected at block ${eventData.eventData.metadata.blockHeader.height}. MM reserves cache invalidation required.`
-        );
-        return true;
-      }
-    }
-    return false;
-  }
-
   async initContractInstances({
     blockNumber,
     ctx,
     invalidateReservesCache = false,
   }: {
     blockNumber?: number;
-    ctx: SqdProcessorContext<Store>;
+    ctx: ProcessorContext<Store>;
     invalidateReservesCache?: boolean;
   }) {
     try {
@@ -272,7 +226,6 @@ export class AaveMoneyMarketInstanceManager {
         return;
       }
 
-      // Reset routing maps so removed reserves don't linger
       this.moneyMarketReservesDetailsMap.clear();
       this.moneyMarketTokenAddresses.clear();
 
@@ -282,9 +235,6 @@ export class AaveMoneyMarketInstanceManager {
           reserve
         );
 
-        // Track available token addresses and their ABIs for pool usage.
-        // This map also serves as the routing index for hasToken() lookups
-        // so the registry can route per-token calls to the owning market.
         this.moneyMarketTokenAddresses.set(
           reserve.underlyingAssetAddress,
           aTokenHydration.abi as any
@@ -344,22 +294,6 @@ export class AaveMoneyMarketInstanceManager {
     return response;
   }
 
-  async getReserveDetailsWithLogs(
-    address: string
-  ): Promise<MoneyMarketTokenDetails | null> {
-    return measureEvmContractCall({
-      call: `moneyMarketTokenContracts.name|symbol|decimals`,
-      originFn: 'getReserveDetailsWithLogs',
-      blockHeight: 0,
-      args: {
-        address,
-        poolImplementationProxyAddress:
-          this.poolImplementationProxyAddressNormalized,
-      },
-      fn: () => this.getReserveDetails(address),
-    });
-  }
-
   async getTokenTotalSupply(
     address: string,
     blockNumber?: number
@@ -376,7 +310,6 @@ export class AaveMoneyMarketInstanceManager {
 
     try {
       response.value = await retryAsync({
-        // passThrough: true,
         fn: async () =>
           (await contract.totalSupply({ blockTag: blockNumber })).toString(),
         fallbackResponse: '0',
@@ -413,7 +346,6 @@ export class AaveMoneyMarketInstanceManager {
         if (contract) {
           try {
             response.value = await retryAsync({
-              // passThrough: true,
               fn: async () =>
                 (
                   await contract.totalSupply({ blockTag: blockNumber })
@@ -432,23 +364,6 @@ export class AaveMoneyMarketInstanceManager {
     return totalResponse;
   }
 
-  async getManyTokensTotalSupplyWithLogs(args: {
-    addresses: string[];
-    blockNumber?: number;
-  }): Promise<MoneyMarketTokenTotalSupply[]> {
-    return measureEvmContractCall({
-      call: `moneyMarketTokenContracts.get(address).totalSupply`,
-      originFn: 'getManyTokensTotalSupplyWithLogs',
-      blockHeight: args?.blockNumber ?? 0,
-      args: {
-        ...args,
-        poolImplementationProxyAddress:
-          this.poolImplementationProxyAddressNormalized,
-      },
-      fn: () => this.getManyTokensTotalSupply(args),
-    });
-  }
-
   async getAccountTokenBalance({
     accountAddress,
     contractAddress,
@@ -457,7 +372,7 @@ export class AaveMoneyMarketInstanceManager {
     accountAddress: string;
     contractAddress: string;
     blockNumber?: number;
-  }) {
+  }): Promise<bigint | null | undefined> {
     const contractAddressNormalized = ethers.utils.getAddress(contractAddress);
     const accountAddressNormalized = ethers.utils.getAddress(accountAddress);
 
@@ -468,7 +383,6 @@ export class AaveMoneyMarketInstanceManager {
 
     try {
       const balance: any = await retryAsync({
-        // passThrough: true,
         fn: () =>
           contract.balanceOf(
             accountAddressNormalized,
@@ -486,24 +400,6 @@ export class AaveMoneyMarketInstanceManager {
     }
   }
 
-  async getAccountTokenBalanceWithLogs(args: {
-    accountAddress: string;
-    contractAddress: string;
-    blockNumber?: number;
-  }) {
-    return measureEvmContractCall({
-      call: `moneyMarketTokenContracts.get().balanceOf`,
-      originFn: 'getAccountTokenBalanceWithLogs',
-      blockHeight: args?.blockNumber ?? 0,
-      args: {
-        ...args,
-        poolImplementationProxyAddress:
-          this.poolImplementationProxyAddressNormalized,
-      },
-      fn: () => this.getAccountTokenBalance(args),
-    });
-  }
-
   async getAccountMmPositionData({
     accountAddress,
     blockNumber,
@@ -515,7 +411,6 @@ export class AaveMoneyMarketInstanceManager {
 
     try {
       const data = await retryAsync<any>({
-        // passThrough: true,
         fn: () =>
           this.poolImplementationContractInstance.getUserAccountData(
             accountAddressNormalized,
@@ -540,10 +435,8 @@ export class AaveMoneyMarketInstanceManager {
           data.currentLiquidationThreshold.toString()
         )
           .div(100)
-          .toFixed(18, BigNumber.ROUND_HALF_UP), // Convert to percentage
-        ltv: BigNumber(data.ltv.toString())
-          .div(100)
-          .toFixed(18, BigNumber.ROUND_HALF_UP), // Convert to percentage
+          .toFixed(),
+        ltv: BigNumber(data.ltv.toString()).div(100).toFixed(),
         healthFactor: ethers.utils.formatUnits(data.healthFactor, 18),
         pool: this.poolImplementationProxyAddressNormalized.toLowerCase(),
       };
@@ -551,23 +444,6 @@ export class AaveMoneyMarketInstanceManager {
       console.log(e);
       return null;
     }
-  }
-
-  async getAccountMmPositionDataWithLogs(args: {
-    accountAddress: string;
-    blockNumber?: number;
-  }): Promise<AccountMmPositionDataContractData | null> {
-    return measureEvmContractCall({
-      call: `poolImplementationContractInstance.getUserAccountData`,
-      originFn: 'getAccountMmPositionDataWithLogs',
-      blockHeight: args?.blockNumber ?? 0,
-      args: {
-        ...args,
-        poolImplementationProxyAddress:
-          this.poolImplementationProxyAddressNormalized,
-      },
-      fn: () => this.getAccountMmPositionData(args),
-    });
   }
 
   async getUserReservesData({
@@ -581,7 +457,6 @@ export class AaveMoneyMarketInstanceManager {
 
     try {
       const data = await retryAsync<any>({
-        // passThrough: true,
         fn: () =>
           this.uiPoolDataProviderContractInstance.getUserReservesData(
             this.poolAddressProviderAddressNormalized,
@@ -608,22 +483,5 @@ export class AaveMoneyMarketInstanceManager {
       console.log(e);
       return null;
     }
-  }
-
-  async getUserReservesDataWithLogs(args: {
-    accountAddress: string;
-    blockNumber?: number;
-  }): Promise<UserReserveDataContractData[] | null> {
-    return measureEvmContractCall({
-      call: `uiPoolDataProviderContractInstance.getUserReservesData`,
-      originFn: 'getUserReservesDataWithLogs',
-      blockHeight: args?.blockNumber ?? 0,
-      args: {
-        ...args,
-        poolImplementationProxyAddress:
-          this.poolImplementationProxyAddressNormalized,
-      },
-      fn: () => this.getUserReservesData(args),
-    });
   }
 }

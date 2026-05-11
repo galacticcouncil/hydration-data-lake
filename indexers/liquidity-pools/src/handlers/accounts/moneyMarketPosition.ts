@@ -174,19 +174,18 @@ export async function handleAccountMmPositionDataOnMmEvent({
     blockHeader: blockHeader,
   });
 
-  let positionsData: WithMarketTag<AccountMmPositionDataContractData>[] = [];
-  const positionDataStorageDictionary =
+  let positionsData: WithMarketTag<AccountMmPositionDataContractData>[] | null =
     StorageResolver.getInstance().storageDictionaryManager?.getAccountMmPositionData(
-      { accountId: account.id, block: blockHeader }
-    );
+      {
+        accountId: account.id,
+        block: blockHeader,
+        mmPoolAddresses: AaveMoneyMarketsRegistry.getInstance()
+          .getAllMarkets()
+          .map((market) => market.poolImplementationProxyAddress.toLowerCase()),
+      }
+    ) ?? null;
 
-  if (positionDataStorageDictionary) {
-    positionsData.push({
-      ...positionDataStorageDictionary,
-      poolImplementationProxyAddress:
-        ctx.appConfig.evm.POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS, // TODO Storage Dictionary must be updated to support multiple money markets
-    });
-  } else {
+  if (!positionsData) {
     const contractData =
       await AaveMoneyMarketsRegistry.getInstance().getAccountMmPositionDataWithLogs(
         {
@@ -220,7 +219,7 @@ export async function handleAccountMmPositionDataOnMmEvent({
     } = positionData;
 
     const newPositionHistData = new AccountMmPositionHistoricalData({
-      id: `${account.id}-${blockHeader.height}`,
+      id: `${account.id}-${poolAddress.toLowerCase()}-${blockHeader.height}`,
       accountId: account.id,
       accountBoundEvmAddress: account.boundEvmAddress,
 
@@ -231,7 +230,7 @@ export async function handleAccountMmPositionDataOnMmEvent({
       ltv,
       healthFactor: maxHealthFactor !== healthFactor ? healthFactor : null,
 
-      poolAddress,
+      poolAddress: poolAddress.toLowerCase(),
 
       paraBlockHeight: block.height,
     });

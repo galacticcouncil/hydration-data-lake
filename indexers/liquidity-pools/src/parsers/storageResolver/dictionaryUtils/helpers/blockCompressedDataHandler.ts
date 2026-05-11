@@ -314,24 +314,35 @@ export function encodeBlockCompressedData<R>({
       }
       case BlockCompressedDataKey.accMmPositionHistoricalData: {
         resultList.push(
-          (decompressedData[dataKey] || []).map(
-            (accMmPositionData: any) =>
-              ({
-                id: accMmPositionData.id,
-                accountId: accMmPositionData.accountId,
-                accountBoundEvmAddress:
-                  accMmPositionData.accountBoundEvmAddress,
-                availableBorrowsBase: accMmPositionData.availableBorrowsBase,
-                currentLiquidationThreshold:
-                  accMmPositionData.currentLiquidationThreshold,
-                healthFactor: accMmPositionData.healthFactor,
-                ltv: accMmPositionData.ltv,
-                poolAddress: accMmPositionData.poolAddress,
-                totalCollateralBase: accMmPositionData.totalCollateralBase,
-                totalDebtBase: accMmPositionData.totalDebtBase,
-                paraBlockHeight: accMmPositionData.paraBlockHeight,
-              }) as AccountMmPositionHistoricalDatumGql as R
-          )
+          (decompressedData[dataKey] || []).map((accMmPositionData: any) => {
+            // Storage Dictionary's compressed payload is not migrated when the
+            // id format changes, so rows inserted under the legacy 2-part shape
+            // (`<accountId>-<paraBlockHeight>`) are still served alongside new
+            // 3-part rows (`<accountId>-<poolAddress>-<paraBlockHeight>`).
+            // Synthesise the new shape from the row's own fields when needed.
+            const rawId: string = accMmPositionData.id;
+            const poolAddressDecorated =
+              accMmPositionData.poolAddress?.toLowerCase() ?? '';
+            const id =
+              rawId && rawId.split('-').length === 2
+                ? `${accMmPositionData.accountId}-${poolAddressDecorated}-${accMmPositionData.paraBlockHeight}`
+                : rawId;
+
+            return {
+              id,
+              accountId: accMmPositionData.accountId,
+              accountBoundEvmAddress: accMmPositionData.accountBoundEvmAddress,
+              availableBorrowsBase: accMmPositionData.availableBorrowsBase,
+              currentLiquidationThreshold:
+                accMmPositionData.currentLiquidationThreshold,
+              healthFactor: accMmPositionData.healthFactor,
+              ltv: accMmPositionData.ltv,
+              poolAddress: poolAddressDecorated,
+              totalCollateralBase: accMmPositionData.totalCollateralBase,
+              totalDebtBase: accMmPositionData.totalDebtBase,
+              paraBlockHeight: accMmPositionData.paraBlockHeight,
+            } as AccountMmPositionHistoricalDatumGql as R;
+          })
         );
         break;
       }
