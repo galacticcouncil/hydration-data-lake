@@ -2053,7 +2053,7 @@ enum OmnipoolLiquidityPositionStatus {
 type OmnipoolLiquidityPosition @entity {
   "<position ID>"
   id: ID!
-  accountId: String!
+  accountId: String! @index
   assetId: String!
   omnipoolAssetId: String!
   initialAmount: BigInt!
@@ -2171,7 +2171,7 @@ type OmnipoolYieldFarmDeposit @entity {
   id: ID!
   nftId: String
   positionId: String!
-  accountId: String!
+  accountId: String! @index
   assetId: String!
 
   "should be either SharesDeposited or DepositDestroyed"
@@ -2285,7 +2285,7 @@ type XykYieldFarmDeposit @entity {
   id: ID!
   nftId: String
   xykpoolId: String!
-  accountId: String!
+  accountId: String! @index
   lpAssetId: String!
   initialAmount: BigInt!
   amount: BigInt!

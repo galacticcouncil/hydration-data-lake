@@ -21,6 +21,7 @@ export class XykYieldFarmDeposit {
   @Column_("text", {nullable: false})
   xykpoolId!: string
 
+  @Index_()
   @Column_("text", {nullable: false})
   accountId!: string
 

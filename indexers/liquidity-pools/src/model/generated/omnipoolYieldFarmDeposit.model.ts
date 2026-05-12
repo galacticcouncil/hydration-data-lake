@@ -21,6 +21,7 @@ export class OmnipoolYieldFarmDeposit {
   @Column_("text", {nullable: false})
   positionId!: string
 
+  @Index_()
   @Column_("text", {nullable: false})
   accountId!: string
 

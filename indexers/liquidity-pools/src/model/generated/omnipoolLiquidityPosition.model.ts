@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, OneToMany as OneToMany_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {OmnipoolLiquidityPositionStatus} from "./_omnipoolLiquidityPositionStatus"
 import {OmnipoolLiquidityPositionEvent} from "./omnipoolLiquidityPositionEvent.model"
@@ -15,6 +15,7 @@ export class OmnipoolLiquidityPosition {
   @PrimaryColumn_()
   id!: string
 
+  @Index_()
   @Column_("text", {nullable: false})
   accountId!: string
 
