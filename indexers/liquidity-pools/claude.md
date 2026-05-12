@@ -71,3 +71,17 @@ Entry point: `handleAssetSpotPricesHistoricalDataAtBlock` in `src/handlers/asset
 - **`processXykUntradableAssetSpotPrices`** — XYK-only assets whose only pools are destroyed, and share tokens of destroyed XYK pools. Writes `price = 0` with empty route.
 
 **Why XYK-only assets use the interim asset, not the Router**: XYK-only assets can only be traded in XYK pools, so the Router would compute their price along a deterministic XYK route. To save the cost of running the Router and traversing the route graph, we approximate the price as `(pool reserve ratio) × (interim asset's already-computed spot price)`. **More importantly**, indexer instances run with XYK pool state intentionally not provided to the Router (`USE_XYKPOOLS_DATA_IN_TRADE_ROUTER = false`), which both saves router execution time and prevents the Router from building any routes through XYK pools — so XYK-only assets must be priced by this path.
+
+## Further reading
+
+Deep documentation lives in `docs/ai/`. Start with `docs/ai/INDEX.md`, then load only the topic(s) relevant to the task.
+
+Quick links by topic:
+- Batch / reorg / transactions → `docs/ai/architecture/`
+- Spot price calculation → `docs/ai/domain/spot-prices.md`
+- Money market pricing → `docs/ai/domain/money-market-pricing.md`
+- Asset IDs → `docs/ai/domain/asset-ids.md`
+- `batchState`, `LatestProcessedDataCacheManager`, `account_owned_asset` → `docs/ai/caches/`
+- Balance events, reaggregation, price pipeline → `docs/ai/flows/`
+- Utility modules (HydratedLogger / `support.app_logs`, Prometheus metrics / reorg detection, `ctx.storeUtils`) → `docs/ai/tools/`
+- Operational tasks → `docs/ai/runbooks/`

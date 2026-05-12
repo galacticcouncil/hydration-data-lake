@@ -15,7 +15,7 @@ import { getAssetSpotPriceHistDataWithUniqueData } from '../assets/assetHistoric
 import {
   AddMultiplePricesPayload,
   RedisTimeSeriesName,
-} from '../../utils/redisTimeSeriesManager';
+} from '../../utils/redisSupport/redisTimeSeriesManager';
 import { ProcessorStatusManager } from '../../processorStatusManager';
 import {
   getProcessingMode,
@@ -28,8 +28,8 @@ import { getStableswapAssetsHistDataLatest } from '../pools/pools/stableswap/his
 import { getXykpoolHistDataWithUniqueData } from '../pools/pools/xykPool/historicalData';
 import { BigNumber } from '../../utils/bignumber';
 import { getXykpoolsHistDataLatest } from '../pools/pools/xykPool/historicalDataLatest';
-import { TimeSeriesDataCommitManager } from '../../utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
-import { DataCommitterJobName } from '../../utils/redisTimeSeriesSupport/queueClient';
+import { TimeSeriesDataCommitManager } from '../../utils/redisSupport/redisTimeSeriesSupport/timeSeriesDataCommitManager';
+import { DataCommitterJobName } from '../../utils/redisSupport/redisTimeSeriesSupport/queueClient';
 import { splitIntoBatches } from '../../utils/helpers';
 import { getAccountTotalBalancesLatest } from '../balances/accountTotalBalanceLatest';
 import { BalancesLoggerManager } from '../balances/balancesLoggerManager';

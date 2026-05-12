@@ -5,7 +5,7 @@ import {
   RedisScripts,
   RedisDefaultModules,
 } from 'redis';
-import { AppConfig } from '../../appConfig';
+import { AppConfig } from '../../../appConfig';
 import { ApiSupportPgClient } from '../redisTimeSeriesSupport/apiSupportPgClient';
 
 export type RedisInstance = RedisClientType<

@@ -9,7 +9,7 @@ import {
   // TIME_SERIES_AGGREGATION_TYPE,
   // TIME_SERIES_DUPLICATE_POLICIES,
 } from 'redis';
-import { AppConfig } from '../../appConfig';
+import { AppConfig } from '../../../appConfig';
 import {
   TimeSeriesAggregationType,
   TimeSeriesDuplicatePolicies,

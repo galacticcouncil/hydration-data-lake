@@ -6,7 +6,7 @@ import { AppConfig } from './appConfig';
 import { printV8MemoryHeap } from './utils/helpers';
 import { execCoreProcessorHandlers } from './processorHelpers/multiprocessorHandlers/legacy';
 import { execSpotPricesProcessorHandlers } from './processorHelpers/multiprocessorHandlers/legacy/spotPricesProc';
-import { RedisTimeSeriesManager } from './utils/redisTimeSeriesManager';
+import { RedisTimeSeriesManager } from './utils/redisSupport/redisTimeSeriesManager';
 import { handleReaggregationProcessing } from './processorHelpers/recalculationProcessing';
 import {
   getProcessingMode,
@@ -16,7 +16,7 @@ import { TypeormDatabaseUtils } from './utils/typeormDatabaseUtils';
 import { getHydratedLogger, initHydratedLogger } from './utils/hydratedLogger';
 import { DbMigrationsManager } from './utils/pgConnectionManagers/dbMigrationsManager';
 import { runProcessorCustomDbMigrations } from './customDbMigrations/runProcessorCustomDbMigrations';
-import { TimeSeriesDataCommitManager } from './utils/redisTimeSeriesSupport/timeSeriesDataCommitManager';
+import { TimeSeriesDataCommitManager } from './utils/redisSupport/redisTimeSeriesSupport/timeSeriesDataCommitManager';
 import { singleFlowAllInOneProcessor } from './processorHelpers/singleFlowAllInOneProcessor';
 import { handleAllInOneMultiprocessorMode } from './processorHelpers/multiprocessorHandlers';
 import { createReorgTracker } from './utils/prometheusMetrics';

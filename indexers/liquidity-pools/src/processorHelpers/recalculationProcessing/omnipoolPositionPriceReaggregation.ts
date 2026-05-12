@@ -1,38 +1,17 @@
-import { Between } from 'typeorm/find-options/operator/Between';
-
 import { Store } from '@subsquid/typeorm-store';
 
 import {
-  AccountAssetBalanceHistoricalData,
-  AccountTotalBalanceHistoricalData,
-  AssetSpotPriceHistoricalData,
-  Block,
-  OmnipoolAssetHistoricalData,
   OmnipoolLiquidityPosition,
   OmnipoolLiquidityPositionEvent,
   OmnipoolLiquidityPositionStatus,
 } from '../../model';
 import { SqdProcessorContext } from '../../processor';
-import { ProcessorStatusManager } from '../../processorStatusManager';
-import {
-  handleAccountTotalBalance,
-  handleLiquidityBalancesInTotalBalances,
-} from '../../handlers/balances/accountTotalBalance';
-import { HistoricalDataManager } from '../../handlers/historicalData';
-import { LatestProcessedDataCacheManager } from '../../utils/latestProcessedDataCacheManager';
-import { correlateAssetSpotPrices } from '../utils';
-import { getOrCreateAsset } from '../../handlers/assets/asset';
-import { prefetchAllAssets } from '../../handlers/assets/utils';
-import { getAssetBalanceInRefAsset } from '../../handlers/balances/utils';
-import { BalancesLoggerManager } from '../../handlers/balances/balancesLoggerManager';
 import parsers from '../../parsers';
 
 export async function handleOmnipoolPositionPriceReaggregation(
   ctx: SqdProcessorContext<Store>
 ) {
   if (!ctx.appConfig.processingMode.ALL_IN_ONE_PROCESSOR_MODE) return;
-
-  console.time('prefetchSpecificData');
 
   ctx.batchState.state.omnipoolLiquidityPositions = new Map(
     (

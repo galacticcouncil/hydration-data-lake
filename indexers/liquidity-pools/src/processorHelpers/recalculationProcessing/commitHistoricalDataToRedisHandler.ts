@@ -5,18 +5,18 @@ import { ProcessorStatusManager } from '../../processorStatusManager';
 import {
   RedisTimeSeriesManager,
   RedisTimeSeriesName,
-} from '../../utils/redisTimeSeriesManager';
-import { getAssetSpotPricesByBlocksRange } from '../../utils/redisTimeSeriesSupport/sql/assetSpotPrice.sql';
+} from '../../utils/redisSupport/redisTimeSeriesManager';
+import { getAssetSpotPricesByBlocksRange } from '../../utils/redisSupport/redisTimeSeriesSupport/sql/assetSpotPrice.sql';
 import {
   AccountTotalBalanceHistDataResponse,
   AssetPairVolumeResponse,
   AssetSpotPriceHistDataResponse,
-} from '../../utils/redisTimeSeriesSupport/timeSeriesApiSupportManager';
-import { ApiSupportPgClient } from '../../utils/redisTimeSeriesSupport/apiSupportPgClient';
-import { getAssetPairVolumesByBlocksRange } from '../../utils/redisTimeSeriesSupport/sql/assetPairVolumes.sql';
+} from '../../utils/redisSupport/redisTimeSeriesSupport/timeSeriesApiSupportManager';
+import { ApiSupportPgClient } from '../../utils/redisSupport/redisTimeSeriesSupport/apiSupportPgClient';
+import { getAssetPairVolumesByBlocksRange } from '../../utils/redisSupport/redisTimeSeriesSupport/sql/assetPairVolumes.sql';
 import { BigNumber } from '../../utils/bignumber';
 import { splitIntoBatches } from '../../utils/helpers';
-import { getAccTotalBalancesByBlocksRange } from '../../utils/redisTimeSeriesSupport/sql/accTotalBalanceHistData.sql';
+import { getAccTotalBalancesByBlocksRange } from '../../utils/redisSupport/redisTimeSeriesSupport/sql/accTotalBalanceHistData.sql';
 
 export async function handleCommitHistoricalDataToRedis(
   ctx: SqdProcessorContext<Store>

@@ -1,4 +1,3 @@
-import { Hop } from '../handlers/assets/assetHistoricalData/utils/offlineSdk/sdk/src';
 import { SqdBlock, SqdProcessorContext } from '../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmAccountsBoundEventParams } from '../parsers/types/events';

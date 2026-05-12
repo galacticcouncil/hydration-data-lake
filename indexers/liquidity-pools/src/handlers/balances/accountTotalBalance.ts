@@ -330,18 +330,15 @@ export async function handleLiquidityBalancesInTotalBalances({
   ctx: SqdProcessorContext<Store>;
   allProcessedAccountsPerBlock: Map<number, Set<string>>;
 }) {
-  console.time('hLBiTB:: 1 getOrCreateAsset(refAsset)');
   const refAsset = await getOrCreateAsset({
     assetRegistryId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
     ctx,
     ensure: true,
     blockHeader: ctx.blocks[ctx.blocks.length - 1].header,
   });
-  console.timeEnd('hLBiTB:: 1 getOrCreateAsset(refAsset)');
 
   if (!refAsset) throw Error('Ref asset not found');
 
-  console.time('hLBiTB:: 2 buildInvolvedAccountsMaps');
   const accountsInvolvedToLiquidityProviding =
     getAccountsInvolvedToLiquidityProviding({ ctx });
 
@@ -374,12 +371,6 @@ export async function handleLiquidityBalancesInTotalBalances({
       .map((accSet) => Array.from(accSet.values()))
       .flat()
   );
-  console.timeEnd('hLBiTB:: 2 buildInvolvedAccountsMaps');
-  console.log(
-    `hLBiTB:: 2 buildInvolvedAccountsMaps :: blocks=${ctx.blocks.length} ` +
-      `accountsInBatch=${allInvolvedAccountsInBatchSet.size} ` +
-      `blocksWithAccounts=${allProcessedAccountsPerBlockAugmented.size}`
-  );
 
   /**
    * TODO
@@ -388,44 +379,32 @@ export async function handleLiquidityBalancesInTotalBalances({
    *       involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
    */
 
-  console.time('hLBiTB:: 3 getOmnipoolLiquidityMiningDepositsForAccounts');
   const { allDepositsInvolvedInBatch } =
     await getOmnipoolLiquidityMiningDepositsForAccounts({
       ctx,
       involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
       involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
     });
-  console.timeEnd('hLBiTB:: 3 getOmnipoolLiquidityMiningDepositsForAccounts');
 
-  console.time('hLBiTB:: 4 getOmnipoolLiquidityPositionsForAccounts');
   await getOmnipoolLiquidityPositionsForAccounts({
     ctx,
     involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
     involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
     allDepositsInvolvedInBatch,
   });
-  console.timeEnd('hLBiTB:: 4 getOmnipoolLiquidityPositionsForAccounts');
 
-  console.time('hLBiTB:: 5 getXykLiquidityMiningDepositsForAccounts');
   await getXykLiquidityMiningDepositsForAccounts({
     ctx,
     involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
     involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
   });
-  console.timeEnd('hLBiTB:: 5 getXykLiquidityMiningDepositsForAccounts');
 
-  console.time('hLBiTB:: 6 addLiquidityBalancesToTotalBalance');
   await addLiquidityBalancesToTotalBalance({
     refAssetId: refAsset.id,
     preProcessedTotalBalances,
     ctx,
     dataSource: 'LIQUIDITY_ACTIONS',
   });
-  console.timeEnd('hLBiTB:: 6 addLiquidityBalancesToTotalBalance');
-  console.log(
-    `hLBiTB:: 6 addLiquidityBalancesToTotalBalance :: ` +
-      `accountLiquidityBalanceHistoricalData.size=${ctx.batchState.state.accountLiquidityBalanceHistoricalData.size}`
-  );
 }
 
 async function addLiquidityBalancesToTotalBalance({

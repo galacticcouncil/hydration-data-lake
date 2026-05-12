@@ -6,7 +6,7 @@ import { GraphQLResolveInfo } from 'graphql/type/definition';
 import { GraphileHelpers } from 'graphile-utils/node8plus/fieldHelpers';
 import type * as pg from 'pg';
 import { AppConfig } from '../../../../../../../../appConfig';
-import { RedisTimeSeriesManager } from '../../../../../../../../utils/redisTimeSeriesManager';
+import { RedisTimeSeriesManager } from '../../../../../../../../utils/redisSupport/redisTimeSeriesManager';
 import { getBucketSizeMsFromAssetsPairPriceTimeRange } from '../../../../../../../utils/aggregationUtils';
 import {
   AccountTotalBalanceBucket,

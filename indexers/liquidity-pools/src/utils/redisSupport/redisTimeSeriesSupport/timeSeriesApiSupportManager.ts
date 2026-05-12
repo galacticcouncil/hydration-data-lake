@@ -7,7 +7,7 @@ import {
   RedisTimeSeriesManager,
   RedisTimeSeriesName,
 } from '../redisTimeSeriesManager';
-import { AppConfig } from '../../appConfig';
+import { AppConfig } from '../../../appConfig';
 import { getAssetPairVolumesByBlocksRange } from './sql/assetPairVolumes.sql';
 import {
   BullQueueClient,
@@ -15,13 +15,12 @@ import {
   HistDataScrapperJobName,
 } from './queueClient';
 import { DoneCallback, Job } from 'bull';
-import * as crypto from 'node:crypto';
 import {
   getAccTotalBalancesByBlocksRange,
   getFirstAvailableAccTotalBalanceEntity,
 } from './sql/accTotalBalanceHistData.sql';
-import { BigNumber } from './../bignumber';
-import { splitIntoBatches } from '../helpers';
+import { BigNumber } from '../../bignumber';
+import { splitIntoBatches } from '../../helpers';
 
 export interface AssetSpotPriceHistDataResponse {
   id: string;
@@ -72,18 +71,11 @@ export class TimeSeriesApiSupportManager {
 
     await new Promise((res) => setTimeout(res, 90000));
 
-    console.log('initHistDataScraper');
+    console.log('TimeSeriesApiSupportManager :: initHistDataScraper');
 
     const bullQueueClient = BullQueueClient.getInstance();
     const pgClient = ApiSupportPgClient.getInstance();
     const apiState = await pgClient.getApiState();
-
-    // await bullQueueClient.cleanUpScrapperNextTickJobs(
-    //   HistDataScrapperJobName.assetPriceHistData
-    // );
-    // await bullQueueClient.cleanUpScrapperNextTickJobs(
-    //   HistDataScrapperJobName.accountTotalBalancesHistData
-    // );
 
     await bullQueueClient.wipeScrapperQueue();
 

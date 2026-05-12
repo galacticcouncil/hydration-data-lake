@@ -27,7 +27,7 @@ import {
 } from './parsers/chains/hydration-lark/typegenTypes';
 import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
-import { TimeSeriesMigration } from './utils/redisTimeSeriesManager/migrationsManager';
+import { TimeSeriesMigration } from './utils/redisSupport/redisTimeSeriesManager/migrationsManager';
 import { PgBossQueueName } from './utils/multiProcPoolManager';
 import { AaveMoneyMarketInstanceConfig } from './utils/evmTools/aave/types';
 

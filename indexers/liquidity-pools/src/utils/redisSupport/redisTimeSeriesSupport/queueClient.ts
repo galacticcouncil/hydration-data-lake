@@ -1,4 +1,4 @@
-import { AppConfig } from '../../appConfig';
+import { AppConfig } from '../../../appConfig';
 import Queue, { DoneCallback, Job, JobStatusClean } from 'bull';
 import * as crypto from 'node:crypto';
 import {

@@ -1,13 +1,13 @@
 import { RedisTimeSeriesManager } from '../redisTimeSeriesManager';
-import { AppConfig } from '../../appConfig';
+import { AppConfig } from '../../../appConfig';
 import {
   BullQueueClient,
   DataCommiterJobData,
   DataCommitterJobName,
 } from './queueClient';
-import { DoneCallback, Job } from 'bull';
+import { Job } from 'bull';
 import { ApiSupportPgClient } from './apiSupportPgClient';
-import { splitIntoBatches } from '../helpers';
+import { splitIntoBatches } from '../../helpers';
 
 const appConfig = AppConfig.getInstance();
 
