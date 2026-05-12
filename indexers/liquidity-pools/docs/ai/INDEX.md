@@ -148,12 +148,15 @@ The code is the source of truth. If you (the agent) find a doc that contradicts 
 - [Balance events processing](flows/balance-events.md) — `processBalanceEventsSequentially` and the discovery / snapshot path. (skeleton)
 - [Price calculation pipeline](flows/price-calculation.md) — How a block's prices are computed, deduped, and persisted. (skeleton)
 - [Reaggregation](flows/reaggregation.md) — When reaggregation runs, what's different vs normal processing, `correlateAssetSpotPrices` usage. (skeleton)
+- [Volume drainer (reorg-safe Redis commits)](flows/redis-volume-drainer.md) — Postgres-backed finality buffer for `volume` time series; head writes land in `pending_redis_ts_commit`, drainer flushes past `BLOCKS_FINALITY_OFFSET`.
 
 ### Tools
 <!-- Utility modules and support infrastructure. Reference docs — "what is X and how do I use it". -->
 - [HydratedLogger](tools/hydrated-logger.md) — Dual-transport logger backing `support.app_logs`; how per-call timing, action_type breakdowns, and per-batch analytics are captured.
 - [Prometheus metrics](tools/prometheus-metrics.md) — Custom `sqd_handler_*`, `sqd_batch_*`, `sqd_reorg_*` series on SQD's `/metrics`; `createMetricsTracker` / `createReorgTracker` factories.
 - [TypeormDatabaseUtils (`ctx.storeUtils`)](tools/typeorm-database-utils.md) — Per-batch wrapper around `ctx.store` providing measured `findWithLogs` / `findOneWithLogs` / `upsertWithBatches` and Postgres-aware retry; the source of `db_read` / `db_write` rows in `support.app_logs`.
+- [Redis-backed Bull queues](tools/redis-queue-bull.md) — Two Bull queues (`DATA_COMMITTER`, `PROCESSING_POOL`) sharing the time series Redis DB; producers/consumers, job shapes, idempotency rules.
+- [Redis TimeSeries (prices, volumes, balances)](tools/redis-timeseries.md) — Bucketed time series storage; `RedisTimeSeriesManager` read/write paths, key structure, `DUPLICATE_POLICY LAST`, migration utilities.
 
 ### Runbooks
 <!-- "How do I do X" task guides. -->
@@ -179,6 +182,7 @@ Quick links by topic:
 - Asset IDs → `docs/ai/domain/asset-ids.md`
 - `batchState`, `LatestProcessedDataCacheManager`, `account_owned_asset` → `docs/ai/caches/`
 - Balance events, reaggregation, price pipeline → `docs/ai/flows/`
+- Redis time series, Bull queues, volume drainer (reorg-safe commits) → `docs/ai/tools/redis-timeseries.md`, `docs/ai/tools/redis-queue-bull.md`, `docs/ai/flows/redis-volume-drainer.md`
 - Utility modules (HydratedLogger / `support.app_logs`, Prometheus metrics / reorg detection, `ctx.storeUtils`) → `docs/ai/tools/`
 - Operational tasks → `docs/ai/runbooks/`
 ```

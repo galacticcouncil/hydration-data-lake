@@ -217,6 +217,26 @@ class RedisConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_REDIS_TS_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT: boolean = true;
 
+  @IsBoolean()
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly REDIS_TS_VOLUME_DRAINER_ENABLED: boolean = true;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly REDIS_TS_DRAINER_POLL_INTERVAL_MS: number = 5_000;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly REDIS_TS_DRAINER_BATCH_SIZE: number = 1000;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly REDIS_TS_DRAINER_FINALITY_SAFETY_MARGIN: number = 5;
+
+  @IsBoolean()
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly REDIS_TS_DRAINER_AWAIT_BULL_ACK: boolean = false;
+
   @Transform(({ value }: { value: string }) => JSON.parse(value ?? ''))
   readonly REDIS_MIGRATIONS: TimeSeriesMigration[] | null = null;
 

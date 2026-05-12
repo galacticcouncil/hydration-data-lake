@@ -532,54 +532,51 @@ export class HistoricalDataManager {
     )
       return;
 
-    let latestBlock = 0;
-
-    const volumesData = await Promise.all(
-      src
-        .filter((item) => !!item.assetRegistryAId && !!item.assetRegistryBId)
-        .map(async (item): Promise<AddMultiplePricesPayload> => {
-          if (item.paraBlockHeight > latestBlock)
-            latestBlock = item.paraBlockHeight;
-
-          const block =
-            await ctx.batchState.getParaBlockByHeightWithFallbackFetch(
-              item.paraBlockHeight,
-              ctx
-            );
-          if (!block)
-            throw new Error(
-              `Block entity not found for paraBlockHeight ${item.paraBlockHeight} (commitAssetsPairVolumeToRedisTimeSeries)`
-            );
-          const timestamp = block.timestamp.getTime();
-
-          return {
-            keyPrefix: ctx.appConfig.INDEXER_ID,
-            name: RedisTimeSeriesName.volume,
-            assetAId:
-              +item.assetRegistryAId! < +item.assetRegistryBId!
-                ? item.assetRegistryAId!
-                : item.assetRegistryBId!,
-            assetBId:
-              +item.assetRegistryAId! < +item.assetRegistryBId!
-                ? item.assetRegistryBId!
-                : item.assetRegistryAId!,
-
-            timestamp,
-            value: BigNumber(item.totalVolumeNormalised).toNumber(),
-          };
-        })
+    const filtered = src.filter(
+      (item) => !!item.assetRegistryAId && !!item.assetRegistryBId
     );
+    if (filtered.length === 0) return;
 
-    await TimeSeriesDataCommitManager.getInstance().addNewDataCommitterJob({
-      actionName: DataCommitterJobName.commitAssetPriceVolume,
-      priceVolumeDataLatestProcessedBlock: latestBlock,
-      priceVolumeDataMany: volumesData,
-      metadata: {
-        commitRequestedAtParaBlock:
-          ctx.blocks[ctx.blocks.length - 1].header.height,
-        requestSender: 'processor',
-      },
-    });
+    const commitManager = TimeSeriesDataCommitManager.getInstance();
+
+    await Promise.all(
+      filtered.map(async (item) => {
+        const block =
+          await ctx.batchState.getParaBlockByHeightWithFallbackFetch(
+            item.paraBlockHeight,
+            ctx
+          );
+        if (!block)
+          throw new Error(
+            `Block entity not found for paraBlockHeight ${item.paraBlockHeight} (commitAssetsPairVolumeToRedisTimeSeries)`
+          );
+        const timestamp = block.timestamp.getTime();
+
+        const payload: AddMultiplePricesPayload = {
+          keyPrefix: ctx.appConfig.INDEXER_ID,
+          name: RedisTimeSeriesName.volume,
+          assetAId:
+            +item.assetRegistryAId! < +item.assetRegistryBId!
+              ? item.assetRegistryAId!
+              : item.assetRegistryBId!,
+          assetBId:
+            +item.assetRegistryAId! < +item.assetRegistryBId!
+              ? item.assetRegistryBId!
+              : item.assetRegistryAId!,
+          timestamp,
+          value: BigNumber(item.totalVolumeNormalised).toNumber(),
+        };
+
+        await commitManager.submitVolume(
+          {
+            paraBlockHeight: item.paraBlockHeight,
+            sampleTimestampMs: timestamp,
+            payload,
+          },
+          ctx
+        );
+      })
+    );
   }
 
   static async commitAccountTotalBalancesToRedisTimeSeries(

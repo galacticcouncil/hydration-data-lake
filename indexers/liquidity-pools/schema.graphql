@@ -34,6 +34,32 @@ type PreprocessedDataBucket @entity {
   data: JSON!
 }
 
+type PendingRedisTsCommit @entity {
+  # Deterministic id: "<jobName>:<seriesKey>:<paraBlockHeight>"
+  # jobName = DataCommitterJobName enum value
+  # seriesKey = canonical key parts joined, e.g. "price:5:10" or "acc_bal_tot_tns:0xabc..."
+  # paraBlockHeight = block this payload was derived from
+  id: ID!
+
+  # Which Bull job consumer handles this row
+  # Values: 'commitAssetPriceVolume' | 'commitAccountTotalBalance'
+  jobName: String! @index
+
+  # Block height the payload was computed at — used by the drainer's finality filter
+  paraBlockHeight: Int! @index
+
+  # Wallclock timestamp (ms since epoch) — the Redis TS sample timestamp
+  # Stored explicitly so the drainer doesn't need to re-resolve block→timestamp
+  sampleTimestampMs: BigInt!
+
+  # The full job payload as it was going to be sent to Bull
+  # Shape matches DataCommiterJobData.priceVolumeDataMany[i] or accountTotalBalanceMany[i]
+  payload: JSON!
+
+  # When this row was inserted (for observability / stuck-row alarms)
+  createdAt: DateTime!
+}
+
 # ======================================================================================================================
 # *** Asset ***
 # ======================================================================================================================
@@ -1884,7 +1910,7 @@ type MoneyMarketReserve @entity {
   underlyingAssetId: String!
   variableDebtTokenId: String!
   aavePool: Aavepool
-#  mmPoolAddress: String
+  #  mmPoolAddress: String
 
   name: String!
   symbol: String!

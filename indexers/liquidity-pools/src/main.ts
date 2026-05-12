@@ -49,6 +49,7 @@ async function runProcessor() {
   let customDbMigrationsExecuted = false;
 
   await TimeSeriesDataCommitManager.getInstance().initCommiter();
+  TimeSeriesDataCommitManager.getInstance().startDrainer();
 
   processor.run(
     new TypeormDatabase({
