@@ -49,18 +49,34 @@ export async function handleAssetAccountBalances(
   /**
    * IMPORTANT
    * Account Asset Balances are aggregated based on the following triggers/events:
-   * - account's activity - if an account is involved to any event from a list of
-   *    trigger events defined in ACCOUNT_BALANCE_AGGREGATION_TRIGGERS variable.
-   *    If activity happened only in EMV environment, only involved accounts and
-   *    only involved assets will be aggregated.
-   * - [TODO] periodical balances check for all accounts for all previously
-   *    tracked assets
-   * - indexer cold start debt balances initialization - if indexer launched
-   *    from not deep history, some accounts may already have balances of
-   *    debt tokens. As indexer tracks debt token balance only in case debt token
-   *    has been involved into EMV activity, we checks all accounts MM reserves
-   *    and aggregate balances event without activity.
-   *    (Check function "handleMoneyMarketAssetBalancesForAccounts")
+   *
+   * - Account activity: an account is involved in any event from
+   *   ACCOUNT_BALANCE_AGGREGATION_TRIGGERS. If activity happened only in the EVM
+   *   environment, only involved accounts and assets are aggregated.
+   *
+   * - Periodical reaggregation: accounts due for refresh per
+   *   ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS are force-injected at
+   *   the first block of the batch (OLD flow: addAccountsToPeriodicalBalancesAggregation,
+   *   NEW flow: addAccountsToPeriodicalBalancesAggregationInDeltaFlow).
+   *
+   * - Cold-start init / refresh: handleAllAccountBalancesInit and
+   *   handleAllAccountBalancesRefresh fully repopulate all account balances
+   *   from on-chain storage when enabled; resulting totals are recorded in
+   *   preProcessedTotalBalances so downstream passes skip them.
+   *
+   * Flow-specific notes:
+   *
+   * - OLD flow (USE_EVENTS_DRIVEN_BALANCE_TRACKING = false): debt token
+   *   balances are only emitted when a debt-token-touching EVM event fires.
+   *   To cover accounts whose debt position predates the indexer's history,
+   *   handleMoneyMarketAssetBalancesForAccounts scans MM reserves for every
+   *   processed account and aggregates debt balances even without an event.
+   *
+   * - NEW flow (USE_EVENTS_DRIVEN_BALANCE_TRACKING = true): the events-driven
+   *   pipeline already catches every debt token movement via the EVM Transfer
+   *   log → BalanceEvent path in collectBalanceEvents, so no separate MM
+   *   reserve scan is needed and handleMoneyMarketAssetBalancesForAccounts is
+   *   intentionally not called.
    */
 
   let preProcessedTotalBalances: Set<string> = new Set();

@@ -695,6 +695,18 @@ export async function processBalanceEventsSequentially({
   const firstBatchBlockHeight = ctx.blocks[0].header.height;
   for (const accountId of accountsForScheduledReaggregation.values()) {
     accountsFirstActivityAtBlock.set(accountId, firstBatchBlockHeight);
+
+    // Propagate scheduled-reaggregation accounts into allProcessedAccountsPerBlock
+    // so handleLiquidityBalancesInTotalBalances picks them up and replays their
+    // LP positions/deposits. Without this, a reaggregated account with no
+    // balance event and no LP event in the batch gets a totals row composed
+    // only of asset balances, silently dropping its LP component.
+    let s = allProcessedAccountsPerBlock.get(firstBatchBlockHeight);
+    if (!s) {
+      s = new Set();
+      allProcessedAccountsPerBlock.set(firstBatchBlockHeight, s);
+    }
+    s.add(accountId);
   }
 
   for (const event of balanceEvents) {

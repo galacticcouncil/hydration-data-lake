@@ -221,7 +221,7 @@ export class TimeSeriesDataCommitManager {
       createdAt: new Date(),
     });
 
-    await ctx.store.save(entity);
+    await ctx.storeUtils.upsertWithBatches([entity]);
   }
 
   startDrainer(): void {
