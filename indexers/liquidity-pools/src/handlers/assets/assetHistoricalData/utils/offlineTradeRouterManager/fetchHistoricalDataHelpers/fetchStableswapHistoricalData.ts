@@ -264,6 +264,7 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
     (histData) =>
       histData.paraBlockHeight > blockFromNumber - 1 &&
       histData.paraBlockHeight < blockToNumber + 1 &&
+      histData.stableswapAsset != null &&
       allStablewapAssets.has(histData.stableswapAsset.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 

@@ -2,11 +2,10 @@ import { Contract, ContractInterface, ethers, BigNumber } from 'ethers';
 import { AppConfig } from '../../appConfig';
 import { AGGREGATOR_V3_ABI } from './abi/mmOracle/mmOracleAbi';
 import { PQueueManager } from '../pQueueManager';
-import type { pool } from '@galacticcouncil/sdk-next';
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { retryAsync } from '../helpers';
-type IPersistentMmOracleEntry = pool.IPersistentMmOracleEntry;
+import { IPersistentMmOracleEntry } from '../../handlers/assets/assetHistoricalData/utils/offlineSdk/sdk/src';
 
 export class MmOracleManager {
   private static instance: MmOracleManager;
