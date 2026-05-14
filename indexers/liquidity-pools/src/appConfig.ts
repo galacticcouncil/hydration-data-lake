@@ -465,13 +465,18 @@ export class AppConfig {
   readonly DB_POOL_MAX_SIZE: number = 2;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly DB_CUSTOM_MIGRATIONS_MAX_RETRY: number = 10;
+  readonly DB_CUSTOM_MIGRATIONS_MAX_RETRY: number = 50;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_CUSTOM_MIGRATIONS_BASE_DELAY_MS: number = 10000;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_CUSTOM_MIGRATIONS_MAX_DELAY_MS: number = 60000;
+
+  // Aborts a single migration statement that can't acquire its required
+  // lock in this window. Prevents indefinite hangs when a custom migration
+  // races with SQD's hot-block rollback transaction on processor restart.
+  readonly DB_CUSTOM_MIGRATIONS_LOCK_TIMEOUT: string = '30s';
 
   @IsNotEmpty()
   readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';

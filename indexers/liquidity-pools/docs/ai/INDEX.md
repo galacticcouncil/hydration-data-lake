@@ -142,6 +142,7 @@ The code is the source of truth. If you (the agent) find a doc that contradicts 
 - [batchState](caches/batch-state.md) — Per-batch working cache lifecycle: init → collect → reference → save.
 - [LatestProcessedDataCacheManager](caches/latest-processed-data-cache.md) — App-lifecycle cache of latest historical rows; population rules.
 - [account_owned_asset lookup](caches/account-owned-asset.md) — Thin ownership table; write path, read path, reorg semantics.
+- [API CacheManager](caches/api-cache-manager.md) — Two-tier (LRU + `support.api_cache` Postgres) cache used by API-process GraphQL resolvers and REST controllers; why `/proxy/*` endpoints exist (upstream rate-limit shielding).
 
 ### Flows
 <!-- Multi-step processing flows. -->
@@ -149,6 +150,7 @@ The code is the source of truth. If you (the agent) find a doc that contradicts 
 - [Price calculation pipeline](flows/price-calculation.md) — How a block's prices are computed, deduped, and persisted. (skeleton)
 - [Reaggregation](flows/reaggregation.md) — When reaggregation runs, what's different vs normal processing, `correlateAssetSpotPrices` usage. (skeleton)
 - [Volume drainer (reorg-safe Redis commits)](flows/redis-volume-drainer.md) — Postgres-backed finality buffer for `volume` time series; head writes land in `pending_redis_ts_commit`, drainer flushes past `BLOCKS_FINALITY_OFFSET`.
+- [DB migrations](flows/db-migrations.md) — Native SQD vs custom migration tracks, shadow-DB `migration:create`, why custom DB objects must NOT live in `db/migrations/`, deadlock-on-startup diagnosis.
 
 ### Tools
 <!-- Utility modules and support infrastructure. Reference docs — "what is X and how do I use it". -->
@@ -160,6 +162,7 @@ The code is the source of truth. If you (the agent) find a doc that contradicts 
 
 ### Runbooks
 <!-- "How do I do X" task guides. -->
+- [Local development](runbooks/local-development.md) — End-to-end local development workflow (placeholder; owner-filled). Covers setup, daily iteration loops, links to migrations.
 - [Reset local DB](runbooks/reset-local-db.md) — Steps to reset and restore the local dev container. (skeleton, see also `/reset-and-init-orca-local-alt` skill)
 - [Debug a suspected reorg issue](runbooks/debug-reorg.md) — Where to look when post-reorg state looks wrong. (skeleton)
 - [Add a new tracked asset type](runbooks/add-asset-type.md) — Checklist for introducing a new asset category. (skeleton)
@@ -180,7 +183,7 @@ Quick links by topic:
 - Spot price calculation → `docs/ai/domain/spot-prices.md`
 - Money market pricing → `docs/ai/domain/money-market-pricing.md`
 - Asset IDs → `docs/ai/domain/asset-ids.md`
-- `batchState`, `LatestProcessedDataCacheManager`, `account_owned_asset` → `docs/ai/caches/`
+- `batchState`, `LatestProcessedDataCacheManager`, `account_owned_asset`, API CacheManager (GraphQL / REST / `/proxy/*`) → `docs/ai/caches/`
 - Balance events, reaggregation, price pipeline → `docs/ai/flows/`
 - Redis time series, Bull queues, volume drainer (reorg-safe commits) → `docs/ai/tools/redis-timeseries.md`, `docs/ai/tools/redis-queue-bull.md`, `docs/ai/flows/redis-volume-drainer.md`
 - Utility modules (HydratedLogger / `support.app_logs`, Prometheus metrics / reorg detection, `ctx.storeUtils`) → `docs/ai/tools/`
