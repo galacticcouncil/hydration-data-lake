@@ -18,7 +18,6 @@ export class RouterCacheManager {
   private static instance: RouterCacheManager;
 
   public mlrCached: Map<string, Hop[]> = new Map();
-  public mlrCachedPerBlock: Map<string, Hop[]> = new Map();
   private cacheInvalidatedAtBlock: number = 0;
 
   static getInstance(): RouterCacheManager {

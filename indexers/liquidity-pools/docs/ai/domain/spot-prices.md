@@ -6,6 +6,7 @@ related:
   - ./money-market-pricing.md
   - ./xyk-pools.md
   - ../flows/price-calculation.md
+  - ../caches/router-cache-manager.md
 ---
 
 # Spot prices
@@ -17,6 +18,23 @@ related:
 - Anything that mentions the **Router**, `XYKPOOL_ASSET_PRICE_INTERIM_ASSET_ID`, `ARTIFICIAL_OMNIPOOL_ASSET_IDS_SET`, or `USE_XYKPOOLS_DATA_IN_TRADE_ROUTER`.
 
 ## Concepts
+
+### Offline SDK — the Router never talks to the chain
+
+The indexer uses an **offline variant of the Hydration SDK**: the `TradeRouter` is constructed from an `IPersistentDataInput` blob that the indexer reconstructs from its own historical-state tables, not from a live chain connection. Inputs supplied per block:
+
+- `meta` — paraBlock number/hash, relayBlock number.
+- `constants` — chain runtime constants for that block.
+- `emaOracle` — EMA oracle entries.
+- `mmOracle` — money market oracle entries.
+- `assets` — asset metadata.
+- `pools` — `{ lbp, xyk, stableswap, omnipool, aave }` snapshots.
+
+Construction site: `initOfflineTradeRouterForBlock` in `src/handlers/assets/assetHistoricalData/utils/offlineTradeRouterManager/index.ts` (~line 96). One `TradeRouter` instance per block in the batch, stored in `OfflineTradeRouterManager.routerInstancesMap`.
+
+**Consequence:** the indexer must collect and persist per-block historical state for everything the Router consumes — constants, EMA oracle entries, mm oracle entries, asset registry, every pool type's reserves and config. This is the reason `*_historical_data` tables exist for constants, EMA oracle entries, assets, and every pool type. Even though prices are deduped at DB save time, the per-block state behind them is NOT deduped — the Router needs the full state at every block to determine whether the resulting price actually changed.
+
+### Three processors
 
 Entry point: `handleAssetSpotPricesHistoricalDataAtBlock` in `src/handlers/assets/assetHistoricalData/assetSpotPrices.ts`.
 
@@ -54,9 +72,26 @@ Two reasons:
 - `getXykOnlyAssets` — classification function; grep to find call sites.
 - `XYKPOOL_ASSET_PRICE_INTERIM_ASSET_ID`, `ARTIFICIAL_OMNIPOOL_ASSET_IDS_SET`, `USE_XYKPOOLS_DATA_IN_TRADE_ROUTER` — constants worth grepping for.
 
+### Head-mode route caching
+
+At chain head, batches are size 1 and consecutive blocks almost always share the same best-route shape between any given asset pair. `RouterCacheManager` (`src/handlers/assets/assetHistoricalData/utils/offlineTradeRouterManager/index.ts:17`) caches the SDK's `Hop[]` result keyed by route key and reuses it across consecutive head batches. Up to ~60% reduction in spot-price calculation time at head.
+
+Wipe policy by batch shape:
+
+- `blocks.length === 1` (head) → keep cache across batches; wipe only when `currentBlock - cacheInvalidatedAtBlock > CACHED_ROUTES_FOR_PRICE_CALCULATION_TTL_BLOCKS`.
+- `blocks.length > 1` (historical sync) → wipe every batch. Historical blocks are processed in parallel via `Promise.all` in `initForBlocksBatch`, and there is no per-block invalidation strategy that works under parallelism — disabling the cache for historical mode was the chosen tradeoff.
+
+Config:
+
+- `ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION` — master switch. `false` bypasses the cache entirely.
+- `CACHED_ROUTES_FOR_PRICE_CALCULATION_TTL_BLOCKS` — rolling TTL window for head-mode cache reuse.
+
+Deep dive: `docs/ai/caches/router-cache-manager.md`.
+
 ## Gotchas
 
 - **Prices are always calculated for every block in a batch.** `ctx.batchState` holds them for every block. At DB save time they are **deduped** — only blocks where the price changed are persisted. See `flows/price-calculation.md`.
+- **Per-block pool/asset state is NOT deduped.** Even though resulting prices are deduped at save time, the offline SDK requires full per-block snapshot input for every block in the batch — that's why all the `*_historical_data` tables collect rows on every block where state changes. Reducing the breadth of these tables breaks pricing.
 - **`correlateAssetSpotPrices` is NOT used in the normal flow.** It's only for reaggregation, where prices are fetched from DB rather than recomputed. See `flows/reaggregation.md`.
 - **Interim asset fallback**: DOT first, HDX if no DOT pool exists. New XYK pools may shift which interim asset applies.
 - **aTokens with non-XYK underlying go through the Router**, not the interim-asset path. See `money-market-pricing.md` for the underlying / aToken / Debt token pricing relationship.

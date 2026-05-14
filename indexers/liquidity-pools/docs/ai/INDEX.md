@@ -143,6 +143,7 @@ The code is the source of truth. If you (the agent) find a doc that contradicts 
 - [LatestProcessedDataCacheManager](caches/latest-processed-data-cache.md) — App-lifecycle cache of latest historical rows; population rules.
 - [account_owned_asset lookup](caches/account-owned-asset.md) — Thin ownership table; write path, read path, reorg semantics.
 - [API CacheManager](caches/api-cache-manager.md) — Two-tier (LRU + `support.api_cache` Postgres) cache used by API-process GraphQL resolvers and REST controllers; why `/proxy/*` endpoints exist (upstream rate-limit shielding).
+- [RouterCacheManager](caches/router-cache-manager.md) — Head-mode route cache (`Map<routeKey, Hop[]>`) for spot-price calculation; up to ~60% speedup at head, disabled during historical sync.
 
 ### Flows
 <!-- Multi-step processing flows. -->

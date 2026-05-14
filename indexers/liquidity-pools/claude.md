@@ -74,6 +74,10 @@ Entry point: `handleAssetSpotPricesHistoricalDataAtBlock` in `src/handlers/asset
 
 **Why XYK-only assets use the interim asset, not the Router**: XYK-only assets can only be traded in XYK pools, so the Router would compute their price along a deterministic XYK route. To save the cost of running the Router and traversing the route graph, we approximate the price as `(pool reserve ratio) × (interim asset's already-computed spot price)`. **More importantly**, indexer instances run with XYK pool state intentionally not provided to the Router (`USE_XYKPOOLS_DATA_IN_TRADE_ROUTER = false`), which both saves router execution time and prevents the Router from building any routes through XYK pools — so XYK-only assets must be priced by this path.
 
+**Offline SDK**: the Router never connects to the chain. Per block, the indexer constructs a `TradeRouter` from an `IPersistentDataInput` built from its own `*_historical_data` tables (constants, EMA oracle, mm oracle, assets, lbp/xyk/stableswap/omnipool/aave pool snapshots). This is why those historical-state tables exist and why their breadth cannot be reduced — the Router needs the full per-block snapshot to determine whether a price actually changed vs the previously persisted value. Construction site: `initOfflineTradeRouterForBlock` in `src/handlers/assets/assetHistoricalData/utils/offlineTradeRouterManager/index.ts`.
+
+**Head-mode route caching**: `RouterCacheManager` caches the SDK's `Hop[]` result per route key and reuses it across consecutive head batches (batch size 1). Up to ~60% reduction in spot-price calculation time at head. Disabled during historical sync (batches > 1 block) because parallel block processing has no clean invalidation strategy. Controlled by `ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION` (master switch) and `CACHED_ROUTES_FOR_PRICE_CALCULATION_TTL_BLOCKS` (rolling TTL window). Deep dive: `docs/ai/caches/router-cache-manager.md`.
+
 ## Account balances aggregation
 
 For debugging balances aggregation, the following tables provide layered visibility — from per-asset snapshots up to a full trace of every balance that contributed to an account's total.
