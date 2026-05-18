@@ -102,7 +102,7 @@ export class QueriesHelper {
     return client;
   }
 
-  dictionaryGqlRequest<
+  async dictionaryGqlRequest<
     Data = any,
     Variables extends AnyVariables = AnyVariables,
   >({

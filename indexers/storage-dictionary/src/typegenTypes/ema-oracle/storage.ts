@@ -2,6 +2,7 @@ import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../sup
 import * as v138 from '../v138'
 import * as v170 from '../v170'
 import * as v335 from '../v335'
+import * as v411 from '../v411'
 
 export const accumulator =  {
     /**
@@ -161,4 +162,68 @@ export interface WhitelistedAssetsV227  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): [Bytes, [number, number]][]
     get(block: Block): Promise<([Bytes, [number, number]][] | undefined)>
+}
+
+export const externalSources =  {
+    /**
+     *  Registered external oracle sources.
+     */
+    v411: new StorageType('EmaOracle.ExternalSources', 'Optional', [sts.bytes()], sts.unit()) as ExternalSourcesV411,
+}
+
+/**
+ *  Registered external oracle sources.
+ */
+export interface ExternalSourcesV411  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: Bytes): Promise<(null | undefined)>
+    getMany(block: Block, keys: Bytes[]): Promise<(null | undefined)[]>
+    getKeys(block: Block): Promise<Bytes[]>
+    getKeys(block: Block, key: Bytes): Promise<Bytes[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<Bytes[]>
+    getKeysPaged(pageSize: number, block: Block, key: Bytes): AsyncIterable<Bytes[]>
+    getPairs(block: Block): Promise<[k: Bytes, v: (null | undefined)][]>
+    getPairs(block: Block, key: Bytes): Promise<[k: Bytes, v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: Bytes, v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: Bytes): AsyncIterable<[k: Bytes, v: (null | undefined)][]>
+}
+
+export const authorizedAccounts =  {
+    /**
+     *  Authorized accounts per (external oracle source, asset pair).
+     * 
+     *  Authorization is scoped per-pair so that a compromised external oracle account can
+     *  only update the specific pairs it was authorized for, limiting DDoS blast radius.
+     *  The asset pair is stored in `ordered_pair` form.
+     */
+    v411: new StorageType('EmaOracle.AuthorizedAccounts', 'Optional', [sts.bytes(), sts.tuple(() => [sts.number(), sts.number()]), v411.AccountId32], sts.unit()) as AuthorizedAccountsV411,
+}
+
+/**
+ *  Authorized accounts per (external oracle source, asset pair).
+ * 
+ *  Authorization is scoped per-pair so that a compromised external oracle account can
+ *  only update the specific pairs it was authorized for, limiting DDoS blast radius.
+ *  The asset pair is stored in `ordered_pair` form.
+ */
+export interface AuthorizedAccountsV411  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key1: Bytes, key2: [number, number], key3: v411.AccountId32): Promise<(null | undefined)>
+    getMany(block: Block, keys: [Bytes, [number, number], v411.AccountId32][]): Promise<(null | undefined)[]>
+    getKeys(block: Block): Promise<[Bytes, [number, number], v411.AccountId32][]>
+    getKeys(block: Block, key1: Bytes): Promise<[Bytes, [number, number], v411.AccountId32][]>
+    getKeys(block: Block, key1: Bytes, key2: [number, number]): Promise<[Bytes, [number, number], v411.AccountId32][]>
+    getKeys(block: Block, key1: Bytes, key2: [number, number], key3: v411.AccountId32): Promise<[Bytes, [number, number], v411.AccountId32][]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<[Bytes, [number, number], v411.AccountId32][]>
+    getKeysPaged(pageSize: number, block: Block, key1: Bytes): AsyncIterable<[Bytes, [number, number], v411.AccountId32][]>
+    getKeysPaged(pageSize: number, block: Block, key1: Bytes, key2: [number, number]): AsyncIterable<[Bytes, [number, number], v411.AccountId32][]>
+    getKeysPaged(pageSize: number, block: Block, key1: Bytes, key2: [number, number], key3: v411.AccountId32): AsyncIterable<[Bytes, [number, number], v411.AccountId32][]>
+    getPairs(block: Block): Promise<[k: [Bytes, [number, number], v411.AccountId32], v: (null | undefined)][]>
+    getPairs(block: Block, key1: Bytes): Promise<[k: [Bytes, [number, number], v411.AccountId32], v: (null | undefined)][]>
+    getPairs(block: Block, key1: Bytes, key2: [number, number]): Promise<[k: [Bytes, [number, number], v411.AccountId32], v: (null | undefined)][]>
+    getPairs(block: Block, key1: Bytes, key2: [number, number], key3: v411.AccountId32): Promise<[k: [Bytes, [number, number], v411.AccountId32], v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [Bytes, [number, number], v411.AccountId32], v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: Bytes): AsyncIterable<[k: [Bytes, [number, number], v411.AccountId32], v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: Bytes, key2: [number, number]): AsyncIterable<[k: [Bytes, [number, number], v411.AccountId32], v: (null | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: Bytes, key2: [number, number], key3: v411.AccountId32): AsyncIterable<[k: [Bytes, [number, number], v411.AccountId32], v: (null | undefined)][]>
 }

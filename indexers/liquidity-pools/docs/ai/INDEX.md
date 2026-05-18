@@ -131,6 +131,7 @@ The code is the source of truth. If you (the agent) find a doc that contradicts 
 ### Domain
 <!-- Hydration / Polkadot business concepts. -->
 - [Asset IDs](domain/asset-ids.md) — How registry IDs, ERC20 addresses, and debt tokens map onto the `id` / `assetRegistryId` schema.
+- [ChainActivityTrace](domain/chain-activity-trace.md) — Trace containers grouping calls/events, `trace_id` string format, cross-block stitching via relations and `operation_id`.
 - [Spot prices](domain/spot-prices.md) — Three processors for spot price calculation, when each runs, interim asset logic, XYK exclusion from Router.
 - [Money market pricing](domain/money-market-pricing.md) — How underlying / aToken / Debt token prices relate within a reserve, fallback rules.
 - [Omnipool](domain/omnipool.md) — Omnipool concepts as they appear in this indexer. (skeleton)

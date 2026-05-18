@@ -87,6 +87,7 @@ import {
   WithMarketTag,
 } from '../../../utils/evmTools/aave/types';
 import { AppConfig } from '../../../appConfig';
+import { prefetchGenericPersistentData } from '../../../processorHelpers/prefetchHelpers';
 
 const appConfig = AppConfig.getInstance();
 
@@ -291,6 +292,7 @@ export class StorageDictionaryManager extends QueriesHelper {
   async fetchBatchStorageStateAllPallets(args: {
     blockNumberFrom: number;
     blockNumberTo: number;
+    ctx: SqdProcessorContext<Store>;
   }) {
     const fetchBlockCompressedDataPaginated = async ({
       pageSize,
@@ -310,18 +312,24 @@ export class StorageDictionaryManager extends QueriesHelper {
         ],
       };
 
-      const resp = await this.dictionaryGqlRequest<
-        GetBlockCompressedDataQuery,
-        GetBlockCompressedDataQueryVariables
-      >({
-        query: GetBlockCompressedData,
-        variables: {
-          filter,
-          orderBy: BlockCompressedDataOrderBy.ParaBlockHeightAsc,
-          first: pageSize,
-          offset,
-        },
-        dictName: topic,
+      const resp = await args.ctx.extLogger.measure({
+        fn: () =>
+          this.dictionaryGqlRequest<
+            GetBlockCompressedDataQuery,
+            GetBlockCompressedDataQueryVariables
+          >({
+            query: GetBlockCompressedData,
+            variables: {
+              filter,
+              orderBy: BlockCompressedDataOrderBy.ParaBlockHeightAsc,
+              first: pageSize,
+              offset,
+            },
+            dictName: topic,
+          }),
+        name: `StorageDictionaryManager_fetchDictionary_${topic}`,
+        actionType: 'other',
+        meta: { paraBlockHeight: args.ctx.blocks[0].header.height },
       });
 
       return {

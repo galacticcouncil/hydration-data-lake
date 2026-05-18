@@ -123,11 +123,13 @@ export async function singleFlowAllInOneProcessor(
         })
       );
 
-      await StorageResolver.getInstance().init({
-        ctx: ctx,
-        blockNumberFrom: ctx.blocks[0].header.height,
-        blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
-      });
+      await mt.track('StorageResolver_fetch_storage_dictionaries', () =>
+        StorageResolver.getInstance().init({
+          ctx: ctx,
+          blockNumberFrom: ctx.blocks[0].header.height,
+          blockNumberTo: ctx.blocks[ctx.blocks.length - 1].header.height,
+        })
+      );
 
       await prefetchOrInitAllBatchAccounts(ctx);
       await prefetchOrInitAllAccountProcessingStatuses(ctx);

@@ -110,7 +110,7 @@ class LogConfig {
   readonly HLOG_LOG_FILE_PATH: string = './logs/app.log';
 
   @Transform(({ value }: { value: string }) => value === 'true')
-  readonly HLOG_CONSOLE_LOGS_ENABLED: boolean = true;
+  readonly HLOG_CONSOLE_LOGS_ENABLED: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly HLOG_CONSOLE_LOGS_VERBOSE: boolean = false;
