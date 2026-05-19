@@ -5,15 +5,13 @@ import {
   OmnipoolAssetVolumeHistoricalData,
   Swap,
 } from '../../../model';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../processor';
 import { getOrCreateOmnipoolAsset } from '../pools/omnipool/omnipoolAssets';
 import {
   getOldOmnipoolAssetVolume,
   getPoolAssetLastVolumeFromCache,
 } from './index';
+import { PoolVolumesCacheManager } from './poolVolumesCacheManager';
 
 export function initOmnipoolAssetVolume({
   swap,
@@ -144,6 +142,10 @@ export async function handleOmnipoolAssetVolumeUpdates({
       currentVolume ||
       (getPoolAssetLastVolumeFromCache(
         omnipoolAssetVolumes,
+        omnipoolAsset.id
+      ) as OmnipoolAssetVolumeHistoricalData | undefined) ||
+      (getPoolAssetLastVolumeFromCache(
+        PoolVolumesCacheManager.getInstance().omnipoolAssetVolumesCache,
         omnipoolAsset.id
       ) as OmnipoolAssetVolumeHistoricalData | undefined) ||
       (await getOldOmnipoolAssetVolume({

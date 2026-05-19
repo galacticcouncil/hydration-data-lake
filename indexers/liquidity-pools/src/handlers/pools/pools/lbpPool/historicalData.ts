@@ -253,7 +253,10 @@ export async function isLbppoolHistoricalDataUniqueRegardingPreviousRecord({
       order: {
         paraBlockHeight: 'DESC',
       },
-    }, { className: 'LbppoolHistoricalData' });
+    }, {
+      className: 'LbppoolHistoricalData',
+      originCallFn: 'isLbppoolHistoricalDataUniqueRegardingPreviousRecord',
+    });
   }
 
   if (!previousItem) {

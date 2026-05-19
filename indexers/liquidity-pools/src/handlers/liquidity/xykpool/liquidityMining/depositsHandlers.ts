@@ -119,7 +119,10 @@ export async function initAllXykLiquidityMiningDeposits(
         createdAtParaBlockHeight: 'DESC',
       },
     },
-    { className: 'XykYieldFarmDeposit' }
+    {
+      className: 'XykYieldFarmDeposit',
+      originCallFn: 'initAllXykLiquidityMiningDeposits',
+    }
   );
 
   if (hasAnyRecord) return;

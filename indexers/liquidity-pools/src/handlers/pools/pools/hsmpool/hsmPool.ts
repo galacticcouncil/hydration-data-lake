@@ -16,7 +16,7 @@ export async function ensureHsmpool(ctx: SqdProcessorContext<Store>) {
           collaterals: { stableswap: true },
         },
       },
-      { className: 'Hsmpool' }
+      { className: 'Hsmpool', originCallFn: 'ensureHsmpool' }
     )) ?? null;
 
   if (!!hsmpoolEntity) {

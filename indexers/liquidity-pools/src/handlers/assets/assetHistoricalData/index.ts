@@ -34,24 +34,6 @@ export async function handleAssetHistoricalData({
    * This ordering is critical because the generic asset historical data serves as a required
    * data source for the OfflinePoolService.
    */
-  // for (const blocksSubBatch of splitIntoBatches(
-  //   blocksToProcess,
-  //   ctx.appConfig.HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE
-  // )) {
-  //   await pMap(
-  //     blocksSubBatch,
-  //     async (block) =>
-  //       processAssetsHistoricalDataAtBlock({
-  //         assetRegistryIds,
-  //         block: block.header,
-  //         ctx,
-  //       }),
-  //     {
-  //       concurrency:
-  //         ctx.appConfig.concurrency.ASYNC_OPERATIONS_CONCURRENCY_COMMON,
-  //     }
-  //   );
-  // }
   await pMap(
     blocksToProcess,
     async (block) =>
@@ -75,7 +57,7 @@ export async function handleAssetSpotPricesHistoricalData({
   ctx: SqdProcessorContext<Store>;
 }) {
   OfflineTradeRouterManager.getInstance().wipeCache();
-  RouterCacheManager.getInstance().wipeCache();
+  RouterCacheManager.getInstance().wipeCache(ctx);
 
   const blocksNumbersToProcessSet = new Set(blockNumbersToProcess || []);
   const blocksToProcess = blockNumbersToProcess

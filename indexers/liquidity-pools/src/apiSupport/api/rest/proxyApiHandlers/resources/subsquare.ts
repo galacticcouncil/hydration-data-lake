@@ -3,6 +3,9 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { allowedQueriesSubsquare } from '../types';
 import crypto from 'node:crypto';
 import { CacheManager } from '../../../../utils/cacheManager';
+import { AppConfig } from '../../../../../appConfig';
+
+const appConfig = AppConfig.getInstance();
 
 export async function handleProxyReqSubsquare(req: Request, res: Response) {
   try {
@@ -62,7 +65,7 @@ export async function handleProxyReqSubsquareAny(
     await CacheManager.getInstance().cache.set<any>(
       cacheKey,
       response.data,
-      10_800_000
+      appConfig.API_PROXY_CACHE_TTL_MS_SUBSQUARE
     );
 
     res.status(response.status).send(response.data);

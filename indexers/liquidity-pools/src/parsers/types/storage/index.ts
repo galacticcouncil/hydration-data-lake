@@ -76,6 +76,15 @@ export interface StablepoolAllPoolsInfoWithPoolId {
 export interface StablepoolAssetState {
   tradable: OmnipoolAssetTradability;
 }
+export interface StablepoolAssetStateWithId {
+  assetId: number;
+  data: StablepoolAssetState | null;
+}
+
+export interface StablepoolAssetStatesWithId {
+  poolId: number;
+  assetStates: StablepoolAssetStateWithId[];
+}
 
 export type StableswapPegSource = {
   sourceKind: 'Oracle' | 'Value' | 'MMOracle';
@@ -176,6 +185,11 @@ export type AccountDataMultiple = Array<{
   assetId: number;
   data: AccountData;
 }>;
+
+export type DcaScheduleDataWithId = {
+  scheduleId: number;
+  data: DcaScheduleData | null;
+};
 
 export type DcaScheduleData = DcaScheduleCallData;
 
@@ -301,6 +315,7 @@ export type GetPoolAssetInfoInput = {
   poolAddress?: string;
   assetId: number;
   block: BlockHeader;
+  allowZeroBalance?: boolean;
 };
 
 export type XykGetPoolDataInput = {
@@ -347,6 +362,10 @@ export type TokensGetTokensTotalIssuanceInput = {
 
 export type DcaGetScheduleInput = {
   scheduleId: number;
+  block: BlockHeader;
+};
+export type DcaGetSchedulesManyInput = {
+  scheduleIds: number[];
   block: BlockHeader;
 };
 export type OtcGetOrderInput = {
@@ -400,6 +419,7 @@ export type GetHsmCollateralInput = {
 
 export type GetAccountMmPositionDataInput = {
   accountId: string;
+  mmPoolAddresses: string[];
   block: BlockHeader;
 };
 

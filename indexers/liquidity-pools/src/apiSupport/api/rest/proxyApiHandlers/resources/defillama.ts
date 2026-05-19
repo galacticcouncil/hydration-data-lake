@@ -66,7 +66,7 @@ export async function handleProxyReqDefillamaAny(
     await CacheManager.getInstance().cache.set<any>(
       cacheKey,
       response.data,
-      43_200_000
+      appConfig.API_PROXY_CACHE_TTL_MS_DEFILLAMA
     );
 
     res.status(response.status).send(response.data);

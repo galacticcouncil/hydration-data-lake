@@ -78,7 +78,7 @@ async function prefetchEntities(
   const prefetchedPools = await ctx.storeUtils.findWithLogs(Xykpool, {
     where: { id: In(poolsToPrefetch) },
     relations: {},
-  }, { className: 'Xykpool' });
+  }, { className: 'Xykpool', originCallFn: 'prefetchEntities' });
 
   if (prefetchedPools.length > 0)
     state.xykAllBatchPools = new Map(

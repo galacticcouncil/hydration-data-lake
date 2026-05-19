@@ -1,7 +1,8 @@
 import pMap from 'p-map';
 import { LessThan } from 'typeorm';
 
-import { BigNumber, PoolType } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
+// import { BigNumber } from '@galacticcouncil/sdk';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';
 
@@ -25,7 +26,9 @@ import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedD
 import { getOrCreatePriceRoute } from '../priceRoute/priceRoute';
 import { getOrCreateAsset } from '../asset';
 import { OfflineTradeRouterManager } from './utils';
-import type { Amount } from '@galacticcouncil/sdk-next';
+// import { Amount, Hop, PoolBase, PoolType } from './utils/offlineSdk/sdk/src';
+import type { Amount, PoolType, Hop, PoolBase } from '@galacticcouncil/sdk-next';
+import { ensureXykpoolHisDataFromLatestPersistedData } from '../../pools/pools/xykPool/historicalData';
 
 const appConfig = AppConfig.getInstance();
 
@@ -47,9 +50,11 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
       (histData) => histData.paraBlockHeight === blockHeader.height
     );
 
-  const xykPoolAssets = getXykOnlyAssets(ctx);
+  const { tradable: xykPoolAssets, untradable: xykUntradableAssets } =
+    getXykOnlyAssets(ctx);
 
   const xykOnlyAssetsHistData = [];
+  const xykOnlyUntradableAssetsHistData = [];
   const otherAssetsHistData = [];
   const xykShareAssetsHistData = [];
 
@@ -68,6 +73,8 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
     }
     if (xykPoolAssets.has(histDataItem.assetId)) {
       xykOnlyAssetsHistData.push(histDataItem);
+    } else if (xykUntradableAssets.has(histDataItem.assetId)) {
+      xykOnlyUntradableAssetsHistData.push(histDataItem);
     } else {
       otherAssetsHistData.push(histDataItem);
     }
@@ -110,7 +117,18 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
     }
   }
 
-  const xykPoolsIndexedByShareAsset = getXykPoolsIndexedByShareAsset({ ctx });
+  for (const histDataItem of xykOnlyUntradableAssetsHistData) {
+    await processXykUntradableAssetSpotPrices({
+      assetId: histDataItem.assetId,
+      blockHeader,
+      ctx,
+    });
+  }
+
+  const {
+    tradable: xykPoolsIndexedByShareAsset,
+    untradable: xykUntradablePoolsIndexedByShareAsset,
+  } = getXykPoolsIndexedByShareAsset({ ctx });
 
   for (const histDataItem of xykShareAssetsHistData) {
     const histDataItemAsset = await getOrCreateAsset({
@@ -120,6 +138,15 @@ export async function handleAssetSpotPricesHistoricalDataAtBlock({
       blockHeader,
     });
     if (!histDataItemAsset) continue;
+
+    if (xykUntradablePoolsIndexedByShareAsset.has(histDataItemAsset.id)) {
+      await processXykUntradableAssetSpotPrices({
+        assetId: histDataItemAsset.id,
+        blockHeader,
+        ctx,
+      });
+      continue;
+    }
 
     await processXykShareAssetSpotPrices({
       asset: histDataItemAsset,
@@ -224,6 +251,7 @@ async function processAssetSpotPrices({
                 decimals: baseAssetEntity.decimals || 6,
               },
               route: [],
+              routeKey: 'ASSET_PRICE_BASE_ASSET_ID',
             };
             if (!priceWithRoute) continue;
           } else if (
@@ -285,10 +313,12 @@ async function processAssetSpotPrices({
 
             price: price.amount,
 
-            priceNormalised: fromExponentialToDecimalNotation(
-              price.amount.toString(),
-              price.decimals
-            ).toFixed(18, BigNumber.ROUND_HALF_UP),
+            priceNormalised: toFixedTrimmed(
+              fromExponentialToDecimalNotation(
+                toFixedTrimmed(price.amount.toString()),
+                price.decimals
+              )
+            ),
             priceRoute,
             paraBlockHeight: blockHeader.height,
           })
@@ -412,18 +442,29 @@ export async function isAssetSpotPriceHistoricalDataUniqueRegardingPreviousRecor
   return !isEqual;
 }
 
-function getXykOnlyAssets(ctx: SqdProcessorContext<Store>) {
-  const xykInvolvedAssetsList = Array.from(
-    ctx.batchState.state.xykAllBatchPools.values()
-  )
-    .filter((pool) => !pool.isDestroyed)
-    .map((pool): [Asset | undefined, Asset | undefined] => {
-      const assetA = ctx.batchState.state.assetsAll.get(pool.assetAId);
-      const assetB = ctx.batchState.state.assetsAll.get(pool.assetBId);
-      return [assetA, assetB];
-    })
-    .flat()
-    .filter((asset): asset is Asset => !!asset);
+function getXykOnlyAssets(ctx: SqdProcessorContext<Store>): {
+  tradable: Map<string, Asset>;
+  untradable: Map<string, Asset>;
+} {
+  const tradableXykAssets = new Map<string, Asset>();
+  const destroyedOnlyXykAssets = new Map<string, Asset>();
+
+  for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
+    const assetA = ctx.batchState.state.assetsAll.get(pool.assetAId);
+    const assetB = ctx.batchState.state.assetsAll.get(pool.assetBId);
+
+    for (const asset of [assetA, assetB]) {
+      if (!asset) continue;
+      if (pool.isDestroyed) {
+        if (!tradableXykAssets.has(asset.id)) {
+          destroyedOnlyXykAssets.set(asset.id, asset);
+        }
+      } else {
+        tradableXykAssets.set(asset.id, asset);
+        destroyedOnlyXykAssets.delete(asset.id);
+      }
+    }
+  }
 
   const omnipoolInvolvedAssets = new Map<string, Asset>(
     Array.from(ctx.batchState.state.omnipoolAssets.values())
@@ -449,16 +490,43 @@ function getXykOnlyAssets(ctx: SqdProcessorContext<Store>) {
       .filter(([, asset]) => asset !== undefined) as [string, Asset][]
   );
 
-  return new Map<string, Asset>(
-    xykInvolvedAssetsList
-      .filter(
-        (asset) =>
-          !omnipoolInvolvedAssets.has(asset.id) &&
-          !stableswapInvolvedAssets.has(asset.id) &&
-          !ctx.appConfig.ARTIFICIAL_OMNIPOOL_ASSET_IDS_SET.has(asset.id)
-      )
-      .map((asset) => [asset.id, asset])
-  );
+  /**
+   * An asset is "XYK-only" only if neither the asset itself nor (for
+   * aToken/Debt tokens) its underlying asset has non-XYK liquidity. Without
+   * the underlying-asset check, aTokens/Debt tokens that appeared in any
+   * destroyed XYK pool would be misclassified as untradable and forced to
+   * price 0 — even though processAssetSpotPrices can price them through their
+   * underlying via the router's aToken fallback path.
+   */
+  const hasNonXykLiquidity = (assetIdToCheck: string) =>
+    omnipoolInvolvedAssets.has(assetIdToCheck) ||
+    stableswapInvolvedAssets.has(assetIdToCheck) ||
+    ctx.appConfig.ARTIFICIAL_OMNIPOOL_ASSET_IDS_SET.has(assetIdToCheck);
+
+  const isXykOnly = (asset: Asset) => {
+    if (hasNonXykLiquidity(asset.id)) return false;
+    const underlyingId = asset.underlyingAssetId;
+    const isWrappedToken =
+      asset.resourceType === AssetResourceType.aToken ||
+      asset.resourceType === AssetResourceType.Debt;
+    return !(
+      isWrappedToken &&
+      !!underlyingId &&
+      hasNonXykLiquidity(underlyingId)
+    );
+  };
+
+  const tradable = new Map<string, Asset>();
+  for (const asset of tradableXykAssets.values()) {
+    if (isXykOnly(asset)) tradable.set(asset.id, asset);
+  }
+
+  const untradable = new Map<string, Asset>();
+  for (const asset of destroyedOnlyXykAssets.values()) {
+    if (isXykOnly(asset)) untradable.set(asset.id, asset);
+  }
+
+  return { tradable, untradable };
 }
 
 /**
@@ -482,6 +550,7 @@ function getXykPoolsIndexedByInterimAssetPair({
   for (const pool of Array.from(
     ctx.batchState.state.xykAllBatchPools.values()
   )) {
+    if (pool.isDestroyed) continue;
     if (
       (pool.assetAId === interimAssetId && xykPoolAssets.has(pool.assetBId)) ||
       (pool.assetBId === interimAssetId && xykPoolAssets.has(pool.assetAId))
@@ -510,18 +579,21 @@ function getXykPoolsIndexedByShareAsset({
   ctx,
 }: {
   ctx: SqdProcessorContext<Store>;
-}) {
-  const pools = new Map<string, Xykpool>();
+}): { tradable: Map<string, Xykpool>; untradable: Map<string, Xykpool> } {
+  const tradable = new Map<string, Xykpool>();
+  const untradable = new Map<string, Xykpool>();
 
-  for (const pool of Array.from(
-    ctx.batchState.state.xykAllBatchPools.values()
-  )) {
+  for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
     if (!pool?.shareTokenId) continue;
 
-    pools.set(pool.shareTokenId, pool);
+    if (pool.isDestroyed) {
+      untradable.set(pool.shareTokenId, pool);
+    } else {
+      tradable.set(pool.shareTokenId, pool);
+    }
   }
 
-  return pools;
+  return { tradable, untradable };
 }
 
 async function processXykInvolvedAssetSpotPrices({
@@ -549,17 +621,31 @@ async function processXykInvolvedAssetSpotPrices({
 
   const assetXykPool = xykPoolsIndexedByInterimAssetPair.get(assetId);
 
-  if (!assetXykPool || !assetXykPool.accountId) return;
+  if (!assetXykPool || !assetXykPool.accountId || assetXykPool.isDestroyed)
+    return;
 
   const interimAssetId =
     assetXykPool.assetAId === asset.id
       ? assetXykPool.assetBId
       : assetXykPool.assetAId;
 
-  const xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
+  let xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
     `${assetXykPool.accountId}-${blockHeader.height}`
   );
-  if (!xykPoolHistData) return;
+
+  if (!xykPoolHistData) {
+    xykPoolHistData = await ensureXykpoolHisDataFromLatestPersistedData({
+      ctx,
+      poolId: assetXykPool.accountId,
+      blockNumber: blockHeader.height,
+    });
+    if (!xykPoolHistData) {
+      console.log(
+        `processXykInvolvedAssetSpotPrices :: xykPoolHistData is not found - ${assetXykPool.accountId}-${blockHeader.height}`
+      );
+      return;
+    }
+  }
 
   // Fetch assets from cache
   const assetA = ctx.batchState.state.assetsAll.get(xykPoolHistData.assetAId);
@@ -576,10 +662,24 @@ async function processXykInvolvedAssetSpotPrices({
     assetB.decimals
   );
 
+  if (
+    assetABalanceNormalised.isLessThanOrEqualTo(0) ||
+    assetBBalanceNormalised.isLessThanOrEqualTo(0)
+  ) {
+    return;
+  }
+
   const priceInInterimAssetNormalised =
     assetXykPool.assetAId === assetId
       ? assetBBalanceNormalised.div(assetABalanceNormalised)
       : assetABalanceNormalised.div(assetBBalanceNormalised);
+
+  if (
+    !priceInInterimAssetNormalised.isFinite() ||
+    priceInInterimAssetNormalised.isNaN()
+  ) {
+    return;
+  }
 
   const calcAssetSpotPrices = async () => {
     for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
@@ -654,10 +754,7 @@ async function processXykInvolvedAssetSpotPrices({
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
-          priceNormalised: xykAssetSpotPrice.toFixed(
-            18,
-            BigNumber.ROUND_HALF_UP
-          ),
+          priceNormalised: toFixedTrimmed(xykAssetSpotPrice),
           priceRoute,
 
           paraBlockHeight: blockHeader.height,
@@ -667,6 +764,51 @@ async function processXykInvolvedAssetSpotPrices({
   };
 
   await calcAssetSpotPrices();
+}
+
+async function processXykUntradableAssetSpotPrices({
+  assetId,
+  blockHeader,
+  ctx,
+}: {
+  assetId: string;
+  ctx: SqdProcessorContext<Store>;
+  blockHeader: BlockHeader;
+}) {
+  const asset = await getOrCreateAsset({
+    id: assetId,
+    ctx,
+    blockHeader,
+    ensure: true,
+  });
+  if (!asset) return;
+
+  for (const assetOutId of ctx.appConfig.ASSET_SPOT_PRICE_ASSET_OUT_IDS) {
+    const assetOut = await getOrCreateAsset({
+      assetRegistryId: assetOutId,
+      ctx,
+      blockHeader,
+      ensure: true,
+    });
+    if (!assetOut) continue;
+
+    const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
+
+    const priceRoute = getOrCreatePriceRoute([], ctx);
+
+    ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.set(
+      histDataItemId,
+      new AssetSpotPriceHistoricalData({
+        id: histDataItemId,
+        assetInId: asset.id,
+        assetOutId: assetOut.id,
+        price: BigInt(0),
+        priceNormalised: '0',
+        priceRoute,
+        paraBlockHeight: blockHeader.height,
+      })
+    );
+  }
 }
 
 export function getAssetsPairPrice({
@@ -712,11 +854,11 @@ export function getAssetsPairPrice({
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
       assetOutEntity.underlyingAssetId
     );
-    assetOutIdEnsured = underlyingAsset?.id ?? assetInId;
+    assetOutIdEnsured = underlyingAsset?.id ?? assetOutId;
   }
 
   if (assetOutIdEnsured === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) {
-    const price = ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
+    let price = ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
       `${assetInIdEnsured}-${assetOutIdEnsured}-${blockHeight}`
     )?.priceNormalised;
 
@@ -726,12 +868,22 @@ export function getAssetsPairPrice({
       (recursionExec && !price) ||
       !assetInEntity ||
       (assetInEntity &&
-        assetInEntity.resourceType !== AssetResourceType.aToken) ||
+        assetInEntity.resourceType !== AssetResourceType.aToken &&
+        assetInEntity.resourceType !== AssetResourceType.Debt) ||
       (assetInEntity &&
-        assetInEntity.resourceType === AssetResourceType.aToken &&
+        (assetInEntity.resourceType === AssetResourceType.aToken ||
+          assetInEntity.resourceType === AssetResourceType.Debt) &&
         !assetInEntity.underlyingAssetId)
-    )
-      return null;
+    ) {
+      const lastPrice = getPreviousSpotPriceFromCache({
+        ctx,
+        assetInId: assetInIdEnsured,
+        assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+        currentBlockHeight: blockHeight,
+      })?.priceNormalised;
+
+      return lastPrice ?? null;
+    }
 
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
       assetInEntity.underlyingAssetId || assetInEntity.id
@@ -747,31 +899,58 @@ export function getAssetsPairPrice({
     });
   }
 
-  const assetInRefPrice =
+  let assetInRefPrice =
     assetInIdEnsured !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
       ? ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
           `${assetInIdEnsured}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
         )?.priceNormalised
       : '1';
 
-  const assetOutRefPrice =
+  if (assetInRefPrice === undefined) {
+    assetInRefPrice = getPreviousSpotPriceFromCache({
+      ctx,
+      assetInId: assetInIdEnsured,
+      assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+      currentBlockHeight: blockHeight,
+    })?.priceNormalised;
+  }
+
+  let assetOutRefPrice =
     assetOutIdEnsured !== ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID
       ? ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
           `${assetOutIdEnsured}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeight}`
         )?.priceNormalised
       : '1';
 
-  if (recursionExec && (!assetInRefPrice || !assetOutRefPrice)) return null;
+  if (assetOutRefPrice === undefined) {
+    assetOutRefPrice = getPreviousSpotPriceFromCache({
+      ctx,
+      assetInId: assetOutIdEnsured,
+      assetOutId: ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID,
+      currentBlockHeight: blockHeight,
+    })?.priceNormalised;
+  }
+
+  if (recursionExec && (!assetInRefPrice || !assetOutRefPrice)) {
+    return null;
+  }
 
   if (assetInRefPrice && assetOutRefPrice) {
-    const price = BigNumber(assetInRefPrice).div(assetOutRefPrice).toFixed();
-    return price;
+    const price = BigNumber(assetInRefPrice).div(assetOutRefPrice);
+    if (!price.isFinite() || price.isNaN()) {
+      console.log(
+        `Invalid pair price for ${assetInIdEnsured}/${assetOutIdEnsured} at block ${blockHeight}: ${price.toString()}. Skipping...`
+      );
+      return null;
+    }
+    return toFixedTrimmed(price);
   }
 
   if (
     !assetInRefPrice &&
     assetInEntity &&
-    assetInEntity.resourceType === AssetResourceType.aToken &&
+    (assetInEntity.resourceType === AssetResourceType.aToken ||
+      assetInEntity.resourceType === AssetResourceType.Debt) &&
     assetInEntity.underlyingAssetId
   ) {
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
@@ -783,13 +962,14 @@ export function getAssetsPairPrice({
   if (
     !assetOutRefPrice &&
     assetOutEntity &&
-    assetOutEntity.resourceType === AssetResourceType.aToken &&
+    (assetOutEntity.resourceType === AssetResourceType.aToken ||
+      assetOutEntity.resourceType === AssetResourceType.Debt) &&
     assetOutEntity.underlyingAssetId
   ) {
     const underlyingAsset = ctx.batchState.state.assetsAll.get(
       assetOutEntity.underlyingAssetId
     );
-    assetOutIdEnsured = underlyingAsset?.id ?? assetInId;
+    assetOutIdEnsured = underlyingAsset?.id ?? assetOutId;
   }
 
   return getAssetsPairPrice({
@@ -799,6 +979,48 @@ export function getAssetsPairPrice({
     blockHeight,
     ctx,
   });
+}
+
+function getPreviousSpotPriceFromCache({
+  ctx,
+  assetInId,
+  assetOutId,
+  currentBlockHeight,
+  checkBatchCache = false,
+}: {
+  assetInId: string;
+  assetOutId: string;
+  currentBlockHeight: number;
+  checkBatchCache?: boolean;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  let batchStatePrevEntity: AssetSpotPriceHistoricalData | null = null;
+
+  if (checkBatchCache)
+    for (const entity of Array.from(
+      ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.values()
+    )) {
+      if (
+        entity.paraBlockHeight >= currentBlockHeight ||
+        entity.assetInId !== assetInId ||
+        entity.assetOutId !== assetOutId
+      )
+        continue;
+
+      if (!batchStatePrevEntity) {
+        batchStatePrevEntity = entity;
+        continue;
+      }
+      if (batchStatePrevEntity.paraBlockHeight < entity.paraBlockHeight)
+        batchStatePrevEntity = entity;
+    }
+
+  return (
+    batchStatePrevEntity ??
+    LatestProcessedDataCacheManager.getInstance().getLastAssetSpotPriceHistoricalDataItem(
+      assetInId
+    )
+  );
 }
 
 async function processXykShareAssetSpotPrices({
@@ -821,11 +1043,25 @@ async function processXykShareAssetSpotPrices({
     return;
   }
 
-  const xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
+  if (originXykpool.isDestroyed) return;
+
+  let xykPoolHistData = ctx.batchState.state.xykPoolAllHistoricalData.get(
     `${originXykpool.accountId}-${blockHeader.height}`
   );
 
-  if (!xykPoolHistData) return;
+  if (!xykPoolHistData) {
+    xykPoolHistData = await ensureXykpoolHisDataFromLatestPersistedData({
+      ctx,
+      poolId: originXykpool.accountId,
+      blockNumber: blockHeader.height,
+    });
+    if (!xykPoolHistData) {
+      console.log(
+        `processXykShareAssetSpotPrices :: xykPoolHistData is not found - ${originXykpool.accountId}-${blockHeader.height}`
+      );
+      return;
+    }
+  }
 
   const assetA = await getOrCreateAsset({
     id: xykPoolHistData.assetAId,
@@ -867,7 +1103,8 @@ async function processXykShareAssetSpotPrices({
           `${originXykpool.assetAId}-${assetOutId}-${blockHeader.height}`
         )?.priceNormalised;
 
-      if (!poolAssetASpotPrice) continue;
+      if (!poolAssetASpotPrice || !BigNumber(poolAssetASpotPrice).isFinite())
+        continue;
 
       const originPoolTvlInRefAssetNormalised =
         fromExponentialToDecimalNotation(
@@ -886,14 +1123,36 @@ async function processXykShareAssetSpotPrices({
         console.log(e);
       }
 
-      if (!shareAssetDecimals) return;
-
+      if (!shareAssetDecimals) {
+        console.log(
+          `processXykShareAssetSpotPrices :: share asset decimals not found for pool ${originXykpool.accountId}`
+        );
+        return;
+      }
+      if (!assetHistData.totalIssuance) {
+        // console.log(
+        //   `processXykShareAssetSpotPrices :: totalIssuance not found for asset ${assetHistData.assetId}`
+        // );
+        return;
+      }
       const shareAssetPriceNormalised = originPoolTvlInRefAssetNormalised.div(
         fromExponentialToDecimalNotation(
           assetHistData.totalIssuance.toString(),
           shareAssetDecimals
         )
       );
+
+      if (
+        !shareAssetPriceNormalised ||
+        !shareAssetPriceNormalised.isFinite() ||
+        shareAssetPriceNormalised.isNaN()
+      ) {
+        // console.log(
+        //   `Invalid share price for asset ${asset.id} at block ${blockHeader.height}: ${shareAssetPriceNormalised?.toString()}. Skipping...`
+        // );
+        continue;
+      }
+
       const histDataItemId = `${asset.id}-${assetOutId}-${blockHeader.height}`;
 
       // Empty route for XYK share assets
@@ -908,15 +1167,11 @@ async function processXykShareAssetSpotPrices({
           price: BigInt(
             fromDecimalToExponentialNotation(
               shareAssetPriceNormalised,
-              // assetOut.decimals
               18
             ).toFixed(0, BigNumber.ROUND_HALF_UP)
           ),
 
-          priceNormalised: shareAssetPriceNormalised.toFixed(
-            18,
-            BigNumber.ROUND_HALF_UP
-          ),
+          priceNormalised: toFixedTrimmed(shareAssetPriceNormalised),
           priceRoute,
 
           paraBlockHeight: blockHeader.height,

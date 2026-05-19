@@ -35,6 +35,23 @@ export class DbMigrationsManager extends CommonPgClient {
 
       while (true) {
         try {
+          // Fail fast on lock waits. Custom migrations run after native SQD
+          // migrations apply, and on processor restart they can race with SQD's
+          // hot-block rollback transaction — a non-concurrent CREATE INDEX /
+          // ALTER TABLE on an entity table will block on locks SQD holds, while
+          // SQD's transaction can't commit until the batch handler (which is
+          // awaiting this migration) returns. Postgres can't auto-detect that
+          // cycle, so without this timeout the process hangs silently.
+          //
+          // lock_timeout caps only the wait for the lock, not the statement
+          // itself — once the lock is acquired the timer stops, so legitimate
+          // long-running index builds and backfills are unaffected. On timeout
+          // the error bubbles into the catch block, which rolls back and
+          // retries with backoff.
+          await this.pgClient.query(
+            `SET lock_timeout = '${appConfig.DB_CUSTOM_MIGRATIONS_LOCK_TIMEOUT}'`
+          );
+
           const migrationsResult: RunMigration[] = await migrations.runner({
             migrationsSchema: appConfig.STATE_SCHEMA_NAME,
             migrationsTable: this.migrationsTable,

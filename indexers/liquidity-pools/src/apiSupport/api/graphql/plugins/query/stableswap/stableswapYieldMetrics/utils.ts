@@ -19,7 +19,7 @@ import {
   getPeriodFromInterval,
   getStartStopBlocksFromInput,
 } from '../../../../../../utils/aggregationUtils';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from '../../../../../../../utils/bignumber';
 import {
   calculateAssetYieldMetrics,
   calculateAverageYieldMetrics,

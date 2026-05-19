@@ -1,6 +1,18 @@
 import { EventName } from '../../../types/events';
-import { TokensTransferData } from '../tokens';
-import { BalancesTransferData } from '../balances';
+import {
+  TokensTransferData,
+  TokensDepositedData,
+  TokensWithdrawnData,
+  TokensReservedData,
+  TokensUnreservedData,
+} from '../tokens';
+import {
+  BalancesTransferData,
+  BalancesDepositData,
+  BalancesWithdrawData,
+  BalancesReservedData,
+  BalancesUnreservedData,
+} from '../balances';
 import { CurrenciesTransferredData } from '../currencies';
 import {
   AssetRegistryLocationSetData,
@@ -216,10 +228,18 @@ type HsmEventMap = {
 
 type BalancesEventMap = {
   [EventName.Balances_Transfer]: BalancesTransferData;
+  [EventName.Balances_Deposit]: BalancesDepositData;
+  [EventName.Balances_Withdraw]: BalancesWithdrawData;
+  [EventName.Balances_Reserved]: BalancesReservedData;
+  [EventName.Balances_Unreserved]: BalancesUnreservedData;
 };
 
 type TokensEventMap = {
   [EventName.Tokens_Transfer]: TokensTransferData;
+  [EventName.Tokens_Deposited]: TokensDepositedData;
+  [EventName.Tokens_Withdrawn]: TokensWithdrawnData;
+  [EventName.Tokens_Reserved]: TokensReservedData;
+  [EventName.Tokens_Unreserved]: TokensUnreservedData;
 };
 
 type CurrenciesEventMap = {

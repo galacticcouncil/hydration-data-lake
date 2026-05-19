@@ -152,7 +152,7 @@ export async function getDcaSchedule({
       where: { id },
       relations,
     },
-    { className: 'DcaSchedule' }
+    { className: 'DcaSchedule', originCallFn: 'getDcaSchedule' }
   );
 
   if (!schedule) return null;
@@ -183,10 +183,10 @@ export async function handleDcaScheduleCreated(
       blockHeader: eventMetadata.blockHeader,
     });
 
-    existingSchedule.events = [
-      ...(existingSchedule.events || []),
-      scheduleEvent,
-    ];
+    // existingSchedule.events = [
+    //   ...(existingSchedule.events || []),
+    //   scheduleEvent,
+    // ];
 
     const state = ctx.batchState.state;
 
@@ -194,6 +194,7 @@ export async function handleDcaScheduleCreated(
     return;
   }
 
+  // TODO get more params from event for older spec versions
   const callArgs = args ?? {
     scheduleData: await parsers.storage.dca.getDcaSchedule({
       scheduleId: eventParams.id,
@@ -225,12 +226,12 @@ export async function handleDcaScheduleCreated(
     blockHeader: eventMetadata.blockHeader,
   });
 
-  const ownerAccount = await getOrCreateAccount({
-    ctx,
-    id: newSchedule.ownerId,
-  });
+  // const ownerAccount = await getOrCreateAccount({
+  //   ctx,
+  //   id: newSchedule.ownerId,
+  // });
 
-  newSchedule.events = [...(newSchedule.events || []), scheduleEvent];
+  // newSchedule.events = [...(newSchedule.events || []), scheduleEvent];
 
   const state = ctx.batchState.state;
 
@@ -268,7 +269,7 @@ export async function handleDcaScheduleCompleted(
     blockHeader: eventMetadata.blockHeader,
   });
 
-  scheduleEntity.events = [...(scheduleEntity.events || []), scheduleEvent];
+  // scheduleEntity.events = [...(scheduleEntity.events || []), scheduleEvent];
 
   const state = ctx.batchState.state;
 
@@ -309,7 +310,7 @@ export async function handleDcaScheduleTerminated(
     blockHeader: eventMetadata.blockHeader,
   });
 
-  scheduleEntity.events = [...(scheduleEntity.events || []), scheduleEvent];
+  // scheduleEntity.events = [...(scheduleEntity.events || []), scheduleEvent];
 
   const state = ctx.batchState.state;
 

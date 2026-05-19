@@ -1,6 +1,8 @@
 import { Swap, SwapFee, SwapAssetBalance, AssetType } from '../model';
 import type * as base from '@subsquid/substrate-data';
 
+export const ZERO_ADDRESS_PK = `0x0000000000000000000000000000000000000000000000000000000000000000`;
+
 export interface TransferEvent {
   id: string;
   traceIds: string[];

@@ -56,16 +56,27 @@ interface HydratedLoggerDbRow {
   } & Record<string, any>;
 }
 
+/**
+ * Dual-transport structured logger (console + Postgres).
+ *
+ * Console output is handled by pino/pino-pretty.
+ * DB output is batched in-memory and flushed to `support.app_logs` on a timer
+ * or when the buffer reaches `maxBatchSize`, whichever comes first.
+ *
+ * Singleton — obtain via `HydratedLogger.getInstance()` or the
+ * `getHydratedLogger()` / `initHydratedLogger()` helpers.
+ */
 export class HydratedLogger {
   private static instance: HydratedLogger | null = null;
 
   private pino: PinoLogger;
-  // private pool: Pool | null = null;
   private pgClient: CommonPgPool | null = null;
+  /** Deduplicates concurrent `ensureSchema` calls. */
   private ensureSchemaOnce?: Promise<void>;
   private consoleLogsEnabled = true;
   private consoleLogsVerbose = true;
 
+  /** In-memory buffer of log rows awaiting DB flush. */
   private buffer: HydratedLoggerDbRow[] = [];
   private maxBatchSize: number;
   private flushIntervalMs: number;
@@ -128,6 +139,7 @@ export class HydratedLogger {
     return this.instance;
   }
 
+  /** Run once after getInstance() to create the DB schema (if DB logging is on). */
   async init() {
     if (this.initDone) return this;
 
@@ -139,6 +151,7 @@ export class HydratedLogger {
     return this;
   }
 
+  /** Creates `support.app_logs` table + indexes and analytics views (idempotent). */
   private async ensureSchema(): Promise<void> {
     if (!this.pgClient) return;
     if (this.ensureSchemaOnce) return this.ensureSchemaOnce;
@@ -190,6 +203,11 @@ export class HydratedLogger {
     this.log('fatal', a, b, options);
   }
 
+  /**
+   * Core logging method. Accepts either (message, meta) or (meta, message) order.
+   * Writes to console via pino and, when DB transport is enabled, buffers a row
+   * for the next flush cycle.
+   */
   log(level: LogLevel, a: any, b?: any, options?: HydratedLoggerRuntimeConfig) {
     let message: string | undefined;
     let meta: HydratedLoggerMeta | undefined;
@@ -231,6 +249,10 @@ export class HydratedLogger {
     }
   }
 
+  /**
+   * Wraps an async/sync function, measures its wall-clock duration, and logs
+   * the result (success or error) with timing info. Rethrows on failure.
+   */
   async measure<T>({
     fn,
     name,
@@ -284,7 +306,7 @@ export class HydratedLogger {
     }
   }
 
-  // --- Flush buffered rows to Postgres
+  /** Flushes up to `maxBatchSize` buffered rows to Postgres in a single multi-row INSERT. */
   async flush(): Promise<void> {
     if (!this.pgClient || this.buffer.length === 0) return;
     const batch = this.buffer.splice(0, this.maxBatchSize);
@@ -340,6 +362,7 @@ export class HydratedLogger {
     }
   }
 
+  /** Stops the flush timer, drains the buffer, closes the PG pool, and flushes pino. */
   async shutdown(): Promise<void> {
     if (this.flushTimer) clearInterval(this.flushTimer);
     await this.flush();
@@ -351,6 +374,7 @@ export class HydratedLogger {
     });
   }
 
+  /** Human-friendly duration: ms / s / m:ss.mmm depending on magnitude. */
   private formatDuration(durationMs: number): string {
     if (durationMs < 1000) {
       // Less than 1 second - show as milliseconds
@@ -368,6 +392,7 @@ export class HydratedLogger {
   }
 }
 
+/** Returns the singleton logger, creating and initialising it on first call. */
 export async function getHydratedLogger() {
   const log = await HydratedLogger.getInstance({
     level: 'info',
@@ -385,6 +410,7 @@ export async function getHydratedLogger() {
   return log;
 }
 
+/** Initialises the logger and registers SIGINT/SIGTERM handlers for graceful shutdown. */
 export async function initHydratedLogger(cfg?: HydratedLoggerConfig) {
   const log = await getHydratedLogger();
 

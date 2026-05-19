@@ -16,51 +16,7 @@ import {
 } from '../../../utils/helpers';
 import { getOrCreateAsset } from '../asset';
 import { getAssetsPairPrice } from './assetSpotPrices';
-
-// class RouterAssetPairs {
-//   public pairsSet: Set<string> = new Set();
-//
-//   get pairsListEmpty() {
-//     return this.pairsSet.size === 0;
-//   }
-//
-//   async init(blockHeader: BlockHeader) {
-//     const router = OfflineTradeRouterManager.getInstance().getRouterForBlock(
-//       blockHeader.height
-//     );
-//
-//     if (!router) {
-//       console.log('handleAssetPairVolumesHistoricalDataAtBlock :: router not found');
-//       return this;
-//     }
-//     const possiblePairs = [];
-//     const allRouterAssets = await router.getAllAssets();
-//
-//     for (const assetA of allRouterAssets) {
-//       try {
-//         const pair = await router.getAssetPairs(assetA.id);
-//         possiblePairs.push(pair.map((pa) => [assetA.id, pa.id]));
-//       } catch (e) {}
-//     }
-//
-//     for (const pair of possiblePairs.flat()) {
-//       if (
-//         this.pairsSet.has(`${pair[0]}-${pair[1]}`) ||
-//         this.pairsSet.has(`${pair[1]}-${pair[0]}`)
-//       )
-//         continue;
-//       this.pairsSet.add(`${pair[0]}-${pair[1]}`);
-//     }
-//     return this;
-//   }
-//
-//   isPairTradable(assetA: string, assetB: string) {
-//     return (
-//       this.pairsSet.has(`${assetA}-${assetB}`) ||
-//       this.pairsSet.has(`${assetB}-${assetA}`)
-//     );
-//   }
-// }
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 
 export async function handleAssetPairVolumesHistoricalDataAtBlock({
   blockHeader,
@@ -74,13 +30,6 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
   >;
   ctx: SqdProcessorContext<Store>;
 }) {
-  // const routerAssetPairs = await new RouterAssetPairs().init(blockHeader);
-  //
-  // if (routerAssetPairs.pairsListEmpty) {
-  //   console.log(`routerAssetPairs is empty on block ${blockHeader.height}`);
-  //   return;
-  // }
-
   const currentBlockEntity = ctx.batchState.getParaBlockFromCacheByHeight(
     blockHeader.height
   );
@@ -161,30 +110,6 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
       !assetOutInfo.decimals
     )
       continue assetsPairLoop;
-
-    // if (
-    //   !routerAssetPairs.isPairTradable(
-    //     assetInData.asset.assetRegistryId,
-    //     assetOutData.asset.assetRegistryId
-    //   )
-    // ) {
-    //   console.log(
-    //     `Pair is not tradable: ${assetInData.asset.assetRegistryId}-${assetOutData.asset.assetRegistryId} on block ${blockHeader.height} `
-    //   );
-    //   continue assetsPairLoop;
-    // }
-
-    // const assetInSpotPrice = getAssetSpotPriceFromHistoricalData({
-    //   assetId: assetInInfo.id,
-    //   blockHeader,
-    //   ctx,
-    // });
-    //
-    // const assetOutSpotPrice = getAssetSpotPriceFromHistoricalData({
-    //   assetId: assetOutInfo.id,
-    //   blockHeader,
-    //   ctx,
-    // });
 
     const assetInSpotPrice = getAssetsPairPrice({
       ctx,
@@ -277,9 +202,11 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
 
       assetAVolume,
       assetBVolume,
-      totalVolumeNormalised: currentTotalVolumeNormalised
-        .plus(existingPairVolEntity?.totalVolumeNormalised ?? '0')
-        .toFixed(),
+      totalVolumeNormalised: toFixedTrimmed(
+        currentTotalVolumeNormalised.plus(
+          existingPairVolEntity?.totalVolumeNormalised ?? '0'
+        )
+      ),
 
       paraBlockHeight: blockHeader.height,
     });
@@ -315,24 +242,6 @@ export async function handleAssetPairVolumesHistoricalDataAtBlock({
     }
   }
 }
-
-// function getAssetSpotPriceFromHistoricalData({
-//   assetId,
-//   blockHeader,
-//   ctx,
-// }: {
-//   assetId: string;
-//   blockHeader: BlockHeader;
-//   ctx: SqdProcessorContext<Store>;
-// }) {
-//   if (assetId === ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID) return '1';
-//
-//   return (
-//     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch.get(
-//       `${assetId}-${ctx.appConfig.ASSET_PRICE_BASE_ASSET_ID}-${blockHeader.height}`
-//     )?.priceNormalised ?? null
-//   );
-// }
 
 function getRelatedAssetPairsFromSwapsChain(swaps: Swap[]) {
   const orderedSwaps = swaps.sort(

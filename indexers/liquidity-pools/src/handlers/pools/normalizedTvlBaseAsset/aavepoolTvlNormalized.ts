@@ -1,4 +1,4 @@
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { SqdProcessorContext } from '../../../processor';
@@ -27,12 +27,19 @@ export async function processAavepoolsNormalizedTvl({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const poolHistData of aaveoolHistDataByBatchList) {
-    const reserveAsset = poolHistData.pool.reserveAssetId ? await getOrCreateAsset({
-      assetRegistryId: poolHistData.pool.reserveAssetId, blockHeader: undefined, ctx, ensure: true
-    }) : null;
+    const reserveAsset = poolHistData.pool.reserveAssetId
+      ? await getOrCreateAsset({
+          assetRegistryId: poolHistData.pool.reserveAssetId,
+          blockHeader: undefined,
+          ctx,
+          ensure: true,
+        })
+      : null;
 
-    if (!reserveAsset){ 
-      console.log(`Reserve asset not found for Aavepool ${poolHistData.pool.id}`);
+    if (!reserveAsset) {
+      console.log(
+        `Reserve asset not found for Aavepool ${poolHistData.pool.id}`
+      );
       continue;
     }
 
@@ -44,24 +51,28 @@ export async function processAavepoolsNormalizedTvl({
       assetSpotPriceNorm = '1';
 
     if (!assetSpotPriceNorm) {
+      // console.log(
+      //   `Spot price for asset ${reserveAsset.id} not found. Skipping.`
+      // );
+      continue;
+    }
+
+    if (!reserveAsset.decimals) {
       console.log(
-        `Spot price for asset ${reserveAsset.id} not found. Skipping.`
+        `Reserve asset decimals not found for asset ${reserveAsset.id}. Skipping.`
       );
       continue;
     }
 
-    if(!reserveAsset.decimals) {
-      console.log(`Reserve asset decimals not found for asset ${reserveAsset.id}. Skipping.`);
-      continue;
-    }
-
-    poolHistData.tvlInRefAssetNorm = BigNumber(
-      calcPriceNormalized({
-        amount: poolHistData.liquidityIn,
-        assetDecimals: reserveAsset.decimals,
-        spotPrice: assetSpotPriceNorm,
-      })
-    ).toFixed();
+    poolHistData.tvlInRefAssetNorm = toFixedTrimmed(
+      BigNumber(
+        calcPriceNormalized({
+          amount: poolHistData.liquidityIn,
+          assetDecimals: reserveAsset.decimals,
+          spotPrice: assetSpotPriceNorm,
+        })
+      )
+    );
 
     ctx.batchState.state.aavePoolsHistoricalData.set(
       poolHistData.id,

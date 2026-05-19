@@ -151,7 +151,7 @@ export async function getOrCreateLbppool({
       { assetBId: `${assetIds[0]}`, assetAId: `${assetIds[1]}`  },
     ],
     relations: {},
-  }, { className: 'Lbppool' });
+  }, { className: 'Lbppool', originCallFn: 'getOrCreateLbppool' });
 
   if (pool) {
     ctx.batchState.state.lbpAllBatchPools.set(pool.id, pool);

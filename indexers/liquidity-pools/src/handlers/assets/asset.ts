@@ -6,13 +6,14 @@ import { Asset, AssetType, AssetResourceType } from '../../model';
 import parsers from '../../parsers';
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { AssetHubManager } from '../../utils/assetHubManager';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   getAssetEvmAddressByType,
   getAssetIdFromCustomMultiLocation,
   getNewAssetMultiLocationFromStorageData,
   getNewCustomAssetMultiLocation,
 } from './utils';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 /**
  * Batch fetch or create multiple assets in a SINGLE database query.
@@ -140,7 +141,7 @@ export async function batchGetOrCreateAssets({
             whereConditions.length === 1 ? whereConditions[0] : whereConditions, // TypeORM automatically ORs array elements
           ...(relations ? { relations } : {}),
         },
-        { className: 'Asset' }
+        { className: 'Asset', originCallFn: 'batchGetOrCreateAssets' }
       );
 
       // Add found assets to both caches
@@ -259,7 +260,7 @@ export async function getOrCreateAsset({
       },
       ...(relations ? { relations } : {}),
     },
-    { className: 'Asset' }
+    { className: 'Asset', originCallFn: 'getOrCreateAsset' }
   );
 
   if (asset) {
@@ -311,7 +312,12 @@ export async function getOrCreateAsset({
     assetType: storageData.assetType,
   });
 
-  if (!assetCustomLocation) return null;
+  if (!assetCustomLocation) {
+    console.log(
+      `getOrCreateAsset :: No assetCustomLocation found for assetRegistryId ${assetRegistryId} at block ${blockHeader.height}`
+    );
+    return null;
+  }
 
   const assetMultiLocationFromStorage =
     await getNewAssetMultiLocationFromStorageData({
@@ -353,12 +359,17 @@ export async function getOrCreateAsset({
 
   const assetEntityId = getAssetIdFromCustomMultiLocation(assetCustomLocation);
 
-  if (!assetEntityId) return null;
+  if (!assetEntityId) {
+    console.log(
+      `getOrCreateAsset :: No assetEntityId found for assetRegistryId ${assetRegistryId} at block ${blockHeader.height}`
+    );
+    return null;
+  }
 
   const evmTokenContractData =
     storageData.assetType === AssetType.Erc20 &&
     (evmAddress || erc20AssetContractAddress)
-      ? await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+      ? await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
           evmAddress ?? erc20AssetContractAddress ?? ''
         )
       : null;
@@ -476,7 +487,7 @@ export async function getOrCreateMoneyMarketAsset({
         ...(assetRegistryId ? { assetRegistryId } : {}),
       },
     },
-    { className: 'Asset' }
+    { className: 'Asset', originCallFn: 'getOrCreateMoneyMarketAsset' }
   );
 
   if (asset) {
@@ -495,7 +506,7 @@ export async function getOrCreateMoneyMarketAsset({
   if (!evmAddress) return null; //TODO fix this
 
   const contractData =
-    await MoneyMarketContractsManager.getInstance().getResourceDetailsWithLogs(
+    await AaveMoneyMarketsRegistry.getInstance().getReserveDetailsWithLogs(
       evmAddress
     );
 

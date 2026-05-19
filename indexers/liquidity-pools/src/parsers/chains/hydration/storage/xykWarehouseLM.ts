@@ -12,7 +12,7 @@ async function getXykpoolLMDeposits({
   depositIds,
 }: XykpoolLMGetDepositsInput): Promise<XykpoolLMDepositDataWithId[] | null> {
   return measureStorageFetch({
-    storageName: 'storage.xykWarehouseLm.deposit',
+    storageName: 'xykWarehouseLm.deposit.getMany',
     originFn: 'getXykpoolLMDeposits',
     blockHeight: block.height,
     fn: async () => {
@@ -58,7 +58,7 @@ async function getAllDepositsData({
   block,
 }: GetDataAtBlockInput): Promise<XykpoolLMDepositDataWithId[] | null> {
   return measureStorageFetch({
-    storageName: 'xykWarehouseLm.deposit',
+    storageName: 'xykWarehouseLm.deposit.getPairsPaged',
     originFn: 'getAllDepositsData',
     blockHeight: block.height,
     fn: async () => {

@@ -231,7 +231,11 @@ export async function prefetchPersistentDataForMultiFlowProcHistDataAggregationP
             height: 'ASC',
           },
         },
-        { className: 'Block' }
+        {
+          className: 'Block',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcHistDataAggregationPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -254,7 +258,11 @@ export async function prefetchPersistentDataForMultiFlowProcHistDataAggregationP
             id: 'ASC',
           },
         },
-        { className: 'MoneyMarketEvent' }
+        {
+          className: 'MoneyMarketEvent',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcHistDataAggregationPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -278,7 +286,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             height: 'ASC',
           },
         },
-        { className: 'Block' }
+        {
+          className: 'Block',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -306,7 +318,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'RoutedTrade' }
+        {
+          className: 'RoutedTrade',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [
       p.id,
@@ -346,7 +362,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'Swap' }
+        {
+          className: 'Swap',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((s) => [
       s.id,
@@ -381,7 +401,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'XykpoolVolumeHistoricalData' }
+        {
+          className: 'XykpoolVolumeHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -404,7 +428,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'OmnipoolAssetVolumeHistoricalData' }
+        {
+          className: 'OmnipoolAssetVolumeHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -428,7 +456,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'StableswapVolumeHistoricalData' }
+        {
+          className: 'StableswapVolumeHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -452,7 +484,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'StableswapAssetVolumeHistoricalData' }
+        {
+          className: 'StableswapAssetVolumeHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -476,7 +512,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'LbppoolHistoricalData' }
+        {
+          className: 'LbppoolHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -500,7 +540,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'XykpoolHistoricalData' }
+        {
+          className: 'XykpoolHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -524,7 +568,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'OmnipoolHistoricalData' }
+        {
+          className: 'OmnipoolHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -549,7 +597,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'OmnipoolAssetHistoricalData' }
+        {
+          className: 'OmnipoolAssetHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -573,7 +625,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'StableswapHistoricalData' }
+        {
+          className: 'StableswapHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -597,7 +653,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'StableswapAssetHistoricalData' }
+        {
+          className: 'StableswapAssetHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -621,7 +681,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'AavepoolHistoricalData' }
+        {
+          className: 'AavepoolHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -645,7 +709,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'HsmpoolAssetHistoricalData' }
+        {
+          className: 'HsmpoolAssetHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -668,7 +736,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'MoneyMarketEvent' }
+        {
+          className: 'MoneyMarketEvent',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -688,7 +760,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'ConstantsHistoricalData' }
+        {
+          className: 'ConstantsHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -709,7 +785,11 @@ export async function prefetchPersistentDataForMultiFlowProcPricesCalcPhase(
             id: 'ASC',
           },
         },
-        { className: 'AssetHistoricalData' }
+        {
+          className: 'AssetHistoricalData',
+          originCallFn:
+            'prefetchPersistentDataForMultiFlowProcPricesCalcPhase',
+        }
       )
     ).map((p) => [p.id, p])
   );

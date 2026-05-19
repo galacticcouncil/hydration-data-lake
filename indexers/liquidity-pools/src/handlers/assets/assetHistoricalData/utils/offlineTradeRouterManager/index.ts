@@ -24,7 +24,7 @@ export class RouterCacheManager {
   private static instance: RouterCacheManager;
 
   public mlrCached: Map<string, Hop[]> = new Map();
-  public mlrCachedPerBlock: Map<string, Hop[]> = new Map();
+  private cacheInvalidatedAtBlock: number = 0;
 
   static getInstance(): RouterCacheManager {
     if (!RouterCacheManager.instance) {
@@ -33,8 +33,27 @@ export class RouterCacheManager {
     return RouterCacheManager.instance;
   }
 
-  wipeCache() {
-    this.mlrCached = new Map();
+  wipeCache(ctx: SqdProcessorContext<Store>) {
+    if (ctx.blocks.length === 0) {
+      this.mlrCached = new Map();
+      this.cacheInvalidatedAtBlock = 0;
+      return;
+    }
+
+    if (ctx.blocks.length > 1) {
+      this.mlrCached = new Map();
+      this.cacheInvalidatedAtBlock =
+        ctx.blocks[ctx.blocks.length - 1].header.height;
+      return;
+    }
+
+    if (
+      ctx.blocks[0].header.height - this.cacheInvalidatedAtBlock >
+      ctx.appConfig.CACHED_ROUTES_FOR_PRICE_CALCULATION_TTL_BLOCKS
+    ) {
+      this.mlrCached = new Map();
+      this.cacheInvalidatedAtBlock = ctx.blocks[0].header.height;
+    }
   }
 }
 

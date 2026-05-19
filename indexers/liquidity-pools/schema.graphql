@@ -34,6 +34,32 @@ type PreprocessedDataBucket @entity {
   data: JSON!
 }
 
+type PendingRedisTsCommit @entity {
+  # Deterministic id: "<jobName>:<seriesKey>:<paraBlockHeight>"
+  # jobName = DataCommitterJobName enum value
+  # seriesKey = canonical key parts joined, e.g. "price:5:10" or "acc_bal_tot_tns:0xabc..."
+  # paraBlockHeight = block this payload was derived from
+  id: ID!
+
+  # Which Bull job consumer handles this row
+  # Values: 'commitAssetPriceVolume' | 'commitAccountTotalBalance'
+  jobName: String! @index
+
+  # Block height the payload was computed at — used by the drainer's finality filter
+  paraBlockHeight: Int! @index
+
+  # Wallclock timestamp (ms since epoch) — the Redis TS sample timestamp
+  # Stored explicitly so the drainer doesn't need to re-resolve block→timestamp
+  sampleTimestampMs: BigInt!
+
+  # The full job payload as it was going to be sent to Bull
+  # Shape matches DataCommiterJobData.priceVolumeDataMany[i] or accountTotalBalanceMany[i]
+  payload: JSON!
+
+  # When this row was inserted (for observability / stuck-row alarms)
+  createdAt: DateTime!
+}
+
 # ======================================================================================================================
 # *** Asset ***
 # ======================================================================================================================
@@ -271,6 +297,15 @@ type AccountAssetBalanceLatest @entity {
   paraBlockHeight: Int!
 }
 
+type AccountOwnedAsset @entity {
+  "<address>-<assetId>"
+  id: ID!
+  accountId: String! @index
+  assetId: String! @index
+
+  firstSeenParaBlockHeight: Int!
+}
+
 enum AccountLiquidityType {
   OmnipoolPosition
   OmnipoolDeposit
@@ -354,7 +389,7 @@ type AccountTotalBalanceLatest @entity {
 }
 
 type AccountMmPositionHistoricalData @entity {
-  "<address>-<paraBlockHeight>"
+  "<accountId>-<poolAddress>-<paraBlockHeight>"
   id: ID!
   accountId: String!
   accountBoundEvmAddress: String
@@ -1825,6 +1860,7 @@ enum EvmEventName {
   ReserveUsedAsCollateralDisabled
   OracleUpdate
   ReserveDataUpdated
+  ReserveInitialized
   FacilitatorAdded
   FacilitatorRemoved
   FacilitatorBucketCapacityUpdated
@@ -1868,12 +1904,13 @@ type MoneyMarketEvent @entity {
 }
 
 type MoneyMarketReserve @entity {
-  "<underlying_asset_address>"
+  "<underlying_asset_address>-<money-market-pool-address>"
   id: ID!
   aTokenId: String!
   underlyingAssetId: String!
   variableDebtTokenId: String!
   aavePool: Aavepool
+  #  mmPoolAddress: String
 
   name: String!
   symbol: String!
@@ -2042,7 +2079,7 @@ enum OmnipoolLiquidityPositionStatus {
 type OmnipoolLiquidityPosition @entity {
   "<position ID>"
   id: ID!
-  accountId: String!
+  accountId: String! @index
   assetId: String!
   omnipoolAssetId: String!
   initialAmount: BigInt!
@@ -2160,7 +2197,7 @@ type OmnipoolYieldFarmDeposit @entity {
   id: ID!
   nftId: String
   positionId: String!
-  accountId: String!
+  accountId: String! @index
   assetId: String!
 
   "should be either SharesDeposited or DepositDestroyed"
@@ -2274,7 +2311,7 @@ type XykYieldFarmDeposit @entity {
   id: ID!
   nftId: String
   xykpoolId: String!
-  accountId: String!
+  accountId: String! @index
   lpAssetId: String!
   initialAmount: BigInt!
   amount: BigInt!

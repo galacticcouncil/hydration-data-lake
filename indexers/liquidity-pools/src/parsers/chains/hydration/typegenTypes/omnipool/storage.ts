@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v115 from '../v115'
 import * as v123 from '../v123'
+import * as v398 from '../v398'
 
 export const assets =  {
     /**
@@ -133,4 +134,78 @@ export interface TvlCapV125  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): bigint
     get(block: Block): Promise<(bigint | undefined)>
+}
+
+export const slipFee =  {
+    /**
+     *  Global slip fee configuration.
+     *  `None` = slip fees disabled (default). `Some(config)` = enabled.
+     *  Set via `set_slip_fee` extrinsic (governance).
+     */
+    v398: new StorageType('Omnipool.SlipFee', 'Optional', [], v398.SlipFeeConfig) as SlipFeeV398,
+}
+
+/**
+ *  Global slip fee configuration.
+ *  `None` = slip fees disabled (default). `Some(config)` = enabled.
+ *  Set via `set_slip_fee` extrinsic (governance).
+ */
+export interface SlipFeeV398  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block): Promise<(v398.SlipFeeConfig | undefined)>
+}
+
+export const slipFeeHubReserveAtBlockStart =  {
+    /**
+     *  Snapshot of each asset's hub_reserve at the start of the current block.
+     *  Lazily populated on first trade per asset per block, cleared in on_finalize.
+     */
+    v398: new StorageType('Omnipool.SlipFeeHubReserveAtBlockStart', 'Optional', [sts.number()], sts.bigint()) as SlipFeeHubReserveAtBlockStartV398,
+}
+
+/**
+ *  Snapshot of each asset's hub_reserve at the start of the current block.
+ *  Lazily populated on first trade per asset per block, cleared in on_finalize.
+ */
+export interface SlipFeeHubReserveAtBlockStartV398  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(bigint | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(bigint | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (bigint | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (bigint | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (bigint | undefined)][]>
+}
+
+export const slipFeeDelta =  {
+    /**
+     *  Cumulative net hub asset delta per asset in the current block.
+     *  Negative = net hub asset outflow, positive = net hub asset inflow.
+     *  Cleared in on_finalize.
+     */
+    v398: new StorageType('Omnipool.SlipFeeDelta', 'Default', [sts.number()], v398.SignedBalance) as SlipFeeDeltaV398,
+}
+
+/**
+ *  Cumulative net hub asset delta per asset in the current block.
+ *  Negative = net hub asset outflow, positive = net hub asset inflow.
+ *  Cleared in on_finalize.
+ */
+export interface SlipFeeDeltaV398  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): v398.SignedBalance
+    get(block: Block, key: number): Promise<(v398.SignedBalance | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v398.SignedBalance | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v398.SignedBalance | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v398.SignedBalance | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v398.SignedBalance | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v398.SignedBalance | undefined)][]>
 }

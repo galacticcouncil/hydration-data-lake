@@ -3,6 +3,7 @@ import {
   GetConstantsInput,
   GetDataAtBlockInput,
   OmnipoolAssetData,
+  OmnipoolAssetDataWithId,
   OmnipoolAssetTradability,
   OmnipoolConstants,
   OmnipoolData,
@@ -16,7 +17,6 @@ import {
 } from '../../../types/storage';
 import { UnknownVersionError } from '../../../../utils/errors';
 import { measureStorageFetch } from '../../../../utils/hydratedLogger/utils';
-import BigNumber from 'bignumber.js';
 import { getOmnipoolLiquidityPositionPriceDecorated } from '../../../../utils/helpers';
 
 function getConstants({ block }: GetConstantsInput): OmnipoolConstants {
@@ -75,7 +75,7 @@ function getNftCollectionIdConstant({
 }: GetDataAtBlockInput): OmnipoolNftCollectionId | null {
   if (block.specVersion < 347) return null;
   if (constants.omnipool.nftCollectionId.v347.is(block)) {
-    const resp = constants.omnipool.burnProtocolFee.v347.get(block);
+    const resp = constants.omnipool.nftCollectionId.v347.get(block);
     return {
       collectionId: resp.toString(),
     };
@@ -229,8 +229,45 @@ async function getAllOmnipoolLiquidityPositions({
   });
 }
 
+async function getOmnipoolAllAssetsData({
+  block,
+}: GetDataAtBlockInput): Promise<OmnipoolAssetDataWithId[] | null> {
+  return measureStorageFetch({
+    storageName: 'omnipool.assets.getPairsPaged',
+    originFn: 'getOmnipoolAllAssetsData',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 347) return null;
+
+      if (storage.omnipool.assets.v347.is(block)) {
+        try {
+          const pairsPaged: OmnipoolAssetDataWithId[] = [];
+
+          for await (const page of storage.omnipool.assets.v347.getPairsPaged(
+            500,
+            block
+          ))
+            pairsPaged.push(
+              ...page
+                .filter((p) => !!p && !!p[1])
+                .map(([assetId, data]) => ({
+                  assetId,
+                  data: data ?? null,
+                }))
+            );
+          return pairsPaged;
+        } catch (e) {
+          return null;
+        }
+      }
+      throw new UnknownVersionError('storage.omnipoolWarehouseLm.deposit');
+    },
+  });
+}
+
 export default {
   getOmnipoolAssetData,
+  getOmnipoolAllAssetsData,
   getOmnipoolAllAssetIds,
   getPoolData,
   getOmnipoolHubAssetTradability,

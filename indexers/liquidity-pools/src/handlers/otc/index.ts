@@ -106,7 +106,7 @@ async function prefetchEntities(
         },
       },
     },
-    { className: 'OtcOrder' }
+    { className: 'OtcOrder', originCallFn: 'prefetchEntities' }
   );
 
   const state = ctx.batchState.state;

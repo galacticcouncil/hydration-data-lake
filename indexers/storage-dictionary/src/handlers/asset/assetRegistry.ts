@@ -1,15 +1,9 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  Asset,
-  AssetType,
-  ResourceType,
-  SubProcessorStatus,
-} from '../../model';
+import { Asset, AssetType, SubProcessorStatus } from '../../model';
 import parsers from '../../parsers';
 import { SubProcessorStatusManager } from '../../utils/subProcessorStatusManager';
 import { AssetDetails } from '../../parsers/types/storage';
-import { MoneyMarketContractsManager } from '../../utils/evm/moneyMarketContractsManager';
 import { getAssetEvmAddressByType } from './utils';
 import { getOrCreateAsset } from './asset';
 

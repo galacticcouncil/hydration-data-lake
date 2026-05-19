@@ -202,7 +202,10 @@ export async function initAllOmnipoolLiquidityPositions(
         createdAtParaBlockHeight: 'DESC',
       },
     },
-    { className: 'OmnipoolLiquidityPosition' }
+    {
+      className: 'OmnipoolLiquidityPosition',
+      originCallFn: 'initAllOmnipoolLiquidityPositions',
+    }
   );
 
   if (hasAnyRecord) return;

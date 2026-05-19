@@ -225,7 +225,7 @@ async function prefetchEntities(
       where: { id: In(omnipoolAssetsToPrefetch) },
       relations: { pool: true },
     },
-    { className: 'OmnipoolAsset' }
+    { className: 'OmnipoolAsset', originCallFn: 'prefetchEntities' }
   );
 
   if (omnipoolAssetsToPrefetch.length > 0)

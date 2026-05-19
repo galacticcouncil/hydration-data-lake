@@ -56,7 +56,7 @@ async function getPoolData({
   block,
 }: LbpGetPoolDataInput): Promise<LbpPoolData | null> {
   return measureStorageFetch({
-    storageName: 'lbp.poolData',
+    storageName: 'lbp.poolData.get',
     originFn: 'getPoolData',
     blockHeight: block.height,
     args: { poolAddress },
@@ -98,7 +98,7 @@ async function getAllPoolsData({
   block,
 }: LbpGetAllPoolsDataInput): Promise<LbpPoolData[]> {
   return measureStorageFetch({
-    storageName: 'lbp.poolData',
+    storageName: 'lbp.poolData.getPairsPaged',
     originFn: 'getAllPoolsData',
     blockHeight: block.height,
     fn: async () => {
@@ -148,7 +148,7 @@ async function getAllPoolIds({
   block,
 }: LbpGetAllPoolIdsInput): Promise<string[]> {
   return measureStorageFetch({
-    storageName: 'lbp.poolData',
+    storageName: 'lbp.poolData.getKeys',
     originFn: 'getAllPoolIds',
     blockHeight: block.height,
     fn: async () => {

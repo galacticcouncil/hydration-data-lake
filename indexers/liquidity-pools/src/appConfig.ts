@@ -9,6 +9,7 @@ import {
   ValidationError,
   IsEnum,
   IsNumber,
+  IsJSON,
 } from 'class-validator';
 import dotenv from 'dotenv';
 
@@ -23,10 +24,12 @@ import {
 import {
   calls as hydrationPaseoNextCalls,
   events as hydrationPaseoNextEvents,
-} from './parsers/chains/hydration-paseo-next/typegenTypes';
+} from './parsers/chains/hydration-lark/typegenTypes';
 import { ChainName, MultiFlowProcessingPhase, NodeEnv } from './utils/types';
 import { isHex } from '@polkadot/util';
-import { TimeSeriesMigration } from './utils/redisTimeSeriesManager/migrationsManager';
+import { TimeSeriesMigration } from './utils/redisSupport/redisTimeSeriesManager/migrationsManager';
+import { PgBossQueueName } from './utils/multiProcPoolManager';
+import { AaveMoneyMarketInstanceConfig } from './utils/evmTools/aave/types';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({
@@ -107,7 +110,7 @@ class LogConfig {
   readonly HLOG_LOG_FILE_PATH: string = './logs/app.log';
 
   @Transform(({ value }: { value: string }) => value === 'true')
-  readonly HLOG_CONSOLE_LOGS_ENABLED: boolean = true;
+  readonly HLOG_CONSOLE_LOGS_ENABLED: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly HLOG_CONSOLE_LOGS_VERBOSE: boolean = false;
@@ -214,6 +217,26 @@ class RedisConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_REDIS_TS_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT: boolean = true;
 
+  @IsBoolean()
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly REDIS_TS_VOLUME_DRAINER_ENABLED: boolean = true;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly REDIS_TS_DRAINER_POLL_INTERVAL_MS: number = 5_000;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly REDIS_TS_DRAINER_BATCH_SIZE: number = 1000;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly REDIS_TS_DRAINER_FINALITY_SAFETY_MARGIN: number = 5;
+
+  @IsBoolean()
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly REDIS_TS_DRAINER_AWAIT_BULL_ACK: boolean = false;
+
   @Transform(({ value }: { value: string }) => JSON.parse(value ?? ''))
   readonly REDIS_MIGRATIONS: TimeSeriesMigration[] | null = null;
 
@@ -248,9 +271,23 @@ class EvmConfig {
 
   @IsNotEmpty()
   @IsString()
+  readonly HSMPOOL_FICILITATOR_ADDRESS: string =
+    '0x6d6f646c70792f68736d6f640000000000000000';
+
+  @IsNotEmpty()
   @IsString()
-  readonly ATOKEN_CONTRACT_ADDRESS: string =
-    '0xc0DF4c545BaFA1788a4Ee55f79704D12fC2c7B5C';
+  readonly HOLLAR_CONTRACT_ADDRESS: string =
+    '0x531a654d1696ed52e7275a8cede955e82620f99a';
+
+  /**
+   * Money market
+   */
+
+  // ===  Legacy variables for compatibility  ===
+  @IsNotEmpty()
+  @IsString()
+  readonly MM_TREASURY_ADDRESS: string =
+    '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9';
 
   @IsNotEmpty()
   @IsString()
@@ -266,21 +303,21 @@ class EvmConfig {
   @IsString()
   readonly POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS: string =
     '0x1b02e051683b5cfac5929c25e84adb26ecf87b38';
+  // ==========
 
-  @IsNotEmpty()
-  @IsString()
-  readonly HSMPOOL_FICILITATOR_ADDRESS: string =
-    '0x6d6f646c70792f68736d6f640000000000000000';
-
-  @IsNotEmpty()
-  @IsString()
-  readonly HOLLAR_CONTRACT_ADDRESS: string =
-    '0x531a654d1696ed52e7275a8cede955e82620f99a';
-
-  @IsNotEmpty()
-  @IsString()
-  readonly MM_TREASURY_ADDRESS: string =
-    '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9';
+  @Transform(({ value }: { value: string }) => JSON.parse(value ?? ''))
+  readonly AAVE_MONEY_MARKET_INSTANCES: AaveMoneyMarketInstanceConfig[] | null =
+    [
+      {
+        marketId: 'main',
+        treasuryAddress: '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9',
+        poolDataProviderAddress: '0x112b087b60C1a166130d59266363C45F8aa99db0',
+        poolAddressProviderAddress:
+          '0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691',
+        poolImplementationProxyAddress:
+          '0x1b02e051683b5cfac5929c25e84adb26ecf87b38',
+      },
+    ];
 
   static getInstance(): EvmConfig {
     if (EvmConfig.instance) return EvmConfig.instance;
@@ -325,6 +362,10 @@ class ProcessingModeConfig {
 
   readonly REAGGREGATION_PROCESSING_FLOW_NAME?: string;
 
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => +value)
+  readonly ALL_IN_ONE_MULTI_FLOW_PROCESSOR_NEXT_BATCH_OFFSET_BLOCKS: number = 0;
+
   @Transform(
     ({ value }: { value: string }) =>
       new Set(value.split(',').map((e) => e.trim()))
@@ -332,6 +373,10 @@ class ProcessingModeConfig {
   readonly REAGGREGATION_PROCESSING_FLOW_TRIGGERS: Set<string> = new Set([
     'NONE',
   ]);
+
+  @IsEnum(PgBossQueueName)
+  readonly MULTI_FLOW_PROCESSOR_TOPIC: PgBossQueueName =
+    PgBossQueueName.CORE_PROCESSOR;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
@@ -344,10 +389,6 @@ class ProcessingModeConfig {
   @IsEnum(MultiFlowProcessingPhase)
   readonly MULTI_FLOW_PROCESSING_PHASE: MultiFlowProcessingPhase =
     MultiFlowProcessingPhase.INITIAL;
-
-  @Transform(({ value }: { value: string }) => value === 'true')
-  @IsBoolean()
-  readonly ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED: boolean = true;
 
   static getInstance(): ProcessingModeConfig {
     if (ProcessingModeConfig.instance) return ProcessingModeConfig.instance;
@@ -424,13 +465,18 @@ export class AppConfig {
   readonly DB_POOL_MAX_SIZE: number = 2;
 
   @Transform(({ value }: { value: string }) => +value)
-  readonly DB_CUSTOM_MIGRATIONS_MAX_RETRY: number = 10;
+  readonly DB_CUSTOM_MIGRATIONS_MAX_RETRY: number = 50;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_CUSTOM_MIGRATIONS_BASE_DELAY_MS: number = 10000;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_CUSTOM_MIGRATIONS_MAX_DELAY_MS: number = 60000;
+
+  // Aborts a single migration statement that can't acquire its required
+  // lock in this window. Prevents indefinite hangs when a custom migration
+  // races with SQD's hot-block rollback transaction on processor restart.
+  readonly DB_CUSTOM_MIGRATIONS_LOCK_TIMEOUT: string = '30s';
 
   @IsNotEmpty()
   readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
@@ -544,6 +590,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly PROCESS_TO_BLOCK: number = -1;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly BLOCKS_FINALITY_OFFSET: number = 50;
+
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PROCESS_LBP_POOLS: boolean = true;
 
@@ -638,6 +687,14 @@ export class AppConfig {
   @IsBoolean()
   readonly ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION: boolean = false;
 
+  @Transform(({ value }: { value: string }) => +value)
+  readonly CACHED_ROUTES_FOR_PRICE_CALCULATION_TTL_BLOCKS: number = 300;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly CACHED_POOL_VOLUME_HIS_DATA_TTL_BLOCKS: number = 100;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly CACHED_EVM_BOUNDED_ACCOUNTS_TTL_BLOCKS: number = 100;
   /**
    * Can be configured to "false" in case normal mono-processor run. In normal
    * processing flow spot price calculation requires data which already must be
@@ -696,6 +753,12 @@ export class AppConfig {
   @IsBoolean()
   readonly USE_HIST_DATA_FROM_REDIS_TIME_SERIES: boolean = true;
 
+  /**
+   * ===========================================================================
+   * ====================== A C C O U N T    B A L A N C E S ===================
+   * ===========================================================================
+   */
+
   @Transform(({ value }: { value: string }) => new Set(value.split(',')))
   readonly ACCOUNT_BALANCE_AGGREGATION_TRIGGERS: Set<string> = new Set([
     'Currencies',
@@ -706,6 +769,17 @@ export class AppConfig {
     'Broadcast',
     'Uniques',
   ]);
+
+  /**
+   * List of accounts which will be used in balances aggregation from storage data
+   * on each batch handling. Should be used for couple of blocks just for
+   * balances actualisation.
+   */
+  @Transform(({ value }: { value: string }) => new Set(value.split(',')))
+  readonly ACCOUNTS_FOR_BALANCES_REFRESH: Set<string> = new Set([]);
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_ALL_ACCOUNT_BALANCES_REFRESH: boolean = false;
 
   @Transform(({ value }: { value: string }) => +value)
   readonly ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE: number = 20;
@@ -719,11 +793,51 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ALL_ACCOUNT_BALANCES_INIT: boolean = false;
 
+  /**
+   * ENABLE_ACCOUNT_BALANCES_PROCESSING - on/off processing balances overall
+   */
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_ACCOUNT_BALANCES_PROCESSING: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  @IsBoolean()
+  readonly ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED: boolean = true;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly USE_EVENTS_DRIVEN_BALANCE_TRACKING: boolean = false;
+
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_PERSISTENT_ACCOUNT_ASSET_BALANCES_NORMALISED: boolean = true;
+
+  /**
+   * ===========================================================================
+   * ===========================================================================
+   * ===========================================================================
+   */
+
+  @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ASSET_SWAP_FEE_AGGREGATION: boolean = true;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly XYKPOOL_HIST_DATA_TRACKING_BATCH_SIZE_PER_BLOCK: number = -1;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly XYKPOOL_HIST_DATA_TRACKING_HIGH_PRIO_SUBSET_SIZE: number = 10;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly API_PROXY_CACHE_TTL_MS_DEFILLAMA: number = 600000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly API_PROXY_CACHE_TTL_MS_KAMINO: number = 600000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly API_PROXY_CACHE_TTL_MS_SUBSCAN: number = 600000;
+
+  @Transform(({ value }: { value: string }) => +value)
+  readonly API_PROXY_CACHE_TTL_MS_SUBSQUARE: number = 600000;
 
   readonly redis: RedisConfig = RedisConfig.getInstance();
 

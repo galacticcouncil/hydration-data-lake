@@ -42,7 +42,7 @@ async function handleLbppoolsDestroyedStatus(ctx: SqdProcessorContext<Store>) {
       isDestroyed: false,
     },
     relations: {},
-  }, { className: 'Lbppool' });
+  }, { className: 'Lbppool', originCallFn: 'handleLbppoolsDestroyedStatus' });
 
   if (lbpPoolsToProcess.length === 0) return;
 
@@ -119,7 +119,7 @@ async function handleStableoolsDestroyedStatus(
       isDestroyed: false,
     },
     relations: {},
-  }, { className: 'Stableswap' });
+  }, { className: 'Stableswap', originCallFn: 'handleStableoolsDestroyedStatus' });
 
   if (stableswapsToProcess.length === 0) return;
 

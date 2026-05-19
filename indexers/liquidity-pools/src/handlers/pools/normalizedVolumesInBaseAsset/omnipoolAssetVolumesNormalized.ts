@@ -1,4 +1,4 @@
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { OmnipoolAssetVolumeHistoricalData } from '../../../model';
@@ -8,6 +8,7 @@ import {
   getOldOmnipoolAssetVolume,
   getPoolAssetPreviousVolumeFromCache,
 } from '../volumes';
+import { PoolVolumesCacheManager } from '../volumes/poolVolumesCacheManager';
 
 export async function processOmnipoolAssetNormalizedVolumes({
   blockNumbersToProcess,
@@ -31,9 +32,13 @@ export async function processOmnipoolAssetNormalizedVolumes({
     ctx.batchState.state.assetsSpotPriceHistoricalDataBatch;
 
   for (const currentAssetVolsHistData of omnipoolAssetHistVolsByBatchList) {
-    const asset = ctx.batchState.state.assetsAll.get(currentAssetVolsHistData.omnipoolAsset.assetId);
+    const asset = ctx.batchState.state.assetsAll.get(
+      currentAssetVolsHistData.omnipoolAsset.assetId
+    );
     if (!asset) {
-      console.warn(`Asset data not found for asset ${currentAssetVolsHistData.omnipoolAsset.assetId} while processing Omnipool asset Volume normalization at para block height ${currentAssetVolsHistData.paraBlockHeight}`);
+      console.warn(
+        `Asset data not found for asset ${currentAssetVolsHistData.omnipoolAsset.assetId} while processing Omnipool asset Volume normalization at para block height ${currentAssetVolsHistData.paraBlockHeight}`
+      );
       continue;
     }
     let assetSpotPriceNorm = historicalSpotPricesMap.get(
@@ -51,6 +56,11 @@ export async function processOmnipoolAssetNormalizedVolumes({
         currentAssetVolsHistData.omnipoolAsset.id,
         currentAssetVolsHistData.paraBlockHeight
       ) as OmnipoolAssetVolumeHistoricalData | undefined) ||
+      (getPoolAssetPreviousVolumeFromCache(
+        PoolVolumesCacheManager.getInstance().omnipoolAssetVolumesCache,
+        currentAssetVolsHistData.omnipoolAsset.id,
+        currentAssetVolsHistData.paraBlockHeight
+      ) as OmnipoolAssetVolumeHistoricalData | undefined) ||
       (await getOldOmnipoolAssetVolume({
         ctx,
         omnipoolAssetId: currentAssetVolsHistData.omnipoolAsset.id,
@@ -63,11 +73,11 @@ export async function processOmnipoolAssetNormalizedVolumes({
       assetDecimals: asset.decimals,
     });
 
-    currentAssetVolsHistData.assetTotalFeesVolNorm = BigNumber(
-      previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0'
-    )
-      .plus(currentAssetVolsHistData.assetFeeVolNorm)
-      .toFixed();
+    currentAssetVolsHistData.assetTotalFeesVolNorm = toFixedTrimmed(
+      BigNumber(previousAssetHistVolume?.assetTotalFeesVolNorm ?? '0').plus(
+        currentAssetVolsHistData.assetFeeVolNorm
+      )
+    );
 
     currentAssetVolsHistData.assetVolInNorm = calcPriceNormalized({
       amount: currentAssetVolsHistData.assetVolIn,
@@ -80,17 +90,17 @@ export async function processOmnipoolAssetNormalizedVolumes({
       assetDecimals: asset.decimals,
     });
 
-    currentAssetVolsHistData.assetTotalVolInNorm = BigNumber(
-      previousAssetHistVolume?.assetTotalVolInNorm ?? '0'
-    )
-      .plus(currentAssetVolsHistData.assetVolInNorm)
-      .toFixed();
+    currentAssetVolsHistData.assetTotalVolInNorm = toFixedTrimmed(
+      BigNumber(previousAssetHistVolume?.assetTotalVolInNorm ?? '0').plus(
+        currentAssetVolsHistData.assetVolInNorm
+      )
+    );
 
-    currentAssetVolsHistData.assetTotalVolOutNorm = BigNumber(
-      previousAssetHistVolume?.assetTotalVolOutNorm ?? '0'
-    )
-      .plus(currentAssetVolsHistData.assetVolOutNorm)
-      .toFixed();
+    currentAssetVolsHistData.assetTotalVolOutNorm = toFixedTrimmed(
+      BigNumber(previousAssetHistVolume?.assetTotalVolOutNorm ?? '0').plus(
+        currentAssetVolsHistData.assetVolOutNorm
+      )
+    );
 
     ctx.batchState.state.omnipoolAssetVolumes.set(
       currentAssetVolsHistData.id,

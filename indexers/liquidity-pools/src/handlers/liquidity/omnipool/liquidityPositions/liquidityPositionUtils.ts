@@ -331,6 +331,10 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
             MoreThanOrEqual(ctx.blocks[0].header.height)
           ),
         },
+      },
+      {
+        className: 'OmnipoolLiquidityPosition',
+        originCallFn: 'getOmnipoolLiquidityPositionsForAccounts',
       }
     );
 
@@ -368,6 +372,10 @@ export async function getOmnipoolLiquidityPositionsForAccounts({
         relations: {
           position: true,
         },
+      },
+      {
+        className: 'OmnipoolLiquidityPositionEvent',
+        originCallFn: 'getOmnipoolLiquidityPositionsForAccounts',
       }
     );
 

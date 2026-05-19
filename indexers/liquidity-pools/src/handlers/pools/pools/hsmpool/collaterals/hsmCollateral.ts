@@ -39,15 +39,19 @@ export async function getOrCreateHsmCollateral({
   if (collateral) return collateral;
 
   // DB fallback
-  collateral = await ctx.storeUtils.findOneWithLogs(HsmCollateral, {
-    where: {
-      ...(id ? { id } : {}),
+  collateral = await ctx.storeUtils.findOneWithLogs(
+    HsmCollateral,
+    {
+      where: {
+        ...(id ? { id } : {}),
+      },
+      relations: {
+        pool: true,
+        stableswap: true,
+      },
     },
-    relations: {
-      pool: true,
-      stableswap: true,
-    },
-  }, { className: 'HsmCollateral' });
+    { className: 'HsmCollateral', originCallFn: 'getOrCreateHsmCollateral' }
+  );
 
   // If we didn't find by id and need to search by assetRegistryId
   if (!collateral && !id && assetRegistryId) {
@@ -57,9 +61,13 @@ export async function getOrCreateHsmCollateral({
     );
 
     if (!asset) {
-      asset = await ctx.storeUtils.findOneWithLogs(Asset, {
-        where: { assetRegistryId },
-      }, { className: 'Asset' });
+      asset = await ctx.storeUtils.findOneWithLogs(
+        Asset,
+        {
+          where: { assetRegistryId },
+        },
+        { className: 'Asset', originCallFn: 'getOrCreateHsmCollateral' }
+      );
 
       if (asset) {
         ctx.batchState.state.assetsAll.set(asset.id, asset);
@@ -68,13 +76,17 @@ export async function getOrCreateHsmCollateral({
 
     if (asset) {
       // Now query HsmCollateral by assetId
-      collateral = await ctx.storeUtils.findOneWithLogs(HsmCollateral, {
-        where: { assetId: asset.id },
-        relations: {
-          pool: true,
-          stableswap: true,
+      collateral = await ctx.storeUtils.findOneWithLogs(
+        HsmCollateral,
+        {
+          where: { assetId: asset.id },
+          relations: {
+            pool: true,
+            stableswap: true,
+          },
         },
-      }, { className: 'HsmCollateral' });
+        { className: 'HsmCollateral', originCallFn: 'getOrCreateHsmCollateral' }
+      );
     }
   }
 

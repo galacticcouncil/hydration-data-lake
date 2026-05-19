@@ -1,6 +1,3 @@
-import { SqdProcessorContext } from '../../processor';
-import { Store } from '@subsquid/typeorm-store';
-import { StorageDictionaryManager } from './dictionaryUtils/storageDictionaryManager';
 import { ProcessingTopic } from './dictionaryUtils/types';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import {
@@ -9,25 +6,19 @@ import {
   GetConstantsInput,
   GetDataAtBlockInput,
   GetEmaOraclesInput,
-  GetNativeTokenBalanceManyInput,
   GetPoolAssetInfoInput,
-  GetTokenBalancesManyInput,
   LbpGetPoolDataInput,
   OmnipoolGetAllAssetIdsInput,
   OmnipoolGetAssetDataInput,
   OmnipoolGetHubAssetTradabilityInput,
-  OmnipoolGetPoolDataInput,
   StablepoolGetPoolDataInput,
   StablepoolGetPoolPegsInput,
-  StablepoolInfo,
-  TokenAccountBalancesWithAccountId,
   TokensGetTokensTotalIssuanceInput,
   TokensGetTokenTotalIssuanceInput,
   XykGetAssetsInput,
   XykGetPoolDataInput,
   XykGetPoolShareTokenPairsManyInput,
   XykGetShareTokenInput,
-  XykPoolData,
 } from '../types/storage';
 import { AaveTradeExecutorPoolsInput } from '../runtimeApiResolver/types';
 import { StorageResolverHelpersManager } from './dictionaryUtils/helpers/storageResolverHelpersManager';
@@ -54,7 +45,11 @@ export class StorageResolver extends StorageResolverHelpersManager {
    *                      if previous one returned null or failed
    */
   async resolveStorageData<
-    Args extends { block: BlockHeader; skipCache?: boolean },
+    Args extends {
+      block: BlockHeader;
+      skipCache?: boolean;
+      allowZeroBalance?: boolean;
+    },
     R,
   >({
     pallet,
@@ -70,6 +65,7 @@ export class StorageResolver extends StorageResolverHelpersManager {
       | 'getPoolAssetInfo'
       | 'getPoolAssetStorageData'
       | 'getAssetData'
+      | 'getAllAssetsData'
       | 'getPoolAssets'
       | 'getPoolPegs'
       | 'getAllPoolsPegs'
@@ -102,11 +98,6 @@ export class StorageResolver extends StorageResolverHelpersManager {
             if (resp) return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getStableswapPoolData(
-            //     args as unknown as StablepoolGetPoolDataInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
           }
           if (method === 'getAllPoolsData') {
             const resp =
@@ -131,11 +122,6 @@ export class StorageResolver extends StorageResolverHelpersManager {
               return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getStableswapPoolAssetInfo(
-            //     args as unknown as GetPoolAssetInfoInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
           }
           if (method === 'getPoolAssetStorageData') {
             const resp =
@@ -177,11 +163,16 @@ export class StorageResolver extends StorageResolverHelpersManager {
             if (resp) return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getOmnipoolAssetState(
-            //     args as unknown as OmnipoolGetAssetDataInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
+          }
+          if (method === 'getAllAssetsData') {
+            const resp =
+              this.storageDictionaryManager.getOmnipoolAllAssetsState(
+                args as unknown as GetDataAtBlockInput // TODO fix types
+              ) as R;
+
+            if (resp) return resp;
+
+            return this.resolveFallbackFunctions(args, fallbackFns);
           }
 
           if (method === 'getPoolAssetInfo') {
@@ -196,11 +187,6 @@ export class StorageResolver extends StorageResolverHelpersManager {
               return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getOmnipoolAssetInfo(
-            //     args as unknown as GetPoolAssetInfoInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
           }
 
           if (method === 'getOmnipoolHubAssetTradability') {
@@ -235,11 +221,6 @@ export class StorageResolver extends StorageResolverHelpersManager {
             if (resp) return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getXykPoolAssets(
-            //     args as unknown as XykGetAssetsInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
           }
           if (method === 'getPoolData') {
             const resp = this.storageDictionaryManager.getXykpoolData(
@@ -249,11 +230,6 @@ export class StorageResolver extends StorageResolverHelpersManager {
             if (resp) return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getXykPoolAssets(
-            //     args as unknown as XykGetAssetsInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
           }
 
           if (method === 'getPoolAssetInfo') {
@@ -261,18 +237,17 @@ export class StorageResolver extends StorageResolverHelpersManager {
               args as unknown as GetPoolAssetInfoInput // TODO fix types
             ) as R;
 
+            // TODO fix type casting
             if (
-              resp &&
-              this.isFreeBalanceExisting(resp as unknown as AccountData) // TODO fix type casting
+              (resp &&
+                this.isFreeBalanceExisting(resp as unknown as AccountData)) ||
+              (resp &&
+                !this.isFreeBalanceExisting(resp as unknown as AccountData) &&
+                args.allowZeroBalance)
             )
               return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getXykPoolAssetInfo(
-            //     args as unknown as GetPoolAssetInfoInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
           }
 
           if (method === 'getPoolShareToken') {
@@ -307,11 +282,6 @@ export class StorageResolver extends StorageResolverHelpersManager {
             if (resp) return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getLbpPoolData(
-            //     args as unknown as LbpGetPoolDataInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
           }
 
           if (method === 'getPoolAssetInfo') {
@@ -326,11 +296,6 @@ export class StorageResolver extends StorageResolverHelpersManager {
               return resp;
 
             return this.resolveFallbackFunctions(args, fallbackFns);
-            // return (
-            //   (this.storageDictionaryManager.getLbpPoolAssetInfo(
-            //     args as unknown as GetPoolAssetInfoInput // TODO fix types
-            //   ) as R) ?? (fallbackFn ? await fallbackFn(args) : null)
-            // );
           }
 
           break;

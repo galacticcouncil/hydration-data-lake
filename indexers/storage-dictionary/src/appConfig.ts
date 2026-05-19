@@ -12,6 +12,7 @@ import dotenv from 'dotenv';
 import { events } from './typegenTypes';
 
 import { NodeEnv } from './utils/types';
+import { AaveMoneyMarketInstanceConfig } from './utils/evm/aave/types';
 
 dotenv.config({
   path: (() => {
@@ -39,6 +40,26 @@ class EvmConfig {
 
   @IsNotEmpty()
   @IsString()
+  readonly HSMPOOL_FICILITATOR_ADDRESS: string =
+    '0x6d6f646c70792f68736d6f640000000000000000';
+
+  @IsNotEmpty()
+  @IsString()
+  readonly HOLLAR_CONTRACT_ADDRESS: string =
+    '0x531a654d1696ed52e7275a8cede955e82620f99a';
+
+  /**
+   * Money market
+   */
+
+  // ===  Legacy variables for compatibility  ===
+  @IsNotEmpty()
+  @IsString()
+  readonly MM_TREASURY_ADDRESS: string =
+    '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9';
+
+  @IsNotEmpty()
+  @IsString()
   readonly UI_POOL_DATA_PROVIDER_CONTRACT_ADDRESS: string =
     '0x112b087b60C1a166130d59266363C45F8aa99db0';
 
@@ -51,6 +72,21 @@ class EvmConfig {
   @IsString()
   readonly POOL_IMPLEMENTATION_PROXY_CONTRACT_ADDRESS: string =
     '0x1b02e051683b5cfac5929c25e84adb26ecf87b38';
+  // ==========
+
+  @Transform(({ value }: { value: string }) => JSON.parse(value ?? ''))
+  readonly AAVE_MONEY_MARKET_INSTANCES: AaveMoneyMarketInstanceConfig[] | null =
+    [
+      {
+        marketId: 'main',
+        treasuryAddress: '0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9',
+        poolDataProviderAddress: '0x112b087b60C1a166130d59266363C45F8aa99db0',
+        poolAddressProviderAddress:
+          '0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691',
+        poolImplementationProxyAddress:
+          '0x1b02e051683b5cfac5929c25e84adb26ecf87b38',
+      },
+    ];
 
   static getInstance(): EvmConfig {
     if (EvmConfig.instance) return EvmConfig.instance;
@@ -216,6 +252,20 @@ export class AppConfig {
    * Request timeout in ms
    */
   readonly RPC_REQUEST_TIMEOUT: number = 20_000;
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_RPC_HTTPS_URLS_POOL: boolean = false;
+
+  @Transform(({ value }: { value: string }) =>
+    (value ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0)
+  )
+  readonly RPC_HTTPS_URLS_POOL: string[] = [];
+
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_RPC_POOL_DEBUG_LOGS: boolean = false;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly INDEXING_IS_PAUSED: boolean = false;

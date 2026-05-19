@@ -96,7 +96,7 @@ export async function getOtcOrderEvents({
       ...(eventName ? { eventName } : {}),
     },
     relations,
-  }, { className: 'OtcOrderEvent' });
+  }, { className: 'OtcOrderEvent', originCallFn: 'getOtcOrderEvents' });
 
   if (events && events.length > 0) {
     for (const action of events) {

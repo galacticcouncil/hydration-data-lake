@@ -5,6 +5,7 @@ import { processLbpPoolsNormalizedVolumes } from './lbpPoolVolumesNormalized';
 import { processStableswapAssetNormalizedVolumes } from './stableswapAssetVolumesNormalized';
 import { processOmnipoolAssetNormalizedVolumes } from './omnipoolAssetVolumesNormalized';
 import { processHsmpoolAssetNormalizedVolumes } from './hsmpoolAssetVolumesNormalized';
+import { PoolVolumesCacheManager } from '../volumes/poolVolumesCacheManager';
 
 export async function processPoolsNormalizedVolumes({
   blockNumbersToProcess,
@@ -13,9 +14,11 @@ export async function processPoolsNormalizedVolumes({
   blockNumbersToProcess?: number[];
   ctx: SqdProcessorContext<Store>;
 }) {
-  await processXykPoolsNormalizedVolumes({ ctx, blockNumbersToProcess });
-  await processLbpPoolsNormalizedVolumes({ ctx, blockNumbersToProcess });
-  await processStableswapAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
-  await processOmnipoolAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
-  await processHsmpoolAssetNormalizedVolumes({ ctx, blockNumbersToProcess });
+  await Promise.all([
+    processXykPoolsNormalizedVolumes({ ctx, blockNumbersToProcess }),
+    processLbpPoolsNormalizedVolumes({ ctx, blockNumbersToProcess }),
+    processStableswapAssetNormalizedVolumes({ ctx, blockNumbersToProcess }),
+    processOmnipoolAssetNormalizedVolumes({ ctx, blockNumbersToProcess }),
+    processHsmpoolAssetNormalizedVolumes({ ctx, blockNumbersToProcess }),
+  ]);
 }

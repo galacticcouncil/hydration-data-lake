@@ -1,12 +1,10 @@
 import { SqdBlock, SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import {
-  AaveFacilitatorContractData,
-  MoneyMarketContractsManager,
-} from '../../utils/evmTools/moneyMarketContractsManager';
 import { AaveFacilitator, AaveFacilitatorHistoricalData } from '../../model';
 import { LessThan } from 'typeorm';
 import { handleFacilitatorUpdatedEvent } from './facilitatorUpdated';
+import { AaveNativeStableTokenManager } from '../../utils/evmTools/aave/aaveNativeStableTokenManager';
+import { AaveFacilitatorContractData } from '../../utils/evmTools/aave/types';
 
 export async function getOrCreateAaveFacilitator({
   id,
@@ -31,7 +29,7 @@ export async function getOrCreateAaveFacilitator({
         id,
       },
     },
-    { className: 'AaveFacilitator' }
+    { className: 'AaveFacilitator', originCallFn: 'getOrCreateAaveFacilitator' }
   );
 
   if (facilitator) {
@@ -40,7 +38,7 @@ export async function getOrCreateAaveFacilitator({
   }
 
   const facilitatorContractData = facilitatorData
-    ? await MoneyMarketContractsManager.getInstance().getAaveFacilitatorWithLogs(
+    ? await AaveNativeStableTokenManager.getInstance().getAaveFacilitatorWithLogs(
         {
           facilitatorAddress: id,
           blockNumber: blockHeader.height,
@@ -82,7 +80,7 @@ export async function ensureAaveFacilitators(ctx: SqdProcessorContext<Store>) {
   const processingBlockHeader = ctx.blocks[ctx.blocks.length - 1].header;
 
   const allFacilitators =
-    await MoneyMarketContractsManager.getInstance().getAllAaveFacilitators({
+    await AaveNativeStableTokenManager.getInstance().getAllAaveFacilitators({
       blockNumber: processingBlockHeader.height,
     });
 
@@ -181,6 +179,9 @@ export async function getOldAaveFacilitatorHistDataEntity({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'AaveFacilitatorHistoricalData' }
+    {
+      className: 'AaveFacilitatorHistoricalData',
+      originCallFn: 'getOldAaveFacilitatorHistDataEntity',
+    }
   );
 }

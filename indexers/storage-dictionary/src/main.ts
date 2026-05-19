@@ -51,7 +51,7 @@ import { LatestProcessedDataCacheManager } from './utils/latestProcessedDataCach
 import { prefetchAllMmAggregatorOracleRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/oracles/mmAggregatorOracle/historicalData';
 import { getMmAggregatorOraclesWithUniqueData } from './handlers/oracles/mmAggregatorOracle/utils';
 import { handleAssetAccountBalancesPerBlock } from './handlers/balances';
-import { MoneyMarketContractsManager } from './utils/evm/moneyMarketContractsManager';
+import { AaveMoneyMarketsRegistry } from './utils/evm/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 import { prefetchAllAccountHistDataRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/balances/historicalData';
 import { getAccAssetBalanceHistDataWithUniqueData } from './handlers/balances/utils';
 import {
@@ -105,7 +105,9 @@ async function runProcessor() {
         ProcessorContext<Store>,
         'batchState' | 'appConfig'
       > = ctx;
-      const batchState = new BatchState();
+      const batchState = new BatchState(
+        ctxWithBatchState as ProcessorContext<Store>
+      );
       (ctxWithBatchState as ProcessorContext<Store>).batchState = batchState;
       (ctxWithBatchState as ProcessorContext<Store>).appConfig =
         AppConfig.getInstance();
@@ -176,7 +178,7 @@ async function runProcessor() {
         orderedBlockNumbers
       );
 
-      await MoneyMarketContractsManager.getInstance().initContractInstances({
+      await AaveMoneyMarketsRegistry.getInstance().initContractInstances({
         ctx: ctxWithBatchState as ProcessorContext<Store>,
         blockNumber: ctx.blocks[ctx.blocks.length - 1].header.height,
       });

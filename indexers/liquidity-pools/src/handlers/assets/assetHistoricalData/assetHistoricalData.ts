@@ -11,8 +11,8 @@ import {
 } from '../../../model';
 import parsers from '../../../parsers';
 import { SqdProcessorContext } from '../../../processor';
-import { MoneyMarketContractsManager } from '../../../utils/evmTools/moneyMarketContractsManager';
 import { LatestProcessedDataCacheManager } from '../../../utils/latestProcessedDataCacheManager';
+import { AaveMoneyMarketsRegistry } from '../../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 
 export async function processAssetsHistoricalDataAtBlock({
   assetRegistryIds,
@@ -27,41 +27,33 @@ export async function processAssetsHistoricalDataAtBlock({
   const mmAssets = [];
   const otherAssets = [];
 
+  // Why: querying tokens.totalIssuance for destroyed XYK share tokens is wasted
+  // RPC work — totalIssuance is 0 forever once the pool is destroyed.
+  const activeShareTokenIds = new Set<string>();
+  for (const pool of ctx.batchState.state.xykAllBatchPools.values()) {
+    if (!pool?.shareTokenId || pool.isDestroyed) continue;
+    activeShareTokenIds.add(pool.shareTokenId);
+  }
+
   for (const asset of ctx.batchState.state.assetsAll.values()) {
-    if (asset.assetRegistryId !== undefined || asset.assetRegistryId !== null)
+    if (asset.assetRegistryId !== undefined && asset.assetRegistryId !== null)
       indexedAssets.set(`${asset.assetRegistryId}`, asset.id);
 
     if (asset.assetType === AssetType.Erc20) {
       if (asset.evmAddress) mmAssets.push(asset);
-    } else {
-      if (asset.assetRegistryId !== undefined || asset.assetRegistryId !== null)
-        otherAssets.push(asset);
+      continue;
     }
-  }
 
-  // const totalIssuancePerAssetMapByAssetId = new Map(
-  //   (
-  //     await parsers.storage.tokens.getManyTokensTotalIssuance({
-  //       block,
-  //       tokenIds: otherAssets.map((asset) => asset.assetRegistryId!),
-  //     })
-  //   )
-  //     .filter((res) => res.amount !== null)
-  //     .map((res) => [indexedAssets.get(res.tokenId)!, res.amount])
-  // );
-  //
-  // totalIssuancePerAssetMapByAssetId.set(
-  //   '0',
-  //   await parsers.storage.balances.getTotalIssuance({ block })
-  // );
-  //
-  // const mmAssetsTotalSupply =
-  //   await MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs(
-  //     {
-  //       addresses: mmAssets.map((a) => a.evmAddress!),
-  //       blockNumber: block.height,
-  //     }
-  //   );
+    if (
+      asset.assetType === AssetType.XYK &&
+      !activeShareTokenIds.has(asset.id)
+    ) {
+      continue;
+    }
+
+    if (asset.assetRegistryId !== undefined && asset.assetRegistryId !== null)
+      otherAssets.push(asset);
+  }
 
   const [
     otherAssetsTotalIssuance,
@@ -74,7 +66,7 @@ export async function processAssetsHistoricalDataAtBlock({
       tokenIds: otherAssets.map((asset) => asset.assetRegistryId!),
     }),
     parsers.storage.balances.getTotalIssuance({ block }),
-    MoneyMarketContractsManager.getInstance().getManyTokensTotalSupplyWithLogs({
+    AaveMoneyMarketsRegistry.getInstance().getManyTokensTotalSupplyWithLogs({
       addresses: mmAssets.map((a) => a.evmAddress!),
       blockNumber: block.height,
     }),
@@ -104,20 +96,6 @@ export async function processAssetsHistoricalDataAtBlock({
     if (!totalIssuancePerAssetMapByAssetId.has(asset.id))
       totalIssuancePerAssetMapByAssetId.set(asset.id, 0n);
   }
-
-  // const existentialDepositPerAssetMap = new Map(
-  //   (
-  //     (await parsers.storage.assetRegistry.getAssetsExistentialDepositAll({
-  //       block,
-  //     })) || []
-  //   ).map((res) => [`${res.assetId}`, res])
-  // );
-
-  // const dynamicFeePerAssetMap = new Map(
-  //   (await parsers.storage.dynamicFees.getAssetFeesAll({ block })).map(
-  //     (res) => [`${res.assetId}`, res]
-  //   )
-  // );
   const dynamicFeePerAssetMap = new Map(
     dynamicFeesAllAssets.map((res) => [`${res.assetId}`, res])
   );

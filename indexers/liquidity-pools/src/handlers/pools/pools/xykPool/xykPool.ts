@@ -177,7 +177,7 @@ export async function getOrCreateXykPool({
       where: { id },
       relations: {},
     },
-    { className: 'Xykpool' }
+    { className: 'Xykpool', originCallFn: 'getOrCreateXykPool' }
   );
 
   if (pool) {
@@ -307,7 +307,7 @@ export async function xykPoolDestroyed(
       where: { id: eventParams.pool },
       relations: {},
     },
-    { className: 'Xykpool' }
+    { className: 'Xykpool', originCallFn: 'xykPoolDestroyed' }
   );
 
   if (!pool) return;
@@ -387,7 +387,7 @@ export async function initAllXykPools({
 
   existingXykPoolsCount = (await ctx.storeUtils.findOneWithLogs(Xykpool, {
     where: {},
-  }))
+  }, { className: 'Xykpool', originCallFn: 'initAllXykPools' }))
     ? 1
     : 0;
 

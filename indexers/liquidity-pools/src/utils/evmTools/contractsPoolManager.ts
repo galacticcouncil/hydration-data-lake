@@ -25,8 +25,13 @@ export class ContractsPoolManager {
   // Pool of providers
   private providers: ethers.providers.JsonRpcProvider[] = [];
 
-  // Contract pools - each contract address maps to an array of contract instances
-  private contractPools: Map<string, Contract[]> = new Map();
+  // Contract pools - keyed by ABI reference, then by normalized address.
+  // Keying on the ABI object identity prevents cache collisions when the same
+  // address is used with different ABIs (e.g. HOLLAR as both an aToken and the
+  // native stable token). Imported JSON ABIs are module singletons, so identity
+  // equality is stable for the process lifetime.
+  private contractPools: Map<ContractInterface, Map<string, Contract[]>> =
+    new Map();
 
   // Atomic counter for round-robin contract distribution (thread-safe via Node.js event loop)
   private contractCallCounter = 0;
@@ -67,7 +72,9 @@ export class ContractsPoolManager {
         appConfig.RPC_HTTPS_URLS_POOL.forEach((url, i) => {
           console.log(`  [${i}] ${url}`);
         });
-        console.log(`[ContractsPoolManager] Debug logging enabled (stats every ${this.LOG_INTERVAL_MS / 1000}s)`);
+        console.log(
+          `[ContractsPoolManager] Debug logging enabled (stats every ${this.LOG_INTERVAL_MS / 1000}s)`
+        );
       }
     } else {
       // Fallback to single provider
@@ -96,21 +103,27 @@ export class ContractsPoolManager {
   ): Contract[] {
     const normalizedAddress = ethers.utils.getAddress(address);
 
-    if (!this.contractPools.has(normalizedAddress)) {
-      // Create one contract instance per provider
-      const contracts = this.providers.map(
+    let abiPools = this.contractPools.get(abi);
+    if (!abiPools) {
+      abiPools = new Map();
+      this.contractPools.set(abi, abiPools);
+    }
+
+    let pool = abiPools.get(normalizedAddress);
+    if (!pool) {
+      pool = this.providers.map(
         (provider) => new Contract(normalizedAddress, abi, provider)
       );
-      this.contractPools.set(normalizedAddress, contracts);
+      abiPools.set(normalizedAddress, pool);
 
       if (this.poolingEnabled && appConfig.ENABLE_RPC_POOL_DEBUG_LOGS) {
         console.log(
-          `[ContractsPoolManager] Created contract pool for ${normalizedAddress.slice(0, 10)}... with ${contracts.length} instances`
+          `[ContractsPoolManager] Created contract pool for ${normalizedAddress.slice(0, 10)}... with ${pool.length} instances`
         );
       }
     }
 
-    return this.contractPools.get(normalizedAddress)!;
+    return pool;
   }
 
   /**
@@ -136,7 +149,11 @@ export class ContractsPoolManager {
    * Log distribution statistics
    */
   private logDistributionStats(): void {
-    if (!this.poolingEnabled || this.contractCallCounter === 0 || !appConfig.ENABLE_RPC_POOL_DEBUG_LOGS) {
+    if (
+      !this.poolingEnabled ||
+      this.contractCallCounter === 0 ||
+      !appConfig.ENABLE_RPC_POOL_DEBUG_LOGS
+    ) {
       return;
     }
 
@@ -152,21 +169,35 @@ export class ContractsPoolManager {
     for (let i = 0; i < providerCount; i++) {
       const actualCalls = this.providerCallDistribution.get(i) || 0;
       const percentage = ((actualCalls / totalCalls) * 100).toFixed(1);
-      const deviation = ((actualCalls - expectedPerProvider) / expectedPerProvider * 100).toFixed(1);
+      const deviation = (
+        ((actualCalls - expectedPerProvider) / expectedPerProvider) *
+        100
+      ).toFixed(1);
       const url = appConfig.RPC_HTTPS_URLS_POOL[i] || 'unknown';
 
       console.log(`  Provider ${i} [${url}]:`);
-      console.log(`    Calls: ${actualCalls} (${percentage}%, deviation: ${deviation}%)`);
+      console.log(
+        `    Calls: ${actualCalls} (${percentage}%, deviation: ${deviation}%)`
+      );
     }
 
     // Check for imbalance
-    const maxCalls = Math.max(...Array.from(this.providerCallDistribution.values()));
-    const minCalls = Math.min(...Array.from(this.providerCallDistribution.values()));
-    const imbalance = maxCalls > 0 ? ((maxCalls - minCalls) / maxCalls * 100).toFixed(1) : '0';
+    const maxCalls = Math.max(
+      ...Array.from(this.providerCallDistribution.values())
+    );
+    const minCalls = Math.min(
+      ...Array.from(this.providerCallDistribution.values())
+    );
+    const imbalance =
+      maxCalls > 0
+        ? (((maxCalls - minCalls) / maxCalls) * 100).toFixed(1)
+        : '0';
 
     console.log(`  Load imbalance: ${imbalance}%`);
     if (parseFloat(imbalance) > 20) {
-      console.warn(`  ⚠️  WARNING: High load imbalance detected! Expected even distribution.`);
+      console.warn(
+        `  ⚠️  WARNING: High load imbalance detected! Expected even distribution.`
+      );
     }
     console.log('');
   }

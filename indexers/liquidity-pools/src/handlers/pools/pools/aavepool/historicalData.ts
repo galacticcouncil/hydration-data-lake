@@ -24,7 +24,10 @@ export async function handleAavepoolHistoricalData(
           where: {},
           relations: {},
         },
-        { className: 'Aavepool' }
+        {
+          className: 'Aavepool',
+          originCallFn: 'handleAavepoolHistoricalData',
+        }
       )
     ).map((p) => [p.id, p])
   );
@@ -108,7 +111,10 @@ export async function handleAavepoolHistoricalData(
                 where: { id: reserveAsset?.variableDebtTokenId as string },
                 relations: {},
               },
-              { className: 'Asset' }
+              {
+                className: 'Asset',
+                originCallFn: 'handleAavepoolHistoricalData',
+              }
             );
           }
           if (debtAsset)
@@ -174,5 +180,5 @@ export async function handleAavepoolHistoricalData(
     predefinedEntities.map((item) => [item.id, item])
   );
 
-  await ctx.storeUtils.upsertWithBatches(predefinedEntities);
+  // await ctx.storeUtils.upsertWithBatches(predefinedEntities);
 }

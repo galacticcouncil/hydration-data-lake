@@ -10,6 +10,10 @@ import {
   AssetRegistryRegisteredEventParams,
   AssetRegistryUpdatedEventParams,
   BalancesTransferEventParams,
+  BalancesDepositEventParams,
+  BalancesWithdrawEventParams,
+  BalancesReservedEventParams,
+  BalancesUnreservedEventParams,
   DcaCompletedEventParams,
   DcaExecutionPlannedEventParams,
   DcaRandomnessGenerationFailedEventParams,
@@ -35,6 +39,10 @@ import {
   StableswapPoolCreatedEventParams,
   StableswapSellExecutedEventParams,
   TokensTransferEventParams,
+  TokensDepositedEventParams,
+  TokensWithdrawnEventParams,
+  TokensReservedEventParams,
+  TokensUnreservedEventParams,
   XykBuyExecutedEventParams,
   XykPoolCreatedEventParams,
   XykPoolDestroyedEventParams,
@@ -150,6 +158,9 @@ import {
   OmnipoolNftCollectionId,
   OmnipoolYieldFarmDepositDataWithId,
   OmnipoolLMGetDepositsInput,
+  DcaGetSchedulesManyInput,
+  OmnipoolAssetDataWithId,
+  StablepoolAssetStatesWithId,
 } from './storage';
 import {
   AaveTradeExecutorPoolDataWithPoolId,
@@ -395,9 +406,17 @@ export type EventParserMethods = {
   };
   tokens: {
     parseTransferParams: (event: SqdEvent) => TokensTransferEventParams;
+    parseDepositedParams: (event: SqdEvent) => TokensDepositedEventParams;
+    parseWithdrawnParams: (event: SqdEvent) => TokensWithdrawnEventParams;
+    parseReservedParams: (event: SqdEvent) => TokensReservedEventParams;
+    parseUnreservedParams: (event: SqdEvent) => TokensUnreservedEventParams;
   };
   balances: {
     parseTransferParams: (event: SqdEvent) => BalancesTransferEventParams;
+    parseDepositParams: (event: SqdEvent) => BalancesDepositEventParams;
+    parseWithdrawParams: (event: SqdEvent) => BalancesWithdrawEventParams;
+    parseReservedParams: (event: SqdEvent) => BalancesReservedEventParams;
+    parseUnreservedParams: (event: SqdEvent) => BalancesUnreservedEventParams;
   };
   currencies: {
     parseTransferredParams: (
@@ -486,6 +505,9 @@ export type StorageParserMethods = {
     getTokenBalancesMany: (
       args: GetTokenBalancesManyInput
     ) => Promise<TokenAccountBalancesWithAccountId[]>;
+    getTokenBalancesManyStorageCall: (
+      args: GetTokenBalancesManyInput
+    ) => Promise<TokenAccountBalancesWithAccountId[]>;
   };
   assetRegistry: {
     getAsset: (
@@ -537,6 +559,9 @@ export type StorageParserMethods = {
     getPoolAssetStorageData: (
       args: GetPoolAssetInfoInput
     ) => Promise<StablepoolAssetState | null>;
+    getAllPoolsAssetsStorageData: (
+      args: GetDataAtBlockInput
+    ) => Promise<StablepoolAssetStatesWithId[] | null>;
   };
   omnipool: {
     getConstants: (args: GetConstantsInput) => OmnipoolConstants;
@@ -555,6 +580,9 @@ export type StorageParserMethods = {
     getOmnipoolAssetData: (
       args: OmnipoolGetAssetDataInput
     ) => Promise<OmnipoolAssetData | null>;
+    getOmnipoolAllAssetsData: (
+      args: GetDataAtBlockInput
+    ) => Promise<OmnipoolAssetDataWithId[] | null>;
     getPoolAssetInfo: (
       args: GetPoolAssetInfoInput
     ) => Promise<AccountData | null>;
@@ -622,6 +650,9 @@ export type StorageParserMethods = {
     getDcaSchedule: (
       args: DcaGetScheduleInput
     ) => Promise<DcaScheduleData | null>;
+    getDcaSchedulesMany: (
+      args: DcaGetSchedulesManyInput
+    ) => Promise<DcaScheduleData[] | null>;
   };
   otc: {
     getOtcOrder: (args: OtcGetOrderInput) => Promise<OtcOrderData | null>;

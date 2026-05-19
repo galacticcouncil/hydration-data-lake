@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "orca-local": {
+      "command": "npx",
+      "args": ["-y", "@hovecapital/read-only-postgres-mcp-server"],
+      "env": {
+        "DB_HOST": "localhost",
+        "DB_PORT": "23798",
+        "DB_DATABASE": "liquidity_pools_db",
+        "DB_USERNAME": "postgres",
+        "DB_PASSWORD": "postgres"
+      }
+    },
+    "orca-local-alt": {
+      "command": "npx",
+      "args": ["-y", "@hovecapital/read-only-postgres-mcp-server"],
+      "env": {
+        "DB_HOST": "localhost",
+        "DB_PORT": "23799",
+        "DB_DATABASE": "liquidity_pools_db",
+        "DB_USERNAME": "postgres",
+        "DB_PASSWORD": "postgres"
+      }
+    }
+  }
+}

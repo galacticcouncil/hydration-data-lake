@@ -2,7 +2,7 @@ import { BlockWithData, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { Asset, AssetType } from '../../model';
 import { constants } from 'ethers';
-import { MoneyMarketContractsManager } from '../../utils/evm/moneyMarketContractsManager';
+import { AaveMoneyMarketsRegistry } from '../../utils/evm/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
 import { getOrCreateAsset } from '../asset/asset';
 import { getOrCreateAccount } from '../accounts';
@@ -91,16 +91,17 @@ export async function handleMmAssetAccountBalancesPerBlock(
           (asset) => !!asset.evmAddress && asset.assetType === AssetType.Erc20 // TODO update to process all types of assets
         ),
         async (asset) => {
+          const result =
+            await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalance(
+              {
+                contractAddress: asset.evmAddress!,
+                accountAddress: account.boundEvmAddress!,
+                blockNumber: block.header.height,
+              }
+            );
           assetBalances.push({
             asset,
-            balance:
-              await MoneyMarketContractsManager.getInstance().getAccountTokenBalance(
-                {
-                  contractAddress: asset.evmAddress!,
-                  accountAddress: account.boundEvmAddress!,
-                  blockNumber: block.header.height,
-                }
-              ),
+            balance: result?.value ?? null,
           });
         },
         { concurrency: appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY }
@@ -339,7 +340,7 @@ export async function handleMmAssetAccountBalancesPerBlock(
 //         let assetInId = assetBalance.asset.id;
 //
 //         if (
-//           assetBalance.asset.resourceType === ResourceType.Debt &&
+//           assetBalance.asset.resourceType === AssetResourceType.Debt &&
 //           assetBalance.asset.underlyingAsset
 //         ) {
 //           let assetFull: Asset | undefined = assetBalance.asset;
@@ -375,7 +376,7 @@ export async function handleMmAssetAccountBalancesPerBlock(
 //             })
 //             : '0';
 //
-//         if (assetBalance.asset.resourceType === ResourceType.Debt) {
+//         if (assetBalance.asset.resourceType === AssetResourceType.Debt) {
 //           accountTotalBalanceHistData.totalTransferableNorm = BigNumber(
 //             accountTotalBalanceHistData.totalTransferableNorm
 //           )

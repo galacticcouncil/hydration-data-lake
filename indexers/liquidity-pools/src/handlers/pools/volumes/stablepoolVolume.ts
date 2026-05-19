@@ -17,6 +17,7 @@ import {
   getPoolAssetLastVolumeFromCache,
   getPoolPreviousVolumeFromCache,
 } from './index';
+import { PoolVolumesCacheManager } from './poolVolumesCacheManager';
 
 // TODO improve conditional usage with poolOperation and liquidityAction
 export async function handleStablepoolVolumeUpdates({
@@ -80,6 +81,10 @@ export async function handleStablepoolVolumeUpdates({
       currentAssetVolume ||
       (getPoolAssetLastVolumeFromCache(
         stablepoolAssetVolumes,
+        `${pool.id}-${asset.id}`
+      ) as StableswapAssetVolumeHistoricalData | undefined) ||
+      (getPoolAssetLastVolumeFromCache(
+        PoolVolumesCacheManager.getInstance().stablswapAssetVolumesCache,
         `${pool.id}-${asset.id}`
       ) as StableswapAssetVolumeHistoricalData | undefined) ||
       (await getOldStablepoolAssetVolume({

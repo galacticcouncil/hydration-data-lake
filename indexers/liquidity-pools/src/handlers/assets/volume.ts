@@ -1,6 +1,6 @@
 import { LessThan } from 'typeorm';
 
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { AssetVolumeHistoricalData } from '../../model';
@@ -204,17 +204,17 @@ export async function processAssetNormalizedVolumes({
       assetDecimals: asset.decimals,
     });
 
-    currentAssetVolHistData.totalVolumeInNorm = BigNumber(
-      previousAssetVolume?.totalVolumeInNorm ?? '0'
-    )
-      .plus(currentAssetVolHistData.volumeInNorm)
-      .toFixed();
+    currentAssetVolHistData.totalVolumeInNorm = toFixedTrimmed(
+      BigNumber(previousAssetVolume?.totalVolumeInNorm ?? '0').plus(
+        currentAssetVolHistData.volumeInNorm
+      )
+    );
 
-    currentAssetVolHistData.totalVolumeOutNorm = BigNumber(
-      previousAssetVolume?.totalVolumeOutNorm ?? '0'
-    )
-      .plus(currentAssetVolHistData.volumeOutNorm)
-      .toFixed();
+    currentAssetVolHistData.totalVolumeOutNorm = toFixedTrimmed(
+      BigNumber(previousAssetVolume?.totalVolumeOutNorm ?? '0').plus(
+        currentAssetVolHistData.volumeOutNorm
+      )
+    );
 
     ctx.batchState.state.assetVolumes.set(
       currentAssetVolHistData.id,
@@ -335,6 +335,9 @@ export async function getOldAssetVolume({
         paraBlockHeight: 'DESC',
       },
     },
-    { className: 'XykpoolVolumeHistoricalData' }
+    {
+      className: 'AssetVolumeHistoricalData',
+      originCallFn: 'getOldAssetVolume',
+    }
   );
 }

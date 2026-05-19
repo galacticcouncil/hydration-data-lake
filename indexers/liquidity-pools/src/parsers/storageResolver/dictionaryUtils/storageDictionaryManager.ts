@@ -44,6 +44,7 @@ import {
   LbpPoolData,
   MmAggregatorDictionaryData,
   OmnipoolAssetData,
+  OmnipoolAssetDataWithId,
   OmnipoolAssetTradability,
   OmnipoolData,
   OmnipoolGetAssetDataInput,
@@ -81,8 +82,12 @@ import {
 import { getStorageDictionaryItemsListByBlockNumber } from './helpers/common';
 import { MinifiedDataStructureManager } from './helpers/minifiedDataStructureManager';
 import { BatchStorageStateSectionCollection } from './helpers/batchStorageStateSectionCollection';
-import { AccountMmPositionDataContractData } from '../../../utils/evmTools/types';
+import {
+  AccountMmPositionDataContractData,
+  WithMarketTag,
+} from '../../../utils/evmTools/aave/types';
 import { AppConfig } from '../../../appConfig';
+import { prefetchGenericPersistentData } from '../../../processorHelpers/prefetchHelpers';
 
 const appConfig = AppConfig.getInstance();
 
@@ -287,6 +292,7 @@ export class StorageDictionaryManager extends QueriesHelper {
   async fetchBatchStorageStateAllPallets(args: {
     blockNumberFrom: number;
     blockNumberTo: number;
+    ctx: SqdProcessorContext<Store>;
   }) {
     const fetchBlockCompressedDataPaginated = async ({
       pageSize,
@@ -306,18 +312,24 @@ export class StorageDictionaryManager extends QueriesHelper {
         ],
       };
 
-      const resp = await this.dictionaryGqlRequest<
-        GetBlockCompressedDataQuery,
-        GetBlockCompressedDataQueryVariables
-      >({
-        query: GetBlockCompressedData,
-        variables: {
-          filter,
-          orderBy: BlockCompressedDataOrderBy.ParaBlockHeightAsc,
-          first: pageSize,
-          offset,
-        },
-        dictName: topic,
+      const resp = await args.ctx.extLogger.measure({
+        fn: () =>
+          this.dictionaryGqlRequest<
+            GetBlockCompressedDataQuery,
+            GetBlockCompressedDataQueryVariables
+          >({
+            query: GetBlockCompressedData,
+            variables: {
+              filter,
+              orderBy: BlockCompressedDataOrderBy.ParaBlockHeightAsc,
+              first: pageSize,
+              offset,
+            },
+            dictName: topic,
+          }),
+        name: `StorageDictionaryManager_fetchDictionary_${topic}`,
+        actionType: 'other',
+        meta: { paraBlockHeight: args.ctx.blocks[0].header.height },
       });
 
       return {
@@ -577,9 +589,7 @@ export class StorageDictionaryManager extends QueriesHelper {
       fn: () => Promise<PalletDictionaryCollectedData[]>,
       fnName: string
     ): Promise<PalletDictionaryCollectedData[]> => {
-      // console.time(`:: >>> Dict. API call [${fnName}]`);
       const resp = await fn();
-      // console.timeEnd(`:: >>> Dict. API call [${fnName}]`);
       const fetchedResults = [];
       for (const respItem of resp) {
         fetchedResults.push(`${respItem.pallet}: ${respItem.data.length}`);
@@ -983,16 +993,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: OmnipoolGetAssetDataInput): OmnipoolAssetData | null {
-    // const node = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL).get(
-    //   `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
-    // );
-    //
-    // if (!node) return null;
-    // const asset = node.omnipoolAssetDataByPoolId.nodes.find(
-    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
-    // );
-    // if (!asset) return null;
-
     const asset = this.getBatchStorageStatePart(ProcessingTopic.OMNIPOOL)
       .getAssetsByParentId(
         `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
@@ -1014,6 +1014,38 @@ export class StorageDictionaryManager extends QueriesHelper {
       cap: BigInt(assetState.cap ?? 0),
       tradable: { bits: assetState.tradable?.bits ?? 0 },
     };
+  }
+
+  getOmnipoolAllAssetsState({
+    block,
+  }: GetDataAtBlockInput): OmnipoolAssetDataWithId[] | null {
+    const assetNodes = this.getBatchStorageStatePart(
+      ProcessingTopic.OMNIPOOL
+    ).getAssetsByParentId(
+      `${this.batchCtx.appConfig.OMNIPOOL_ADDRESS}-${block.height}`
+    );
+
+    if (!assetNodes || assetNodes.size === 0) return null;
+
+    const decoratedResult: OmnipoolAssetDataWithId[] = [];
+
+    for (const [assetId, assetNode] of assetNodes.entries()) {
+      const assetState =
+        MinifiedDataStructureManager.encodeStruct<MinifiedDataStructureTypeName.OmnipoolAssetState>(
+          assetNode.assetState
+        );
+      decoratedResult.push({
+        assetId,
+        data: {
+          hubReserve: BigInt(assetState.hubReserve ?? 0),
+          shares: BigInt(assetState.shares ?? 0),
+          protocolShares: BigInt(assetState.protocolShares ?? 0),
+          cap: BigInt(assetState.cap ?? 0),
+          tradable: { bits: assetState.tradable?.bits ?? 0 },
+        },
+      });
+    }
+    return decoratedResult;
   }
 
   getXykpoolData({
@@ -1055,15 +1087,6 @@ export class StorageDictionaryManager extends QueriesHelper {
   getXykpoolShareTokenPairsAll({
     block,
   }: XykGetPoolShareTokenPairsManyInput): XykPoolShareTokenPair[] | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(ProcessingTopic.XYK).entries(),
-    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
-
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.XYK>({
-    //     blockNumber: block.height,
-    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.XYK),
-    //   });
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.XYK
     ).getEntitiesByBlockNumber(block.height);
@@ -1100,16 +1123,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    // const node = this.getBatchStorageStatePart(ProcessingTopic.XYK).get(
-    //   `${poolAddress}-${block.height}`
-    // );
-    //
-    // if (!node) return null;
-    // const asset = node.xykpoolAssetsDataByPoolId.nodes.find(
-    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
-    // );
-    // if (!asset) return null;
-
     const asset = this.getBatchStorageStatePart(ProcessingTopic.XYK)
       .getAssetsByParentId(`${poolAddress}-${block.height}`)
       ?.get(assetId);
@@ -1131,6 +1144,16 @@ export class StorageDictionaryManager extends QueriesHelper {
       feeFrozen: BigInt(balances.feeFrozen ?? 0),
       flags: BigInt(balances.flags ?? 0),
     };
+  }
+
+  isXykPoolAssetInfoAvailable({
+    poolAddress,
+    assetId,
+    block,
+  }: GetPoolAssetInfoInput): boolean {
+    return !!this.getBatchStorageStatePart(ProcessingTopic.XYK)
+      .getAssetsByParentId(`${poolAddress}-${block.height}`)
+      ?.has(assetId);
   }
 
   getLbpPoolData({
@@ -1178,16 +1201,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     assetId,
     block,
   }: GetPoolAssetInfoInput): AccountData | null {
-    // const node = this.getBatchStorageStatePart(ProcessingTopic.LBP).get(
-    //   `${poolAddress}-${block.height}`
-    // );
-    //
-    // if (!node) return null;
-    // const asset = node.lbppoolAssetsDataByPoolId.nodes.find(
-    //   (asset) => asset && asset.assetId.toString() === assetId.toString()
-    // );
-    // if (!asset) return null;
-
     const asset = this.getBatchStorageStatePart(ProcessingTopic.LBP)
       .getAssetsByParentId(`${poolAddress}-${block.height}`)
       ?.get(assetId);
@@ -1215,68 +1228,26 @@ export class StorageDictionaryManager extends QueriesHelper {
   }: AaveTradeExecutorPoolsInput):
     | AaveTradeExecutorPoolDataWithPoolId[]
     | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(ProcessingTopic.AAVE).entries(),
-    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
-
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.AAVE>({
-    //     blockNumber: block.height,
-    //     fullData: this.getBatchStorageStatePart(ProcessingTopic.AAVE),
-    //   });
-    //
-    // if (nodes.length === 0) return null;
-
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.AAVE
     ).getEntitiesByBlockNumber(block.height);
 
     if (!nodes || nodes.size === 0) return null;
 
-    return (
-      Array.from(nodes)
-        // .filter(
-        //   ([key, data]) =>
-        //     data.reserveAssetId !== undefined &&
-        //     data.reserveAssetId !== null &&
-        //     data.aTokenId !== undefined &&
-        //     data.aTokenId !== null
-        // )
-        .map(([key, data]) => ({
-          poolId: key,
-          data: {
-            reserve: +data.reserveAssetId!,
-            aToken: +data.aTokenId!,
-            liquidityIn: BigInt(data.liquidityIn),
-            liquidityOut: BigInt(data.liquidityOut),
-          },
-        }))
-    );
+    return Array.from(nodes).map(([key, data]) => ({
+      poolId: key,
+      data: {
+        reserve: +data.reserveAssetId!,
+        aToken: +data.aTokenId!,
+        liquidityIn: BigInt(data.liquidityIn),
+        liquidityOut: BigInt(data.liquidityOut),
+      },
+    }));
   }
 
   getAssetDynamicFeesAll({
     block,
   }: GetAssetsDynamicFeesAllInput): AssetDynamicFeeData[] | null {
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(
-    //     ProcessingTopic.ASSET_HIST_DATA
-    //   ).entries(),
-    // ].filter(([key, data]) => key.split('-')[1] === block.height.toString());
-    //
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
-    //     {
-    //       blockNumber: block.height,
-    //       fullData: this.getBatchStorageStatePart(
-    //         ProcessingTopic.ASSET_HIST_DATA
-    //       ),
-    //       additionalFilter: ([key, data]) =>
-    //         data.assetId !== undefined && data.assetId !== null,
-    //     }
-    //   );
-    //
-    // if (nodes.length === 0) return null;
-
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.ASSET_HIST_DATA
     ).getEntitiesByBlockNumber(block.height);
@@ -1343,29 +1314,6 @@ export class StorageDictionaryManager extends QueriesHelper {
     block,
   }: TokensGetTokensTotalIssuanceInput): TokenTotalIssuance[] | null {
     const idsSet = new Set(tokenIds.map((id) => `${id}`));
-
-    // const nodes = [
-    //   ...this.getBatchStorageStatePart(
-    //     ProcessingTopic.ASSET_HIST_DATA
-    //   ).entries(),
-    // ].filter(
-    //   ([key, data]) =>
-    //     key.split('-')[1] === block.height.toString() &&
-    //     idsSet.has(key.split('-')[0])
-    // );
-
-    // const nodes =
-    //   getStorageDictionaryItemsListByBlockNumber<ProcessingTopic.ASSET_HIST_DATA>(
-    //     {
-    //       blockNumber: block.height,
-    //       fullData: this.getBatchStorageStatePart(
-    //         ProcessingTopic.ASSET_HIST_DATA
-    //       ),
-    //       additionalFilter: ([key, data]) => idsSet.has(key.split('-')[0]),
-    //     }
-    //   );
-    //
-    // if (nodes.length === 0) return null;
 
     const nodes = this.getBatchStorageStatePart(
       ProcessingTopic.ASSET_HIST_DATA
@@ -1538,15 +1486,20 @@ export class StorageDictionaryManager extends QueriesHelper {
 
   getAccountMmPositionData({
     accountId,
+    mmPoolAddresses = [],
     block,
-  }: GetAccountMmPositionDataInput): AccountMmPositionDataContractData | null {
-    const node = this.getBatchStorageStatePart(
-      ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA
-    ).getEntityById(`${accountId}-${block.height}`);
+  }: GetAccountMmPositionDataInput):
+    | WithMarketTag<AccountMmPositionDataContractData>[]
+    | null {
+    const result: WithMarketTag<AccountMmPositionDataContractData>[] = [];
 
-    return !node
-      ? null
-      : ({
+    for (const pool of mmPoolAddresses) {
+      const node = this.getBatchStorageStatePart(
+        ProcessingTopic.ACCOUNT_MM_POSITION_HIST_DATA
+      ).getEntityById(`${accountId}-${pool}-${block.height}`);
+
+      if (node)
+        result.push({
           totalCollateralBase: node.totalCollateralBase,
           totalDebtBase: node.totalDebtBase,
           availableBorrowsBase: node.availableBorrowsBase,
@@ -1554,6 +1507,10 @@ export class StorageDictionaryManager extends QueriesHelper {
           ltv: node.ltv,
           healthFactor: node.healthFactor,
           pool: node.poolAddress,
-        } as AccountMmPositionDataContractData);
+          poolImplementationProxyAddress: pool,
+        } as WithMarketTag<AccountMmPositionDataContractData>);
+    }
+
+    return result.length === mmPoolAddresses.length ? result : null;
   }
 }

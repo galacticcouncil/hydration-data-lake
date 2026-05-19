@@ -5,8 +5,20 @@ import {
   LbpPoolUpdatedData,
   LbpSellExecutedData,
 } from '../lbp';
-import { TokensTransferData } from '../tokens';
-import { BalancesTransferData } from '../balances';
+import {
+  TokensTransferData,
+  TokensDepositedData,
+  TokensWithdrawnData,
+  TokensReservedData,
+  TokensUnreservedData,
+} from '../tokens';
+import {
+  BalancesTransferData,
+  BalancesDepositData,
+  BalancesWithdrawData,
+  BalancesReservedData,
+  BalancesUnreservedData,
+} from '../balances';
 import {
   XykBuyExecutedData,
   XykLiquidityAddedData,
@@ -202,14 +214,24 @@ type AssetRegistryEventData =
   | AssetRegistryUpdatedData
   | AssetRegistryLocationSetData;
 
-type BalancesEventData = BalancesTransferData;
+type BalancesEventData =
+  | BalancesTransferData
+  | BalancesDepositData
+  | BalancesWithdrawData
+  | BalancesReservedData
+  | BalancesUnreservedData;
 
 type BroadcastEventData =
   | BroadcastSwappedData
   | BroadcastSwapped2Data
   | BroadcastSwapped3Data;
 
-type TokensEventData = TokensTransferData;
+type TokensEventData =
+  | TokensTransferData
+  | TokensDepositedData
+  | TokensWithdrawnData
+  | TokensReservedData
+  | TokensUnreservedData;
 
 type EvmEventData = EvmLogData;
 

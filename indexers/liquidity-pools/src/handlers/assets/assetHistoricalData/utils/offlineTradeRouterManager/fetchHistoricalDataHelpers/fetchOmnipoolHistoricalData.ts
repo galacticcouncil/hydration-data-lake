@@ -73,7 +73,10 @@ export async function fetchOmnipoolHistoricalData({
             },
           },
         },
-        { className: 'OmnipoolHistoricalData' }
+        {
+          className: 'OmnipoolHistoricalData',
+          originCallFn: 'fetchOmnipoolHistoricalData',
+        }
       )
     : null;
 

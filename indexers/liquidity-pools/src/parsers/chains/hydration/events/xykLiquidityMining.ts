@@ -1,15 +1,6 @@
 import { events } from '../typegenTypes';
 import { SqdEvent } from '../../../../processor';
-import {
-  XykBuyExecutedEventParams,
-  XykLiquidityAddedEventParams,
-  XykLiquidityRemovedEventParams,
-  XykPoolCreatedEventParams,
-  XykPoolDestroyedEventParams,
-  XykSellExecutedEventParams,
-} from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
-import { XykLiquidityAddedData } from '../../../batchBlocksParser/types';
 import {
   XykLMDepositDestroyedEventParams,
   XykLMGlobalFarmCreatedEventParams,

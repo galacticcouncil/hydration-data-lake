@@ -1,6 +1,5 @@
 import {
   Client as GqlClient,
-  cacheExchange,
   fetchExchange,
   AnyVariables,
   DocumentInput,
@@ -8,8 +7,6 @@ import {
 } from '@urql/core';
 import { retryExchange } from '@urql/exchange-retry';
 import { ProcessingTopic } from './types';
-import { SqdProcessorContext } from '../../../processor';
-import { Store } from '@subsquid/typeorm-store';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { pipe, tap, map } from 'wonka';
 import { AppConfig } from '../../../appConfig';
@@ -33,19 +30,6 @@ const responsePreprocessingExchange: Exchange =
 
         return result;
       })
-
-      // tap((result) => {
-      //   if ((result.operation.context.fetchOptions as RequestInit)?.headers?['dictionary-response-compression'] === 'full') {
-      //     // TODO do decompression of response here
-      //   }
-      //
-      //   if (result.error) {
-      //     console.error(
-      //       'Storage dictionary GraphQL Error:',
-      //       result.error.message
-      //     );
-      //   }
-      // })
     );
   };
 
@@ -118,7 +102,7 @@ export class QueriesHelper {
     return client;
   }
 
-  dictionaryGqlRequest<
+  async dictionaryGqlRequest<
     Data = any,
     Variables extends AnyVariables = AnyVariables,
   >({

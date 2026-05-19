@@ -1,13 +1,12 @@
 import { Block, ProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
-import { MoneyMarketContractsManager } from '../../utils/evm/moneyMarketContractsManager';
+import { AaveMoneyMarketsRegistry } from '../../utils/evm/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 import { AccountMmPositionHistoricalData } from '../../model';
 import {
   getOrCreateAccount,
   getOrCreateAccountByBoundEvmAddress,
 } from './index';
-import { constants, ethers } from 'ethers';
-import parsers from '../../parsers';
+import { constants } from 'ethers';
 import pMap from 'p-map';
 
 export class AccountMoneyMarketPositionDataManager {
@@ -80,13 +79,13 @@ export class AccountMoneyMarketPositionDataManager {
   }) {
     if (accountEvmAddress === constants.AddressZero) return;
 
-    const contractData =
-      await MoneyMarketContractsManager.getInstance().getAccountMmPositionData({
+    const positionsData =
+      await AaveMoneyMarketsRegistry.getInstance().getAccountMmPositionData({
         accountAddress: accountEvmAddress,
         blockNumber: blockHeader.height,
       });
 
-    if (!contractData) return;
+    if (!positionsData || positionsData.length === 0) return;
 
     const account = await getOrCreateAccountByBoundEvmAddress({
       ctx,
@@ -99,37 +98,42 @@ export class AccountMoneyMarketPositionDataManager {
       return;
     }
 
-    const {
-      totalCollateralBase,
-      totalDebtBase,
-      availableBorrowsBase,
-      currentLiquidationThreshold,
-      ltv,
-      healthFactor,
-      pool: poolAddress,
-    } = contractData;
+    for (const positionData of positionsData) {
+      const {
+        totalCollateralBase,
+        totalDebtBase,
+        availableBorrowsBase,
+        currentLiquidationThreshold,
+        ltv,
+        healthFactor,
+        pool: poolAddress,
+      } = positionData;
 
-    const newPositionHistData = new AccountMmPositionHistoricalData({
-      id: `${account.id}-${blockHeader.height}`,
-      accountId: account.id,
-      accountBoundEvmAddress: account.boundEvmAddress,
+      const poolAddressDecorated = poolAddress.toLowerCase();
 
-      totalCollateralBase,
-      totalDebtBase,
-      availableBorrowsBase,
-      currentLiquidationThreshold,
-      ltv,
-      healthFactor: this.maxHealthFactor !== healthFactor ? healthFactor : null,
+      const newPositionHistData = new AccountMmPositionHistoricalData({
+        id: `${account.id}-${poolAddressDecorated}-${blockHeader.height}`,
+        accountId: account.id,
+        accountBoundEvmAddress: account.boundEvmAddress,
 
-      poolAddress,
+        totalCollateralBase,
+        totalDebtBase,
+        availableBorrowsBase,
+        currentLiquidationThreshold,
+        ltv,
+        healthFactor:
+          this.maxHealthFactor !== healthFactor ? healthFactor : null,
 
-      paraBlockHeight: blockHeader.height,
-    });
+        poolAddress: poolAddressDecorated,
 
-    ctx.batchState.state.accMmPositionHistData.set(
-      newPositionHistData.id,
-      newPositionHistData
-    );
+        paraBlockHeight: blockHeader.height,
+      });
+
+      ctx.batchState.state.accMmPositionHistData.set(
+        newPositionHistData.id,
+        newPositionHistData
+      );
+    }
   }
 
   async handleAllAccountsMmPositionDataUpdate({
@@ -139,7 +143,6 @@ export class AccountMoneyMarketPositionDataManager {
     blockHeader: Block;
     ctx: ProcessorContext<Store>;
   }) {
-
     await pMap(
       Array.from(ctx.batchState.state.evmAccountExtensions.entries()) || [],
       async ([h160Address, extension]) => {
@@ -163,104 +166,3 @@ export class AccountMoneyMarketPositionDataManager {
     );
   }
 }
-
-// const maxHealthFactor =
-//   '115792089237316195423570985008687907853269984665640564039457.584007913129639935';
-
-// export async function handleAccountMmPositionDataUpdate({
-//   accountEvmAddress,
-//   blockHeader,
-//   ctx,
-// }: {
-//   accountEvmAddress: string;
-//   blockHeader: Block;
-//   ctx: ProcessorContext<Store>;
-// }) {
-//   if (accountEvmAddress === constants.AddressZero) return;
-//
-//   const contractData =
-//     await MoneyMarketContractsManager.getInstance().getAccountMmPositionData({
-//       accountAddress: accountEvmAddress,
-//       blockNumber: blockHeader.height,
-//     });
-//
-//   if (!contractData) return;
-//
-//   const account = await getOrCreateAccountByBoundEvmAddress({
-//     ctx,
-//     evmAddress: accountEvmAddress,
-//     blockHeader: blockHeader,
-//   });
-//
-//   if (!account) {
-//     console.log(`Account not found for EVM address: ${accountEvmAddress} `);
-//     return;
-//   }
-//
-//   const {
-//     totalCollateralBase,
-//     totalDebtBase,
-//     availableBorrowsBase,
-//     currentLiquidationThreshold,
-//     ltv,
-//     healthFactor,
-//     pool: poolAddress,
-//   } = contractData;
-//
-//   const newPositionHistData = new AccountMmPositionHistoricalData({
-//     id: `${account.id}-${blockHeader.height}`,
-//     accountId: account.id,
-//     accountBoundEvmAddress: account.boundEvmAddress,
-//
-//     totalCollateralBase,
-//     totalDebtBase,
-//     availableBorrowsBase,
-//     currentLiquidationThreshold,
-//     ltv,
-//     healthFactor: maxHealthFactor !== healthFactor ? healthFactor : null,
-//
-//     poolAddress,
-//
-//     paraBlockHeight: blockHeader.height,
-//   });
-//
-//   ctx.batchState.state.accMmPositionHistData.set(
-//     newPositionHistData.id,
-//     newPositionHistData
-//   );
-// }
-
-// export async function handleAllAccountsMmPositionDataUpdate({
-//   blockHeader,
-//   ctx,
-// }: {
-//   blockHeader: Block;
-//   ctx: ProcessorContext<Store>;
-// }) {
-//   const allEvmAccounts =
-//     await parsers.storage.evmAccounts.getAllAccountsExtensions({
-//       block: blockHeader,
-//     });
-//
-//   await pMap(
-//     allEvmAccounts || [],
-//     async ({ h160Address, extension }) => {
-//       const accId = `${h160Address}${extension.replace(/^0x/, '')}`;
-//       await getOrCreateAccount({
-//         id: accId,
-//         ctx,
-//         boundEvmAddress: h160Address,
-//         ensureBoundEvmAddress: true,
-//       });
-//
-//       await handleAccountMmPositionDataUpdate({
-//         ctx,
-//         blockHeader,
-//         accountEvmAddress: h160Address,
-//       });
-//     },
-//     {
-//       concurrency: ctx.appConfig.concurrency.EVM_CONTRACT_CALL_CONCURRENCY,
-//     }
-//   );
-// }

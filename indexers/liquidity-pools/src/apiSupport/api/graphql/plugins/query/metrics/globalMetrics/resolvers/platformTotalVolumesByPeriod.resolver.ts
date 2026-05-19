@@ -11,14 +11,17 @@ import {
   PlatformTotalVolumesByPeriodResponse,
 } from './types';
 import { CacheManager } from '../../../../../../../utils/cacheManager';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../../../../../../utils/bignumber';
 import crypto from 'node:crypto';
 import { getStartStopBlocksFromInput } from '../../../../../../../utils/aggregationUtils';
 import { handleOmnipoolAssetHistoricalVolumesByPeriodAggregation } from '../../../omnipool/omnipoolVolume/utils';
 import { AppConfig } from '../../../../../../../../appConfig';
 import { handleStableswapHistoricalVolumesByPeriodAggregation } from '../../../stableswap/stableswapVolume/utils';
 import { handleXykPoolHistoricalVolumesByPeriodAggregation } from '../../../xykpool/xykPoolsVolume/utils';
-import { getAllXykpoolIds } from '../../../../../../../sql/xykpool/xykpool.sql';
+import {
+  getAllActiveXykpoolIds,
+  getAllXykpoolIds,
+} from '../../../../../../../sql/xykpool/xykpool.sql';
 
 const appConfig = AppConfig.getInstance();
 
@@ -80,7 +83,7 @@ export async function platformTotalVolumesByPeriodResolver(
   const allXykpoolIds = (
     await pgClient.query<{
       pool_id: string;
-    }>(getAllXykpoolIds)
+    }>(getAllActiveXykpoolIds)
   ).rows.map((pool) => pool.pool_id);
 
   const allXykpoolVols =

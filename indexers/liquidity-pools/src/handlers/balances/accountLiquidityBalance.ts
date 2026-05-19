@@ -3,7 +3,6 @@ import { FindOptionsRelations } from 'typeorm';
 import { Store } from '@subsquid/typeorm-store';
 
 import {
-  Account,
   AccountAssetBalanceHistoricalData,
   AccountLiquidityBalanceHistoricalData,
   AccountLiquidityType,
@@ -14,6 +13,7 @@ import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrice
 import { calcPriceNormalized } from '../../utils/helpers';
 import { getOrCreateAsset } from '../assets/asset';
 import { getOmnipoolLiquidityPositionAmountOut } from '../liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
+import { EventName } from '../../parsers/types/events';
 
 export async function getOrCreateAccountLiquidityBalanceHistoricalData({
   accountId,
@@ -210,4 +210,55 @@ export async function getOrCreateAccountLiquidityBalanceWithAmounts({
     : '0';
 
   return balanceEntity;
+}
+
+export function getAccountsInvolvedToLiquidityProviding({
+  ctx,
+}: {
+  ctx: SqdProcessorContext<Store>;
+}) {
+  const accountsAccumulator: Map<number, Set<string>> = new Map();
+
+  const liquidityRelatedEventNames: Set<EventName> = new Set([
+    EventName.Omnipool_PositionCreated,
+    EventName.Omnipool_PositionUpdated,
+    EventName.Omnipool_PositionDestroyed,
+    EventName.OmnipoolLiquidityMining_SharesDeposited,
+    EventName.OmnipoolLiquidityMining_DepositDestroyed,
+    EventName.XYKLiquidityMining_SharesDeposited,
+    EventName.XYKLiquidityMining_DepositDestroyed,
+    EventName.Uniques_Transferred,
+  ]);
+  const addAccountToAccumulator = (
+    blockNumber: number,
+    accountAddress: string
+  ) => {
+    if (!accountsAccumulator.has(blockNumber)) {
+      accountsAccumulator.set(blockNumber, new Set());
+    }
+
+    accountsAccumulator.get(blockNumber)!.add(accountAddress);
+  };
+
+  for (const block of ctx.blocks) {
+    eventsLoop: for (const event of block.events) {
+      if (!liquidityRelatedEventNames.has(event.name as EventName))
+        continue eventsLoop;
+
+      if (event.args.owner) {
+        addAccountToAccumulator(block.header.height, event.args.owner);
+      }
+      if (event.args.who) {
+        addAccountToAccumulator(block.header.height, event.args.who);
+      }
+      if (event.args.from) {
+        addAccountToAccumulator(block.header.height, event.args.from);
+      }
+      if (event.args.to) {
+        addAccountToAccumulator(block.header.height, event.args.to);
+      }
+    }
+  }
+
+  return accountsAccumulator;
 }

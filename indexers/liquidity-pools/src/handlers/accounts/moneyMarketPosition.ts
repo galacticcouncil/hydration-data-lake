@@ -6,14 +6,29 @@ import { Store } from '@subsquid/typeorm-store';
 import { AccountMmPositionHistoricalData, EvmEventName } from '../../model';
 import { BatchBlocksParsedDataManager } from '../../parsers/batchBlocksParser';
 import { StorageResolver } from '../../parsers/storageResolver';
-import { EventName } from '../../parsers/types/events';
+import {
+  EventName,
+  EvmAccountsBoundEventParams,
+} from '../../parsers/types/events';
 import { EvmAccountsAccountExtensionWithEvmAddress } from '../../parsers/types/storage';
 import { SqdBlock, SqdProcessorContext } from '../../processor';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import {
   getOrCreateAccount,
   getOrCreateAccountByBoundEvmAddress,
 } from './index';
+import parsers from '../../parsers';
+import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
+import { getPreviousAssetAccountBalancesForListOfAccountsSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
+import { RawAccountAssetBalanceHistoricalData } from '../balances/accountTotalBalance';
+import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
+import { getAccountsWithMmAssetBalancesSql } from '../../utils/pgConnectionManagers/queries/getAccountsWithMmAssetBalances.sql';
+import { getAllMoneyMarketAssets } from '../assets/asset';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
+import {
+  AccountMmPositionDataContractData,
+  WithMarketTag,
+} from '../../utils/evmTools/aave/types';
 
 const maxHealthFactor =
   '115792089237316195423570985008687907853269984665640564039457.584007913129639935';
@@ -27,11 +42,19 @@ export async function handleAccountMmPositionData(
     { blockHeader: SqdBlock; evmAddresses: Set<string> }
   > = new Map();
 
+  const blocksWithOracleUpdate: Map<number, SqdBlock> = new Map();
+
   for (const event of Array.from(
     parsedEvents.getSectionByEventName(EventName.EVM_Log).values()
   )) {
-    if (event.eventData.params?.eventName === EvmEventName.OracleUpdate)
+    if (event.eventData.params?.eventName === EvmEventName.OracleUpdate) {
+      blocksWithOracleUpdate.set(
+        event.eventData.metadata.blockHeader.height,
+        event.eventData.metadata.blockHeader
+      );
+
       continue;
+    }
 
     if (
       !accountsToProcessPerBlock.has(
@@ -70,6 +93,9 @@ export async function handleAccountMmPositionData(
     );
   }
 
+  /**
+   * Process accounts explicitly involved in EVM actions
+   */
   for (const blockSlotData of accountsToProcessPerBlock.values()) {
     await pMap(
       Array.from(blockSlotData.evmAddresses.values()),
@@ -82,6 +108,52 @@ export async function handleAccountMmPositionData(
       },
       { concurrency: 50 }
     );
+  }
+
+  /**
+   * Process accounts on Oracle update
+   */
+
+  if (blocksWithOracleUpdate.size === 0) return;
+
+  // const latestBlockWithOracleUpdate = Array.from(
+  //   blocksWithOracleUpdate.keys()
+  // ).sort((a, b) => b - a)[0];
+
+  let allEvmAccounts =
+    await AccountEvmExtensionsCacheManager.getInstance().getAllBoundedAccountsList(
+      ctx
+    );
+
+  const allExistingMmAssets = await getAllMoneyMarketAssets(ctx);
+
+  try {
+    const resp = (
+      await CommonPgPool.getInstance().query<{
+        account_id: string;
+      }>(getAccountsWithMmAssetBalancesSql, [
+        allEvmAccounts.map((a) => a.accountAddress),
+        allExistingMmAssets.map((a) => a.id),
+      ])
+    ).rows;
+
+    const responseSet = new Set(resp.map((r) => r.account_id));
+
+    allEvmAccounts = allEvmAccounts.filter((a) =>
+      responseSet.has(a.accountAddress)
+    );
+  } catch (e) {
+    console.log(e);
+  }
+
+  if (!allEvmAccounts) return;
+
+  for (const blockHeader of blocksWithOracleUpdate.values()) {
+    await handleAllAccountsMmPositionDataUpdate({
+      allEvmAccounts,
+      blockHeader,
+      ctx,
+    });
   }
 }
 
@@ -102,18 +174,29 @@ export async function handleAccountMmPositionDataOnMmEvent({
     blockHeader: blockHeader,
   });
 
-  const positionData =
+  let positionsData: WithMarketTag<AccountMmPositionDataContractData>[] | null =
     StorageResolver.getInstance().storageDictionaryManager?.getAccountMmPositionData(
-      { accountId: account.id, block: blockHeader }
-    ) ??
-    (await MoneyMarketContractsManager.getInstance().getAccountMmPositionDataWithLogs(
       {
-        accountAddress: accountEvmAddress,
-        blockNumber: blockHeader.height,
+        accountId: account.id,
+        block: blockHeader,
+        mmPoolAddresses: AaveMoneyMarketsRegistry.getInstance()
+          .getAllMarkets()
+          .map((market) => market.poolImplementationProxyAddress.toLowerCase()),
       }
-    ));
+    ) ?? null;
 
-  if (!positionData) {
+  if (!positionsData) {
+    const contractData =
+      await AaveMoneyMarketsRegistry.getInstance().getAccountMmPositionDataWithLogs(
+        {
+          accountAddress: accountEvmAddress,
+          blockNumber: blockHeader.height,
+        }
+      );
+    if (contractData) positionsData = contractData;
+  }
+
+  if (!positionsData || positionsData.length === 0) {
     // console.log(`No contract data for address ${accountEvmAddress}`);
     return;
   }
@@ -124,37 +207,39 @@ export async function handleAccountMmPositionDataOnMmEvent({
 
   if (!block) throw Error('Block not found');
 
-  const {
-    totalCollateralBase,
-    totalDebtBase,
-    availableBorrowsBase,
-    currentLiquidationThreshold,
-    ltv,
-    healthFactor,
-    pool: poolAddress,
-  } = positionData;
+  for (const positionData of positionsData) {
+    const {
+      totalCollateralBase,
+      totalDebtBase,
+      availableBorrowsBase,
+      currentLiquidationThreshold,
+      ltv,
+      healthFactor,
+      pool: poolAddress,
+    } = positionData;
 
-  const newPositionHistData = new AccountMmPositionHistoricalData({
-    id: `${account.id}-${blockHeader.height}`,
-    accountId: account.id,
-    accountBoundEvmAddress: account.boundEvmAddress,
+    const newPositionHistData = new AccountMmPositionHistoricalData({
+      id: `${account.id}-${poolAddress.toLowerCase()}-${blockHeader.height}`,
+      accountId: account.id,
+      accountBoundEvmAddress: account.boundEvmAddress,
 
-    totalCollateralBase,
-    totalDebtBase,
-    availableBorrowsBase,
-    currentLiquidationThreshold,
-    ltv,
-    healthFactor: maxHealthFactor !== healthFactor ? healthFactor : null,
+      totalCollateralBase,
+      totalDebtBase,
+      availableBorrowsBase,
+      currentLiquidationThreshold,
+      ltv,
+      healthFactor: maxHealthFactor !== healthFactor ? healthFactor : null,
 
-    poolAddress,
+      poolAddress: poolAddress.toLowerCase(),
 
-    paraBlockHeight: block.height,
-  });
+      paraBlockHeight: block.height,
+    });
 
-  ctx.batchState.state.accountMmPositionHistoricalData.set(
-    newPositionHistData.id,
-    newPositionHistData
-  );
+    ctx.batchState.state.accountMmPositionHistoricalData.set(
+      newPositionHistData.id,
+      newPositionHistData
+    );
+  }
 }
 
 export async function handleAllAccountsMmPositionDataUpdate({
@@ -162,24 +247,23 @@ export async function handleAllAccountsMmPositionDataUpdate({
   blockHeader,
   ctx,
 }: {
-  allEvmAccounts: EvmAccountsAccountExtensionWithEvmAddress[];
+  allEvmAccounts: EvmAccountsBoundEventParams[];
   blockHeader: SqdBlock;
   ctx: SqdProcessorContext<Store>;
 }) {
   await pMap(
     allEvmAccounts || [],
-    async ({ h160Address, extension }) => {
-      const accId = `${h160Address}${extension.replace(/^0x/, '')}`;
+    async ({ accountAddress, evmAddress }) => {
       await getOrCreateAccount({
-        id: accId,
+        id: accountAddress,
         ctx,
-        boundEvmAddress: h160Address,
+        boundEvmAddress: evmAddress,
       });
 
       await handleAccountMmPositionDataOnMmEvent({
         ctx,
         blockHeader,
-        accountEvmAddress: h160Address,
+        accountEvmAddress: evmAddress,
       });
     },
     {

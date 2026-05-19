@@ -9,16 +9,22 @@ export async function handleStablepools(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
-  if (!ctx.appConfig.PROCESS_STABLEPOOLS) return;
-
+  let isStableswapRelatedEventsExists = false;
   for (const eventData of getOrderedListByBlockNumber([
     ...parsedEvents
       .getSectionByEventName(EventName.Stableswap_PoolCreated)
       .values(),
   ])) {
     await stableswapCreated(ctx, eventData);
+    isStableswapRelatedEventsExists = true;
   }
 
-  await ctx.store.save([...ctx.batchState.state.stableswapPools.values()]);
-  await ctx.store.save([...ctx.batchState.state.stableswapAssets.values()]);
+  if (!isStableswapRelatedEventsExists) return;
+
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.stableswapPools.values())
+  );
+  await ctx.store.save(
+    Array.from(ctx.batchState.state.stableswapAssets.values())
+  );
 }

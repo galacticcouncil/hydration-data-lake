@@ -34,7 +34,7 @@ import { XykpoolsVolumeSubscriptionsPlugin } from './apiSupport/api/graphql/plug
 import restRouter from './apiSupport/api/rest/routes/rest.routes';
 import { runApiDbMigrations } from './apiSupport/apiMigrations/runApiDbMigrations';
 import { swaggerOptions } from './apiSupport/swagger';
-import { TimeSeriesApiSupportManager } from './utils/redisTimeSeriesSupport/timeSeriesApiSupportManager';
+import { TimeSeriesApiSupportManager } from './utils/redisSupport/redisTimeSeriesSupport/timeSeriesApiSupportManager';
 import { AppConfig } from './appConfig';
 import { getEnvPath } from './utils/helpers';
 import { NodeEnv } from './utils/types';

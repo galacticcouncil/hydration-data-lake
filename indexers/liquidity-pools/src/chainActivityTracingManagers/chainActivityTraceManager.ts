@@ -660,7 +660,10 @@ export class ChainActivityTraceManager {
         where: { id },
         relations,
       },
-      { className: 'ChainActivityTrace' }
+      {
+        className: 'ChainActivityTrace',
+        originCallFn: 'getChainActivityTrace',
+      }
     );
 
     if (!entity) return null;
@@ -744,7 +747,7 @@ export class ChainActivityTraceManager {
         },
         ...(relations ? { relations } : {}),
       },
-      { className: 'Block' }
+      { className: 'Block', originCallFn: 'prefetchBlockToCache' }
     );
 
     ctx.batchState.state.batchBlocks = new Map(

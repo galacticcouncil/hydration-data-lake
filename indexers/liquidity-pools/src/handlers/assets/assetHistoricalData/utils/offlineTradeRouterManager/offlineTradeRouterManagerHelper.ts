@@ -267,137 +267,6 @@ export class OfflineTradeRouterManagerHelper {
     await Promise.all(promises);
   }
 
-  // TODO should be reviewed and removed
-  // protected async prefetchAllHistoricalDataForBlock({
-  //   blockNumber,
-  //   ctx,
-  // }: {
-  //   blockNumber: number;
-  //   ctx: SqdProcessorContext<Store>;
-  // }) {
-  //   this.ensureHistDataStorage([blockNumber]);
-  //
-  //   await Promise.all([
-  //     this.fetchConstantsHistoricalDataForBlock({ ctx, blockNumber }),
-  //     this.fetchEmaOraclesHistoricalDataForBlock({ ctx, blockNumber }),
-  //     this.fetchAssetsHistoricalDataForBlock({ ctx, blockNumber }),
-  //     this.fetchLbpPoolsHistoricalDataForBlock({ ctx, blockNumber }),
-  //     this.fetchXykPoolsHistoricalDataForBlock({ ctx, blockNumber }),
-  //     this.fetchStableswapHistoricalDataForBlock({ ctx, blockNumber }),
-  //     this.fetchOmnipoolHistoricalDataForBlock({ ctx, blockNumber }),
-  //     this.fetchAavePoolsHistoricalDataForBlock({ ctx, blockNumber }),
-  //   ]);
-  // }
-
-  // protected async fetchConstantsHistoricalDataForBlock({
-  //   blockNumber,
-  //   ctx,
-  // }: {
-  //   blockNumber: number;
-  //   ctx: SqdProcessorContext<Store>;
-  // }) {
-  //   const histData = await fetchConstantsHistoricalData({ ctx, blockNumber });
-  //
-  //   if (!histData)
-  //     throw new Error(
-  //       `Missing constants historical data at block ${blockNumber}`
-  //     );
-  //
-  //   this.constantsHistData.set(blockNumber, histData);
-  // }
-  // protected async fetchAssetsHistoricalDataForBlock({
-  //   blockNumber,
-  //   ctx,
-  // }: {
-  //   blockNumber: number;
-  //   ctx: SqdProcessorContext<Store>;
-  // }) {
-  //   this.assetsHistData.set(
-  //     blockNumber,
-  //     await fetchAssetsHistoricalData({ ctx, blockNumber })
-  //   );
-  // }
-  //
-  // protected async fetchEmaOraclesHistoricalDataForBlock({
-  //   blockNumber,
-  //   ctx,
-  // }: {
-  //   blockNumber: number;
-  //   ctx: SqdProcessorContext<Store>;
-  // }) {
-  //   this.emaOraclesHistData.set(
-  //     blockNumber,
-  //     await fetchEmaOracleEntriesHistoricalData({ ctx, blockNumber })
-  //   );
-  // }
-  //
-  // protected async fetchLbpPoolsHistoricalDataForBlock({
-  //   blockNumber,
-  //   ctx,
-  // }: {
-  //   blockNumber: number;
-  //   ctx: SqdProcessorContext<Store>;
-  // }) {
-  //   this.lbppoolsHistData.set(
-  //     blockNumber,
-  //     await fetchLbpPoolsHistoricalData({ blockNumber, ctx })
-  //   );
-  // }
-  //
-  // protected async fetchXykPoolsHistoricalDataForBlock({
-  //   blockNumber,
-  //   ctx,
-  // }: {
-  //   blockNumber: number;
-  //   ctx: SqdProcessorContext<Store>;
-  // }) {
-  //   this.xykpoolsHistData.set(
-  //     blockNumber,
-  //     await fetchXykPoolsHistoricalData({ blockNumber, ctx })
-  //   );
-  // }
-  //
-  // protected async fetchAavePoolsHistoricalDataForBlock({
-  //   blockNumber,
-  //   ctx,
-  // }: {
-  //   blockNumber: number;
-  //   ctx: SqdProcessorContext<Store>;
-  // }) {
-  //   this.aavepoolsHistData.set(
-  //     blockNumber,
-  //     await fetchAavePoolsHistoricalData({ blockNumber, ctx })
-  //   );
-  // }
-  //
-  // protected async fetchStableswapHistoricalDataForBlock({
-  //   blockNumber,
-  //   ctx,
-  // }: {
-  //   blockNumber: number;
-  //   ctx: SqdProcessorContext<Store>;
-  // }) {
-  //   this.stableswapHistData.set(
-  //     blockNumber,
-  //     await fetchStableswapHistoricalData({ blockNumber, ctx })
-  //   );
-  // }
-  //
-  // protected async fetchOmnipoolHistoricalDataForBlock({
-  //   blockNumber,
-  //   ctx,
-  // }: {
-  //   blockNumber: number;
-  //   ctx: SqdProcessorContext<Store>;
-  // }) {
-  //   const historicalData = await fetchOmnipoolHistoricalData({
-  //     blockNumber,
-  //     ctx,
-  //   });
-  //   if (!historicalData) return;
-  //   this.omnipoolHistData.set(blockNumber, historicalData);
-  // }
-
   protected async fetchConstantsHistoricalDataForBlocksRange({
     blockFromNumber,
     blockToNumber,
@@ -549,7 +418,7 @@ export class OfflineTradeRouterManagerHelper {
           (await MmOracleManager.getInstance().getAggregatorMmOracleData({
             address,
             blockHeight,
-            ctx
+            ctx,
           }));
 
         if (oracleData)
@@ -1052,9 +921,6 @@ export class OfflineTradeRouterManagerHelper {
   }): IPersistentEmaOracleEntry[] {
     const entries: Map<string, IPersistentEmaOracleEntry> = new Map();
 
-    // for (const entry of [
-    //   ...(this.emaOraclesHistData.get(blockNumber) || new Map()).values(),
-    // ] as EmaOracleEntryHistoricalData[]) {
     for (const [key, entry] of (this.emaOraclesHistData.get(blockNumber) ||
       new Map()) as Map<string, EmaOracleEntryHistoricalData>) {
       entries.set(entry.id, {

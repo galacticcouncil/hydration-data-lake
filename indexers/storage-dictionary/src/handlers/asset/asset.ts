@@ -1,9 +1,9 @@
 import { Block, ProcessorContext } from '../../processor';
-import { Asset, AssetType, ResourceType } from '../../model';
+import { Asset, AssetType, AssetResourceType } from '../../model';
 import parsers from '../../parsers';
 import { AssetDetails } from '../../parsers/types/storage';
 import { getAssetEvmAddressByType } from './utils';
-import { MoneyMarketContractsManager } from '../../utils/evm/moneyMarketContractsManager';
+import { AaveMoneyMarketsRegistry } from '../../utils/evm/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 import { Store } from '@subsquid/typeorm-store';
 
 export async function getOrCreateAsset({
@@ -101,7 +101,7 @@ export async function getOrCreateAsset({
   const evmTokenContractData =
     storageData.assetType === AssetType.Erc20 &&
     (evmAddress || erc20AssetContractAddress)
-      ? await MoneyMarketContractsManager.getInstance().getTokenDetails(
+      ? await AaveMoneyMarketsRegistry.getInstance().getReserveDetails(
           evmAddress ?? erc20AssetContractAddress ?? ''
         )
       : null;
@@ -130,7 +130,7 @@ export async function getOrCreateAsset({
     assetType: storageData.assetType,
     resourceType: evmTokenContractData
       ? evmTokenContractData.resourceType
-      : ResourceType.Underlying,
+      : AssetResourceType.Underlying,
     symbol: getSymbol(),
     decimals: getDecimals(),
     xcmRateLimit: storageData.xcmRateLimit ?? null,

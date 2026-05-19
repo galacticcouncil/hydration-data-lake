@@ -40,6 +40,7 @@ export class StorageResolverHelpersManager {
       await this.storageDictionaryManager.fetchBatchStorageStateAllPallets({
         blockNumberFrom,
         blockNumberTo,
+        ctx,
       });
   }
 

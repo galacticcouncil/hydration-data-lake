@@ -1,4 +1,4 @@
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../../utils/bignumber';
 import { Store } from '@subsquid/typeorm-store';
 
 import { SqdProcessorContext } from '../../../processor';
@@ -29,8 +29,10 @@ export function processXykPoolsNormalizedTvl({
     const assetA = ctx.batchState.state.assetsAll.get(poolHistData.assetAId);
     const assetB = ctx.batchState.state.assetsAll.get(poolHistData.assetBId);
 
-    if(!assetA || !assetB) {
-      console.warn(`Asset data not found for assets ${poolHistData.assetAId} or ${poolHistData.assetBId} while processing XYK pool TVL normalization at para block height ${poolHistData.paraBlockHeight}`);
+    if (!assetA || !assetB) {
+      console.warn(
+        `Asset data not found for assets ${poolHistData.assetAId} or ${poolHistData.assetBId} while processing XYK pool TVL normalization at para block height ${poolHistData.paraBlockHeight}`
+      );
       continue;
     }
 
@@ -56,21 +58,21 @@ export function processXykPoolsNormalizedTvl({
       continue;
 
     // TODO can be simplified - oneAssetTvl.multiplyBy(2) because XYK pool is always balanced
-    poolHistData.tvlInRefAssetNorm = BigNumber(
-      calcPriceNormalized({
-        amount: poolHistData.assetABalance,
-        assetDecimals: assetA.decimals,
-        spotPrice: assetASpotPriceNorm,
-      })
-    )
-      .plus(
+    poolHistData.tvlInRefAssetNorm = toFixedTrimmed(
+      BigNumber(
+        calcPriceNormalized({
+          amount: poolHistData.assetABalance,
+          assetDecimals: assetA.decimals,
+          spotPrice: assetASpotPriceNorm,
+        })
+      ).plus(
         calcPriceNormalized({
           amount: poolHistData.assetBBalance,
           assetDecimals: assetB.decimals,
           spotPrice: assetBSpotPriceNorm,
         })
       )
-      .toFixed();
+    );
 
     ctx.batchState.state.xykPoolAllHistoricalData.set(
       poolHistData.id,

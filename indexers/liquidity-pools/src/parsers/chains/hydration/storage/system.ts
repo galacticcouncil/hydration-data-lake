@@ -15,7 +15,7 @@ async function getSystemAccount(
   block: BlockHeader
 ): Promise<SystemAccountInfo | null> {
   return measureStorageFetch({
-    storageName: 'system.account',
+    storageName: 'system.account.get',
     originFn: 'getSystemAccount',
     blockHeight: block.height,
     args: { account },
@@ -69,7 +69,7 @@ async function getAllSystemAccountKeys({
   block,
 }: GetDataAtBlockInput): Promise<string[] | null> {
   return measureStorageFetch({
-    storageName: 'system.account',
+    storageName: 'system.account.getKeysPaged',
     originFn: 'getAllSystemAccountKeys',
     blockHeight: block.height,
     fn: async () => {
@@ -111,7 +111,7 @@ async function getNativeTokenBalanceMany({
   BalancesAccountInfoWithAccountId[]
 > {
   return measureStorageFetch({
-    storageName: 'system.account',
+    storageName: 'system.account.getMany',
     originFn: 'getNativeTokenBalanceMany',
     blockHeight: block.height,
     args: { accountIds },

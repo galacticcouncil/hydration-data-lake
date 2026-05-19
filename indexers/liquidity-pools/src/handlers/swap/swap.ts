@@ -71,7 +71,7 @@ export async function getSwap({
       },
       relations,
     },
-    { className: 'Swap' }
+    { className: 'Swap', originCallFn: 'getSwap' }
   );
 
   if (!swap) return null;

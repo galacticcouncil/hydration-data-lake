@@ -241,11 +241,11 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
   }
 
   const allStablewapAssets = new Map<string, StableswapAsset>();
-  for (const histData of allStableswapAssetsPersisted) {
-    allStablewapAssets.set(histData.id, histData);
+  for (const sAsset of allStableswapAssetsPersisted) {
+    allStablewapAssets.set(sAsset.id, sAsset);
   }
-  for (const histData of allStableswapAssetsCached) {
-    allStablewapAssets.set(histData.id, histData);
+  for (const sAsset of allStableswapAssetsCached) {
+    allStablewapAssets.set(sAsset.id, sAsset);
   }
 
   const cachedStableswapHistData = [
@@ -261,11 +261,18 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
   const cachedStableswapAssetsHistDataList = [
     ...ctx.batchState.state.stablepoolAssetsAllHistoricalData.values(),
   ].filter(
-    (histData) =>
+    (histData) => {
+      return (
       histData.paraBlockHeight > blockFromNumber - 1 &&
       histData.paraBlockHeight < blockToNumber + 1 &&
-      histData.stableswapAsset != null &&
-      allStablewapAssets.has(histData.stableswapAsset.id) // TODO check this condition item.paraBlockHeight === blockNumber
+        allStablewapAssets.has(
+          histData.stableswapAsset?.id ||
+            `${histData.id.split('-')[0]}-${histData.id.split('-')[1]}`
+        )
+      );
+    }
+
+    // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
   const cachedStableswapAssetsHistDataByPoolMap = new Map<

@@ -68,7 +68,7 @@ export async function handleProxyReqKaminoAny(
     await CacheManager.getInstance().cache.set<any>(
       cacheKey,
       response.data,
-      10_800_000
+      appConfig.API_PROXY_CACHE_TTL_MS_KAMINO
     );
 
     res.status(response.status).send(response.data);

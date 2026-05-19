@@ -10,7 +10,7 @@ async function getOracles({
   block,
 }: GetEmaOraclesInput): Promise<EmaOracleEntryData[]> {
   return measureStorageFetch({
-    storageName: 'emaOracle.oracles',
+    storageName: 'emaOracle.oracles.getPairsPaged',
     originFn: 'getOracles',
     blockHeight: block.height,
     fn: async () => {

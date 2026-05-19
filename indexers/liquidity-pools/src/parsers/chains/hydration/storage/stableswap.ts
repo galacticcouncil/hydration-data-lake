@@ -3,9 +3,11 @@ import {
   GetConstantsInput,
   GetDataAtBlockInput,
   GetPoolAssetInfoInput,
+  OmnipoolAssetDataWithId,
   OmnipoolAssetTradability,
   StablepoolAllPoolsInfoWithPoolId,
   StablepoolAssetState,
+  StablepoolAssetStatesWithId,
   StablepoolGetAllPoolIdsInput,
   StablepoolGetPoolDataInput,
   StablepoolGetPoolPegsInput,
@@ -51,7 +53,7 @@ async function getPoolData({
   block,
 }: StablepoolGetPoolDataInput): Promise<StablepoolInfo | null> {
   return measureStorageFetch({
-    storageName: 'stableswap.pools',
+    storageName: 'stableswap.pools.get',
     originFn: 'getPoolData',
     blockHeight: block.height,
     args: { poolId },
@@ -74,7 +76,7 @@ async function getAllPoolsData({
   block,
 }: GetDataAtBlockInput): Promise<StablepoolAllPoolsInfoWithPoolId[] | null> {
   return measureStorageFetch({
-    storageName: 'stableswap.pools',
+    storageName: 'stableswap.pools.getPairsPaged',
     originFn: 'getAllPoolsData',
     blockHeight: block.height,
     fn: async () => {
@@ -116,7 +118,7 @@ async function getPoolAssetStorageData({
   assetId,
 }: GetPoolAssetInfoInput): Promise<StablepoolAssetState | null> {
   return measureStorageFetch({
-    storageName: 'stableswap.assetTradability',
+    storageName: 'stableswap.assetTradability.get',
     originFn: 'getPoolAssetStorageData',
     blockHeight: block.height,
     args: { poolId, assetId },
@@ -150,11 +152,52 @@ async function getPoolAssetStorageData({
   });
 }
 
+async function getAllPoolsAssetsStorageData({
+  block,
+}: GetDataAtBlockInput): Promise<StablepoolAssetStatesWithId[] | null> {
+  return measureStorageFetch({
+    storageName: 'stableswap.assetTradability.getPairsPaged',
+    originFn: 'getAllPoolsAssetsStorageData',
+    blockHeight: block.height,
+    fn: async () => {
+      if (block.specVersion < 183) return null;
+
+      if (
+        storage.stableswap.assetTradability.v183.is(block) ||
+        block.specVersion >= 183
+      ) {
+        const pairsPageMap: Map<number, StablepoolAssetStatesWithId> =
+          new Map();
+
+        for await (const page of storage.stableswap.assetTradability.v183.getPairsPaged(
+          500,
+          block
+        )) {
+          for (const [[poolId, assetId], data] of page.filter(
+            (p) => !!p && !!p[1]
+          )) {
+            if (!pairsPageMap.has(poolId))
+              pairsPageMap.set(poolId, { poolId, assetStates: [] });
+
+            pairsPageMap.get(poolId)!.assetStates.push({
+              assetId: assetId,
+              data: { tradable: { bits: data?.bits ?? 15 } },
+            });
+          }
+        }
+
+        return Array.from(pairsPageMap.values());
+      }
+      throw new UnknownVersionError('storage.stableswap.assetTradability');
+    },
+  });
+}
+
 async function getAllPoolIds({
   block,
 }: StablepoolGetAllPoolIdsInput): Promise<number[]> {
   return measureStorageFetch({
-    storageName: 'stableswap.pools',
+    storageName: 'stableswap.pools.getKeys',
     originFn: 'getAllPoolIds',
     blockHeight: block.height,
     fn: async () => {
@@ -178,7 +221,7 @@ async function getPoolPegs({
   block,
 }: StablepoolGetPoolPegsInput): Promise<StablepoolPoolPegsInfo | null> {
   return measureStorageFetch({
-    storageName: 'stableswap.poolPegs',
+    storageName: 'stableswap.poolPegs.get',
     originFn: 'getPoolPegs',
     blockHeight: block.height,
     args: { poolId },
@@ -255,7 +298,7 @@ async function getAllPoolsPegs({
   StablepoolManyPoolsPegsInfoWithPoolId[] | null
 > {
   return measureStorageFetch({
-    storageName: 'stableswap.poolPegs',
+    storageName: 'stableswap.poolPegs.getPairsPaged',
     originFn: 'getAllPoolsPegs',
     blockHeight: block.height,
     fn: async () => {
@@ -353,6 +396,7 @@ async function getAllPoolsPegs({
 export default {
   getPoolData,
   getPoolAssetStorageData,
+  getAllPoolsAssetsStorageData,
   getAllPoolIds,
   getConstants,
   getPoolPegs,

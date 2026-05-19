@@ -10,7 +10,7 @@ import {
 } from '../../../../../../../sql/omnipool/omnipoolTvl.sql';
 import { getStableswapsTotalTvl } from '../../../../../../../sql/stableswap/stableswapTvl.sql';
 import { getAllXykpoolsTvl } from '../../../../../../../sql/xykpool/xykpoolsTvl.sql';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber } from '../../../../../../../../utils/bignumber';
 import { getLatestTotalPlatformSupplyAmount } from '../../../../../../../sql/moneyMarket/supply.sql';
 import { AppConfig } from '../../../../../../../../appConfig';
 

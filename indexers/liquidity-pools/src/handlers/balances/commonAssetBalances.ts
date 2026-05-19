@@ -91,8 +91,8 @@ export async function handleCommonAssetAccountBalances({
       }
 
       const accountData = currentBlockData.data.get(accountId)!;
-      for (const [assetId, balance] of accountAssetBalances.entries()) {
-        accountData.set(assetId, balance);
+      for (const [assetRegistryId, balance] of accountAssetBalances.entries()) {
+        accountData.set(assetRegistryId, balance);
       }
     }
   }
@@ -103,19 +103,25 @@ export async function handleCommonAssetAccountBalances({
       .flat()
   );
 
-  const persistedAccounts = await ctx.storeUtils.findWithLogs(
-    Account,
-    {
-      where: {
-        id: In(
-          Array.from(allInvolvedAccountsInBatchSet.keys()).filter(
-            (acc) => !ctx.batchState.state.accounts.has(acc)
-          )
-        ),
-      },
-    },
-    { className: 'Account', originCallFn: 'handleCommonAssetAccountBalances' }
-  );
+  const persistedAccountsIdsToFetch = Array.from(
+    allInvolvedAccountsInBatchSet.keys()
+  ).filter((acc) => !ctx.batchState.state.accounts.has(acc));
+
+  const persistedAccounts =
+    persistedAccountsIdsToFetch.length === 0
+      ? []
+      : await ctx.storeUtils.findWithLogs(
+          Account,
+          {
+            where: {
+              id: In(persistedAccountsIdsToFetch),
+            },
+          },
+          {
+            className: 'Account',
+            originCallFn: 'handleCommonAssetAccountBalances',
+          }
+        );
 
   for (const acc of persistedAccounts) {
     ctx.batchState.state.accounts.set(acc.id, acc);
@@ -144,7 +150,7 @@ export async function handleCommonAssetAccountBalances({
     const allAccountIds = Array.from(blockData.data.keys());
 
     // Batch fetch all assets for this block in a single DB query
-    // IMPORTANT: assetsCache keysare assetId but not assetRegistryId
+    // IMPORTANT: assetsCache keys are assetId but not assetRegistryId
     const assetsCache = await batchGetOrCreateAssets({
       assetRegistryIds: Array.from(allAssetRegistryIds),
       ctx,

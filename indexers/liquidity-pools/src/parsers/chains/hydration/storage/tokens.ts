@@ -19,7 +19,7 @@ async function getTokensAccountsAssetBalances(
   block: BlockHeader
 ): Promise<TokensAccountsAssetBalances | null> {
   return measureStorageFetch({
-    storageName: 'tokens.accounts',
+    storageName: 'tokens.accounts.get',
     originFn: 'getTokensAccountsAssetBalances',
     blockHeight: block.height,
     args: { account, assetId },
@@ -44,7 +44,7 @@ async function getTokenTotalIssuance({
   block,
 }: TokensGetTokenTotalIssuanceInput): Promise<bigint | null> {
   return measureStorageFetch({
-    storageName: 'tokens.totalIssuance',
+    storageName: 'tokens.totalIssuance.get',
     originFn: 'getTokenTotalIssuance',
     blockHeight: block.height,
     args: { tokenId },
@@ -68,7 +68,7 @@ async function getManyTokensTotalIssuance({
   block,
 }: TokensGetTokensTotalIssuanceInput): Promise<TokenTotalIssuance[]> {
   return measureStorageFetch({
-    storageName: 'tokens.totalIssuance',
+    storageName: 'tokens.totalIssuance.getPairsPaged',
     originFn: 'getManyTokensTotalIssuance',
     blockHeight: block.height,
     args: { tokenIds },
@@ -107,7 +107,7 @@ async function getTokenBalancesMany({
   block,
 }: GetTokenBalancesManyInput): Promise<TokenAccountBalancesWithAccountId[]> {
   return measureStorageFetch({
-    storageName: 'tokens.accounts',
+    storageName: 'tokens.accounts.getPairsPaged',
     originFn: 'getTokenBalancesMany',
     blockHeight: block.height,
     args: { accountIds },

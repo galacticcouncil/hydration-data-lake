@@ -21,7 +21,10 @@ export async function processPreprocessedDataBuckets(
     const anyBucket = await ctx.storeUtils.findOneWithLogs(PreprocessedDataBucket, {
       where: {},
       order: { paraBlockHeight: 'ASC' },
-    }, { className: 'PreprocessedDataBucket' });
+    }, {
+      className: 'PreprocessedDataBucket',
+      originCallFn: 'processPreprocessedDataBuckets',
+    });
     if (!anyBucket) {
       isBlockNumberToProcess = false;
       break;

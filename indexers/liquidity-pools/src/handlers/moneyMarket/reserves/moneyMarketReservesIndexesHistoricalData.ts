@@ -3,15 +3,11 @@ import { Store } from '@subsquid/typeorm-store';
 import {
   EvmEventName,
   MmReserveIndexesHistoricalData,
+  MoneyMarketReserve,
 } from '../../../model';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
-import {
-  PoolReserveDataUpdatedEventParams,
-} from '../../../parsers/types/events';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../../processor';
+import { PoolReserveDataUpdatedEventParams } from '../../../parsers/types/events';
+import { SqdBlock, SqdProcessorContext } from '../../../processor';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
 import { getOrCreateMoneyMarketReserve } from './moneyMarketReserve';
 
@@ -33,11 +29,15 @@ export async function processMmReserveIndexesHistoricalData({
 
   const {
     eventData: { params: eventParams, metadata: eventMetadata },
-    callData,
   } = eventCallData;
 
+  const emitterAddress = eventParams.address.toLowerCase();
+
   await processMmReserveIndexesHistoricalDataEntity({
-    data: parsedEvmEventData,
+    data: {
+      ...parsedEvmEventData,
+      mmReserveEntityId: `${emitterAddress}-${parsedEvmEventData.reserveAddress.toLowerCase()}`,
+    },
     blockHeader: eventMetadata.blockHeader,
     ctx,
   });
@@ -48,12 +48,12 @@ export async function processMmReserveIndexesHistoricalDataEntity({
   ctx,
   blockHeader,
 }: {
-  data: PoolReserveDataUpdatedEventParams;
+  data: PoolReserveDataUpdatedEventParams & { mmReserveEntityId: string };
   blockHeader: SqdBlock;
   ctx: SqdProcessorContext<Store>;
 }) {
   const mmReserve = await getOrCreateMoneyMarketReserve({
-    id: data.reserveAddress.toLowerCase(),
+    id: data.mmReserveEntityId,
     blockHeader,
     ctx,
   });

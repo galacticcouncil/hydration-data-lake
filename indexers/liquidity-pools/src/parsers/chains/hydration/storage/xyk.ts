@@ -67,7 +67,7 @@ async function getPoolAssets({
   poolAddress,
 }: XykGetAssetsInput): Promise<XykPoolAssetIds | null> {
   return measureStorageFetch({
-    storageName: 'xyk.poolAssets',
+    storageName: 'xyk.poolAssets.get',
     originFn: 'getPoolAssets',
     blockHeight: block.height,
     args: { poolAddress },
@@ -103,7 +103,7 @@ async function getPoolData({
   poolAddress,
 }: XykGetAssetsInput): Promise<XykPoolData | null> {
   return measureStorageFetch({
-    storageName: 'xyk.poolAssets',
+    storageName: 'xyk.poolAssets.get',
     originFn: 'getPoolData',
     blockHeight: block.height,
     args: { poolAddress },
@@ -142,7 +142,7 @@ async function getShareToken({
   poolAddress,
 }: XykGetShareTokenInput): Promise<number | null> {
   return measureStorageFetch({
-    storageName: 'xyk.shareToken',
+    storageName: 'xyk.shareToken.get',
     originFn: 'getShareToken',
     blockHeight: block.height,
     args: { poolAddress },
@@ -171,7 +171,7 @@ async function getPoolShareTokenPairsMany({
   block,
 }: XykGetPoolShareTokenPairsManyInput): Promise<XykPoolShareTokenPair[]> {
   return measureStorageFetch({
-    storageName: 'xyk.shareToken',
+    storageName: 'xyk.shareToken.getPairsPaged',
     originFn: 'getPoolShareTokenPairsMany',
     blockHeight: block.height,
     fn: async () => {

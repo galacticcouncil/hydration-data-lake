@@ -5,6 +5,7 @@ import {
   TradeOperationType,
 } from '../../../model';
 import { SwappedExecutionTypeKind } from '../../../utils/types';
+import { DcaScheduleOrderData } from '../calls';
 
 export * from './xyk';
 export * from './evm';
@@ -18,7 +19,15 @@ export * from './liquidation';
 
 export enum EventName {
   'Balances_Transfer' = 'Balances.Transfer',
+  'Balances_Deposit' = 'Balances.Deposit',
+  'Balances_Withdraw' = 'Balances.Withdraw',
+  'Balances_Reserved' = 'Balances.Reserved',
+  'Balances_Unreserved' = 'Balances.Unreserved',
   'Tokens_Transfer' = 'Tokens.Transfer',
+  'Tokens_Deposited' = 'Tokens.Deposited',
+  'Tokens_Withdrawn' = 'Tokens.Withdrawn',
+  'Tokens_Reserved' = 'Tokens.Reserved',
+  'Tokens_Unreserved' = 'Tokens.Unreserved',
   'Currencies_Transferred' = 'Currencies.Transferred',
 
   'AssetRegistry_Registered' = 'AssetRegistry.Registered',
@@ -148,6 +157,50 @@ export type CurrenciesTransferredEventParams = {
 export type BalancesTransferEventParams = {
   from: string;
   to: string;
+  amount: bigint;
+};
+
+export type BalancesDepositEventParams = {
+  who: string;
+  amount: bigint;
+};
+
+export type BalancesWithdrawEventParams = {
+  who: string;
+  amount: bigint;
+};
+
+export type BalancesReservedEventParams = {
+  who: string;
+  amount: bigint;
+};
+
+export type BalancesUnreservedEventParams = {
+  who: string;
+  amount: bigint;
+};
+
+export type TokensDepositedEventParams = {
+  currencyId: number;
+  who: string;
+  amount: bigint;
+};
+
+export type TokensWithdrawnEventParams = {
+  currencyId: number;
+  who: string;
+  amount: bigint;
+};
+
+export type TokensReservedEventParams = {
+  currencyId: number;
+  who: string;
+  amount: bigint;
+};
+
+export type TokensUnreservedEventParams = {
+  currencyId: number;
+  who: string;
   amount: bigint;
 };
 

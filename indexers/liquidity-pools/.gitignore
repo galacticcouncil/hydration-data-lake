@@ -14,3 +14,7 @@
 /logs
 .claude
 .planning
+.mcp.json
+llmContext
+/db/dev
+/research

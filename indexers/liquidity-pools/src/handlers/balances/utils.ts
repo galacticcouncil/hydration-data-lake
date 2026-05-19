@@ -16,10 +16,12 @@ import {
   UnchangedAccountAssetBalanceHistoricalData,
   UnchangedAccountAssetBalancesPerBlockMap,
 } from './accountTotalBalance';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../utils/bignumber';
 import {
+  AccountData,
   BalancesAccountInfoWithAccountId,
   TokenAccountBalancesWithAccountId,
+  TokenAccountBalanceWithAssetId,
 } from '../../parsers/types/storage';
 import { AssetBalancesStorageDataPerBlockPerAccountMap } from './commonAssetBalances';
 import { getOrCreateAccountAssetBalanceHistoricalData } from './accountAssetBalance';
@@ -27,8 +29,9 @@ import { getOrCreateAccount } from '../accounts';
 import { InvolvedAccountsAndAssetsInMmEventsPerBlockMap } from './moneyMarketAssetBalances';
 import parsers from '../../parsers';
 import pMap from 'p-map';
-import { MoneyMarketContractsManager } from '../../utils/evmTools/moneyMarketContractsManager';
+import { AaveMoneyMarketManager } from '../../utils/evmTools/aave/aaveMoneyMarketManager';
 import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
+import { AaveMoneyMarketsRegistry } from '../../utils/evmTools/aave/aaveMoneyMarketsRegistry/aaveMoneyMarketsRegistry';
 type AssetId = string;
 
 export async function getUnchangedAccountAssetBalanceFromCachedEntity({
@@ -181,11 +184,71 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
     async ([blockNumber, accountAssetBalancesAtBlock]) => {
       const blockHeader =
         ctx.batchState.getBlockHeaderByBlockHeight(blockNumber);
+
       if (!ensuredUnchangedAccountAssetBalancesByOnChainData.has(blockNumber))
         ensuredUnchangedAccountAssetBalancesByOnChainData.set(
           blockNumber,
           new Map()
         );
+
+      const prefetchedAccountAssetBalancesWithoutCache: Map<
+        string,
+        {
+          native: AccountData | null;
+          other: Map<string, AccountData | null>;
+        }
+      > = new Map();
+
+      const nativeAssetBalances =
+        await parsers.storage.system.getNativeTokenBalanceMany({
+          block: blockHeader,
+          accountIds: Array.from(accountAssetBalancesAtBlock.keys()),
+          skipCache: true,
+        });
+      const otherTokenBalances =
+        await parsers.storage.tokens.getTokenBalancesMany({
+          block: blockHeader,
+          accountIds: Array.from(accountAssetBalancesAtBlock.keys()),
+          skipCache: true,
+        });
+
+      for (const nativeBalance of nativeAssetBalances) {
+        if (
+          !prefetchedAccountAssetBalancesWithoutCache.has(
+            nativeBalance.accountId
+          )
+        ) {
+          prefetchedAccountAssetBalancesWithoutCache.set(
+            nativeBalance.accountId,
+            {
+              native: nativeBalance.data,
+              other: new Map(),
+            }
+          );
+        }
+      }
+      for (const otherBalance of otherTokenBalances) {
+        if (
+          !prefetchedAccountAssetBalancesWithoutCache.has(
+            otherBalance.accountId
+          )
+        ) {
+          prefetchedAccountAssetBalancesWithoutCache.set(
+            otherBalance.accountId,
+            {
+              native: null,
+              other: new Map(),
+            }
+          );
+        }
+        if (otherBalance.assetBalances) {
+          for (const assetBalance of otherBalance.assetBalances) {
+            prefetchedAccountAssetBalancesWithoutCache
+              .get(otherBalance.accountId)!
+              .other.set(assetBalance.assetId, assetBalance.data);
+          }
+        }
+      }
 
       await pMap(
         Array.from(accountAssetBalancesAtBlock.entries()),
@@ -227,15 +290,19 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
               let totalTransferableBalance = 0n;
               let totalLockedBalance = 0n;
 
-              if (assetEntity.assetType === AssetType.Erc20) {
-                totalTransferableBalance =
-                  (await MoneyMarketContractsManager.getInstance().getAccountTokenBalanceWithLogs(
-                    {
-                      contractAddress: assetEntity.evmAddress!,
-                      accountAddress: accountEntity.boundEvmAddress!,
-                      blockNumber,
-                    }
-                  )) ?? 0n;
+              // if (assetEntity.assetType === AssetType.Erc20) {
+              if (assetEntity.resourceType === AssetResourceType.Debt) {
+                const totalTransferableBalance =
+                  (
+                    await AaveMoneyMarketsRegistry.getInstance().getAccountTokenBalanceWithLogs(
+                      {
+                        contractAddress: assetEntity.evmAddress!,
+                        accountAddress: accountEntity.boundEvmAddress!,
+                        blockNumber,
+                      }
+                    )
+                  )?.value ?? 0n;
+
                 if (!totalTransferableBalance) {
                   assetBalancesHistDataWithNoResult.set(
                     assetId,
@@ -245,33 +312,42 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
                 }
               } else {
                 if (assetId === '0') {
-                  const balances =
-                    await parsers.storage.system.getNativeTokenBalanceMany({
-                      block: blockHeader,
-                      accountIds: [accountId],
-                      skipCache: true,
-                    });
-
-                  if (balances.length === 0 || !balances[0]?.data) {
+                  if (
+                    !prefetchedAccountAssetBalancesWithoutCache.has(
+                      accountId
+                    ) ||
+                    prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.native === null
+                  ) {
                     assetBalancesHistDataWithNoResult.set(
                       assetId,
                       assetPrevBalanceData
                     );
                     return;
                   }
-
-                  totalTransferableBalance = balances[0].data.free;
-                  totalLockedBalance = balances[0].data.reserved;
+                  totalTransferableBalance =
+                    prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.native?.free ?? 0n;
+                  totalLockedBalance =
+                    prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.native?.reserved ?? 0n;
                 } else {
-                  const balances =
-                    await parsers.storage.tokens.getTokenBalancesMany({
-                      block:
-                        ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
-                      accountIds: [accountId],
-                      skipCache: true,
-                    });
-
-                  if (balances.length === 0 || !balances[0]?.assetBalances) {
+                  if (
+                    !assetEntity.assetRegistryId ||
+                    !prefetchedAccountAssetBalancesWithoutCache.has(
+                      accountId
+                    ) ||
+                    !prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.other ||
+                    prefetchedAccountAssetBalancesWithoutCache.get(accountId)
+                      ?.other.size === 0 ||
+                    !prefetchedAccountAssetBalancesWithoutCache
+                      .get(accountId)
+                      ?.other?.has(assetEntity.assetRegistryId!) ||
+                    !prefetchedAccountAssetBalancesWithoutCache
+                      .get(accountId)
+                      ?.other?.get(assetEntity.assetRegistryId!)
+                  ) {
                     assetBalancesHistDataWithNoResult.set(
                       assetId,
                       assetPrevBalanceData
@@ -279,9 +355,11 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
                     return;
                   }
 
-                  const assetBalance = balances[0].assetBalances.find(
-                    (b) => b.assetId === assetEntity.assetRegistryId
-                  );
+                  const assetBalance =
+                    prefetchedAccountAssetBalancesWithoutCache
+                      .get(accountId)
+                      ?.other?.get(assetEntity.assetRegistryId!);
+
                   if (!assetBalance) {
                     assetBalancesHistDataWithNoResult.set(
                       assetId,
@@ -289,8 +367,8 @@ export async function ensureAccountAssetBalancesForOutdatedBalancesWithOnChainDa
                     );
                     return;
                   }
-                  totalTransferableBalance = assetBalance.data.free;
-                  totalLockedBalance = assetBalance.data.reserved;
+                  totalTransferableBalance = assetBalance.free;
+                  totalLockedBalance = assetBalance.reserved;
                 }
               }
 
@@ -402,6 +480,68 @@ export async function createAccountAssetBalancesForOutdatedBalances({
   }
 }
 
+/**
+ * For events-driven mode: create balance entities for unchanged assets
+ * preserving actual previous balance values (transferable/totalLocked)
+ * with re-normalized prices.
+ */
+export async function createAccountAssetBalancesFromUnchangedData({
+  unchangedAccountAssetBalancesPerBlock,
+  ctx,
+}: {
+  unchangedAccountAssetBalancesPerBlock: UnchangedAccountAssetBalancesPerBlockMap;
+  ctx: SqdProcessorContext<Store>;
+}) {
+  for (const [
+    blockNumber,
+    blockData,
+  ] of unchangedAccountAssetBalancesPerBlock.entries()) {
+    for (const [accountId, accountBalances] of blockData.entries()) {
+      const account = await getOrCreateAccount({ ctx, id: accountId });
+
+      for (const assetBalance of accountBalances.values()) {
+        // Find the previous balance entity to get actual transferable/totalLocked
+        const prevEntityId = `${assetBalance.accountId}-${assetBalance.assetId}-${assetBalance.paraBlockHeight}`;
+        const previousEntity =
+          ctx.batchState.state.accountAssetBalanceHistoricalData.get(
+            prevEntityId
+          );
+
+        // Get actual previous balance values
+        const transferable = previousEntity
+          ? BigInt(previousEntity.transferable)
+          : 0n;
+        const totalLocked = previousEntity
+          ? BigInt(previousEntity.totalLocked)
+          : 0n;
+
+        const assetBalanceHistData =
+          await getOrCreateAccountAssetBalanceHistoricalData({
+            ctx,
+            assetId: assetBalance.assetId,
+            account,
+            blockHeader: ctx.batchState.getBlockHeaderByBlockHeight(
+              assetBalance.processingParaBlockHeight
+            ),
+            fetchFromDb: false,
+          });
+
+        assetBalanceHistData.transferable = transferable;
+        assetBalanceHistData.totalLocked = totalLocked;
+        assetBalanceHistData.transferableInRefAssetNorm =
+          assetBalance.transferableInRefAssetNorm;
+        assetBalanceHistData.totalLockedInRefAssetNorm =
+          assetBalance.totalLockedInRefAssetNorm;
+
+        ctx.batchState.state.accountAssetBalanceHistoricalData.set(
+          assetBalanceHistData.id,
+          assetBalanceHistData
+        );
+      }
+    }
+  }
+}
+
 export function updateAccountTotalBalanceHistoricalDataWithUnchangedBalances({
   unchangedAccountAssetBalancesPerBlock,
   ctx,
@@ -424,11 +564,9 @@ export function updateAccountTotalBalanceHistoricalDataWithUnchangedBalances({
       return acc.plus(value.transferableInRefAssetNorm);
     }, BigNumber(accountTotalBalance.totalTransferableNorm));
 
-    accountTotalBalance.totalTransferableNorm =
-      accountTotalTransferableBalanceSummaryAtBlock.toFixed(
-        18,
-        BigNumber.ROUND_HALF_UP
-      );
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      accountTotalTransferableBalanceSummaryAtBlock
+    );
 
     ctx.batchState.state.accountTotalBalanceHistoricalData.set(
       accountTotalBalance.id,
@@ -505,6 +643,9 @@ export function indexAccountAssetBalancesAccumulators({
   }
 }
 
+/**
+ * Function returns balances indexed by asstRegistryId but not by assetId
+ */
 export function addAssetBalancesToAccumulator({
   commonTokenBalances,
   nativeTokenBalances,
@@ -561,12 +702,12 @@ export async function fetchBalancesForAccountsPerBlock({
     async ([blockNumber, accountsSetPerBlock]) => {
       if (accountsSetPerBlock.size === 0) return;
 
-      const accountsInBlockList: string[] = [];
+      const accountsToFetchInBlockList: string[] = [];
 
       for (const accountId of Array.from(accountsSetPerBlock.keys())) {
         const cachedAccountBalance = cache?.get(blockNumber)?.get(accountId);
         if (!cachedAccountBalance) {
-          accountsInBlockList.push(accountId);
+          accountsToFetchInBlockList.push(accountId);
           continue;
         }
         if (!assetBalancesStorageDataPerBlockPerAccountMap.has(blockNumber))
@@ -583,12 +724,12 @@ export async function fetchBalancesForAccountsPerBlock({
       const [nativeTokenBalances, commonTokenBalances] = await Promise.all([
         parsers.storage.system.getNativeTokenBalanceMany({
           block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
-          accountIds: accountsInBlockList,
+          accountIds: accountsToFetchInBlockList,
           skipCache: skipStorageReadCache,
         }),
         parsers.storage.tokens.getTokenBalancesMany({
           block: ctx.batchState.getBlockHeaderByBlockHeight(blockNumber),
-          accountIds: accountsInBlockList,
+          accountIds: accountsToFetchInBlockList,
           skipCache: skipStorageReadCache,
         }),
       ]);

@@ -21,7 +21,7 @@ export async function ensureOmnipool(ctx: SqdProcessorContext<Store>) {
         where: { id: ctx.appConfig.OMNIPOOL_ADDRESS },
         relations: { assets: true },
       },
-      { className: 'Omnipool' }
+      { className: 'Omnipool', originCallFn: 'ensureOmnipool' }
     )) ?? null;
 
   if (!!omnipoolEntity) {

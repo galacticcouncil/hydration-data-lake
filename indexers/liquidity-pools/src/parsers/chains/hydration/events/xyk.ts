@@ -9,7 +9,6 @@ import {
   XykSellExecutedEventParams,
 } from '../../../types/events';
 import { UnknownVersionError } from '../../../../utils/errors';
-import { XykLiquidityAddedData } from '../../../batchBlocksParser/types';
 
 function parsePoolCreatedParams(event: SqdEvent): XykPoolCreatedEventParams {
   if (events.xyk.poolCreated.v183.is(event)) {

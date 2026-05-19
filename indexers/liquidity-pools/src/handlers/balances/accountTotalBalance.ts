@@ -1,7 +1,6 @@
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { calcPriceNormalized } from '../../utils/helpers';
-import { getAssetsPairPrice } from '../assets/assetHistoricalData/assetSpotPrices';
 import { getOrCreateAsset } from '../assets/asset';
 import { AccountData } from '../../parsers/types/storage';
 import { SqdBlock } from '../../processor';
@@ -12,12 +11,12 @@ import {
   Asset,
   AssetResourceType,
 } from '../../model';
-import { BigNumber } from '@galacticcouncil/sdk';
+import { BigNumber, toFixedTrimmed } from '../../utils/bignumber';
 import { getOmnipoolLiquidityPositionsForAccounts } from '../liquidity/omnipool/liquidityPositions/liquidityPositionUtils';
 import { getXykLiquidityMiningDepositsForAccounts } from '../liquidity/xykpool/liquidityMining/depositsUtils';
 import { getOmnipoolLiquidityMiningDepositsForAccounts } from '../liquidity/omnipool/liquidityMining/depositUtils';
 import { CommonPgPool } from '../../utils/pgConnectionManagers/pgPool';
-import { getPreviousAssetAccountBalancesSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
+import { getPreviousAssetAccountBalancesForListOfAccountsSql } from '../../utils/pgConnectionManagers/queries/getPreviousAssetAccountBalances.sql';
 import {
   createAccountAssetBalancesForOutdatedBalances,
   ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData,
@@ -31,6 +30,7 @@ import {
 } from './balancesLoggerManager';
 import { FindOptionsRelations } from 'typeorm';
 import { AppConfig } from '../../appConfig';
+import { getAccountsInvolvedToLiquidityProviding } from './accountLiquidityBalance';
 
 const appConfig = AppConfig.getInstance();
 
@@ -121,7 +121,10 @@ export async function getOrCreateAccountTotalBalanceHistoricalData({
         where: { id: entityId },
         relations,
       },
-      { className: 'AccountTotalBalanceHistoricalData' }
+      {
+        className: 'AccountTotalBalanceHistoricalData',
+        originCallFn: 'getAccountTotalBalanceHistoricalData',
+      }
     );
 
     if (dataEntity) {
@@ -271,32 +274,28 @@ export async function addAssetBalanceToAccountTotalBalance({
      * But account cannot have debt balance higher that collateral or
      * borrowed amount. So in final result totalBalance always will be positive.
      */
-    // accountTotalBalance.totalTransferableNorm = (
-    //   totalBalanceWithoutDebt.isLessThan(0)
-    //     ? BigNumber(0)
-    //     : totalBalanceWithoutDebt
-    // ).toFixed();
-    accountTotalBalance.totalTransferableNorm =
-      totalBalanceWithoutDebt.toFixed();
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      totalBalanceWithoutDebt
+    );
 
-    accountTotalBalance.totalDebtNorm = BigNumber(
-      accountTotalBalance.totalDebtNorm ?? '0'
-    )
-      .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-      .toFixed();
+    accountTotalBalance.totalDebtNorm = toFixedTrimmed(
+      BigNumber(accountTotalBalance.totalDebtNorm ?? '0').plus(
+        assetBalanceHistData.transferableInRefAssetNorm || '0'
+      )
+    );
   } else {
-    accountTotalBalance.totalTransferableNorm = BigNumber(
-      accountTotalBalance.totalTransferableNorm
-    )
-      .plus(assetBalanceHistData.transferableInRefAssetNorm || '0')
-      .toFixed();
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      BigNumber(accountTotalBalance.totalTransferableNorm).plus(
+        assetBalanceHistData.transferableInRefAssetNorm || '0'
+      )
+    );
   }
 
-  accountTotalBalance.totalLockedNorm = BigNumber(
-    accountTotalBalance.totalLockedNorm
-  )
-    .plus(assetBalanceHistData.totalLockedInRefAssetNorm || '0')
-    .toFixed();
+  accountTotalBalance.totalLockedNorm = toFixedTrimmed(
+    BigNumber(accountTotalBalance.totalLockedNorm).plus(
+      assetBalanceHistData.totalLockedInRefAssetNorm || '0'
+    )
+  );
 
   BalancesLoggerManager.getInstance().addLog({
     accountId: accountTotalBalance.accountId,
@@ -340,29 +339,63 @@ export async function handleLiquidityBalancesInTotalBalances({
 
   if (!refAsset) throw Error('Ref asset not found');
 
+  const accountsInvolvedToLiquidityProviding =
+    getAccountsInvolvedToLiquidityProviding({ ctx });
+
+  const allProcessedAccountsPerBlockAugmented: Map<
+    number,
+    Set<string>
+  > = new Map();
+
+  for (const block of ctx.blocks) {
+    if (
+      (!allProcessedAccountsPerBlock.has(block.header.height) ||
+        !allProcessedAccountsPerBlock.get(block.header.height)?.size) &&
+      (!accountsInvolvedToLiquidityProviding.has(block.header.height) ||
+        !accountsInvolvedToLiquidityProviding.get(block.header.height)?.size)
+    )
+      continue;
+
+    const mergedAccounts = new Set<string>([
+      ...(allProcessedAccountsPerBlock.get(block.header.height) || []),
+      ...(accountsInvolvedToLiquidityProviding.get(block.header.height) || []),
+    ]);
+    allProcessedAccountsPerBlockAugmented.set(
+      block.header.height,
+      mergedAccounts
+    );
+  }
+
   const allInvolvedAccountsInBatchSet = new Set(
-    Array.from(allProcessedAccountsPerBlock.values())
+    Array.from(allProcessedAccountsPerBlockAugmented.values())
       .map((accSet) => Array.from(accSet.values()))
       .flat()
   );
 
+  /**
+   * TODO
+   * Redundancy with involved account lists should be refactored:
+   *       involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
+   *       involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
+   */
+
   const { allDepositsInvolvedInBatch } =
     await getOmnipoolLiquidityMiningDepositsForAccounts({
       ctx,
-      involvedAccountsPerBlock: allProcessedAccountsPerBlock,
+      involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
       involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
     });
 
   await getOmnipoolLiquidityPositionsForAccounts({
     ctx,
-    involvedAccountsPerBlock: allProcessedAccountsPerBlock,
+    involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
     involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
     allDepositsInvolvedInBatch,
   });
 
   await getXykLiquidityMiningDepositsForAccounts({
     ctx,
-    involvedAccountsPerBlock: allProcessedAccountsPerBlock,
+    involvedAccountsPerBlock: allProcessedAccountsPerBlockAugmented,
     involvedAccountsInBatch: allInvolvedAccountsInBatchSet,
   });
 
@@ -370,7 +403,7 @@ export async function handleLiquidityBalancesInTotalBalances({
     refAssetId: refAsset.id,
     preProcessedTotalBalances,
     ctx,
-    dataSource: 'XYK_DEPOSIT',
+    dataSource: 'LIQUIDITY_ACTIONS',
   });
 }
 
@@ -418,11 +451,11 @@ async function addLiquidityBalancesToTotalBalance({
     /**
      * Account total balance calculation
      */
-    accountTotalBalance.totalTransferableNorm = BigNumber(
-      accountTotalBalance.totalTransferableNorm
-    )
-      .plus(portionAmountNorm)
-      .toFixed();
+    accountTotalBalance.totalTransferableNorm = toFixedTrimmed(
+      BigNumber(accountTotalBalance.totalTransferableNorm).plus(
+        portionAmountNorm
+      )
+    );
 
     BalancesLoggerManager.getInstance().addLog({
       accountId: accountTotalBalance.accountId,
@@ -455,92 +488,6 @@ async function addLiquidityBalancesToTotalBalance({
     );
   }
 }
-
-//
-// async function addLiquidityMiningWorthToTotalBalance({
-//   preProcessedTotalBalances,
-//   lmWorthData,
-//   refAssetId,
-//   dataSource,
-//   ctx,
-// }: {
-//   ctx: SqdProcessorContext<Store>;
-//   preProcessedTotalBalances?: Set<string> | null;
-//   refAssetId: string;
-//   lmWorthData: AccountPositionBalancesPerBlockPerAsset;
-//   dataSource?: string;
-// }) {
-//   for (const blockData of lmWorthData.values()) {
-//     for (const [accountId, accountAssetData] of blockData.data.entries()) {
-//       if (
-//         preProcessedTotalBalances &&
-//         preProcessedTotalBalances.has(
-//           `${accountId}-${blockData.blockHeader.height}`
-//         )
-//       )
-//         continue;
-//
-//       const accountTotalBalance =
-//         await getOrCreateAccountTotalBalanceHistoricalData({
-//           accountId,
-//           refAssetId,
-//           blockHeader: blockData.blockHeader,
-//           ctx,
-//         });
-//
-//       for (const [assetId, balanceBn] of accountAssetData.entries()) {
-//         const asset = await getOrCreateAsset({
-//           id: assetId,
-//           ctx,
-//           ensure: true,
-//           blockHeader: blockData.blockHeader,
-//         });
-//         if (!asset) continue;
-//
-//         const assetSpotPrice = getAssetsPairPrice({
-//           ctx,
-//           assetInId: asset.id,
-//           blockHeight: blockData.blockHeader.height,
-//         });
-//
-//         const portionAmountNorm =
-//           assetSpotPrice && asset.decimals
-//             ? calcPriceNormalized({
-//                 amount: BigInt(balanceBn.toFixed() ?? '0'),
-//                 assetDecimals: asset.decimals,
-//                 spotPrice: assetSpotPrice,
-//               })
-//             : '0';
-//
-//         /**
-//          * Account total balance calculation
-//          */
-//         accountTotalBalance.totalTransferableNorm = BigNumber(
-//           accountTotalBalance.totalTransferableNorm
-//         )
-//           .plus(portionAmountNorm)
-//           .toFixed();
-//
-//         BalancesLoggerManager.getInstance().addLog({
-//           accountId: accountTotalBalance.accountId,
-//           assetId: asset.id,
-//           source:
-//             (dataSource as BalanceLogInput['source']) ??
-//             'ASSET_BALANCE_IMPLICIT',
-//           memo: 'fn :: addLiquidityMiningWorthToTotalBalance',
-//           paraBlockHeight: accountTotalBalance.paraBlockHeight,
-//           transferable: BigInt(balanceBn.toFixed() ?? '0'),
-//           transferableNorm: portionAmountNorm,
-//         });
-//       }
-//
-//       ctx.batchState.state.accountTotalBalanceHistoricalData.set(
-//         accountTotalBalance.id,
-//         accountTotalBalance
-//       );
-//     }
-//   }
-// }
 
 /**
  * Reconciles account asset balances across blocks by backfilling unchanged assets.
@@ -590,9 +537,6 @@ export async function handleUnchangedAccountAssetBalances({
   });
 
   const pgPool = CommonPgPool.getInstance();
-  // console.time(
-  //   'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: loop'
-  // );
 
   /**
    * LOOP L1 :: Iterating block by block. Only blocks are involved where there is at least
@@ -608,6 +552,30 @@ export async function handleUnchangedAccountAssetBalances({
       AccountId,
       Map<AssetId, UnchangedAccountAssetBalanceHistoricalData>
     >();
+
+    const latestAccountAssetBalancesIndexedByAccount: Map<
+      string,
+      RawAccountAssetBalanceHistoricalData[]
+    > = new Map();
+
+    try {
+      const resp = (
+        await pgPool.query<RawAccountAssetBalanceHistoricalData>(
+          getPreviousAssetAccountBalancesForListOfAccountsSql,
+          [Array.from(assetBalancesByAccountAtBlock.keys())]
+        )
+      ).rows;
+
+      for (const record of resp) {
+        if (!latestAccountAssetBalancesIndexedByAccount.has(record.account_id))
+          latestAccountAssetBalancesIndexedByAccount.set(record.account_id, []);
+        latestAccountAssetBalancesIndexedByAccount
+          .get(record.account_id)!
+          .push(record);
+      }
+    } catch (e) {
+      console.log(e);
+    }
 
     /**
      * LOOP L2 :: Iterating accounts involved at specific block.
@@ -679,23 +647,11 @@ export async function handleUnchangedAccountAssetBalances({
         }
       }
 
-      let persistentAssetBalances: RawAccountAssetBalanceHistoricalData[] = [];
-
-      try {
-        persistentAssetBalances = (
-          await pgPool.query<RawAccountAssetBalanceHistoricalData>(
-            getPreviousAssetAccountBalancesSql,
-            [
-              accountId,
-              Array.from(assetIdsForAccountToIgnoreInDbAggregation.values()),
-            ]
-          )
-        ).rows;
-      } catch (e) {
-        console.log(e);
-      }
-
-      for (const balance of persistentAssetBalances) {
+      for (const balance of (
+        latestAccountAssetBalancesIndexedByAccount.get(accountId) || []
+      ).filter(
+        (r) => !assetIdsForAccountToIgnoreInDbAggregation.has(r.asset_id)
+      )) {
         const unchangedAssetBalanceData =
           await getUnchangedAccountAssetBalanceFromPersistentEntity({
             previousAssetBalancePersistent: balance,
@@ -711,26 +667,24 @@ export async function handleUnchangedAccountAssetBalances({
       }
     }
 
+    for (const [
+      key,
+      value,
+    ] of unchangedAssetBalancesFromPrevBlockIndexedByAccount.entries()) {
+      if (value.size === 0)
+        unchangedAssetBalancesFromPrevBlockIndexedByAccount.delete(key);
+    }
+
     unchangedAccountAssetBalancesPerBlock.set(
       blockHeight,
       unchangedAssetBalancesFromPrevBlockIndexedByAccount
     );
   }
-  // console.timeEnd(
-  //   'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: loop'
-  // );
-
-  // console.time(
-  //   'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData'
-  // );
   const ensuredUnchangedAccountAssetBalancesPerBlock =
     await ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData({
       unchangedAccountAssetBalancesPerBlock,
       ctx,
     });
-  // console.timeEnd(
-  //   'handleAssetAccountBalances:: handleUnchangedAccountAssetBalances :: ensureAccountAssetBalancesForOutdatedBalancesWithOnChainData'
-  // );
   await createAccountAssetBalancesForOutdatedBalances({
     unchangedAccountAssetBalancesPerBlock:
       ensuredUnchangedAccountAssetBalancesPerBlock,

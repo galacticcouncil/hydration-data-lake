@@ -55,6 +55,7 @@ export default {
     ...tokens,
     getTokenTotalIssuance: tokens.getTokenTotalIssuance,
     getManyTokensTotalIssuance: tokens.getManyTokensTotalIssuance,
+    getTokenBalancesManyStorageCall: tokens.getTokenBalancesMany,
     getTokenBalancesMany: (
       args: GetTokenBalancesManyInput
     ): Promise<TokenAccountBalancesWithAccountId[] | null> =>
@@ -95,6 +96,7 @@ export default {
   otc,
   evmAccounts,
   stableswap: {
+    getAllPoolsAssetsStorageData: stableswap.getAllPoolsAssetsStorageData,
     getConstants: stableswap.getConstants,
     getPoolPegs: stableswap.getPoolPegs,
     getAllPoolIds: stableswap.getAllPoolIds,
@@ -149,6 +151,7 @@ export default {
     getOmnipoolHubAssetTradability: omnipool.getOmnipoolHubAssetTradability,
     getAllOmnipoolLiquidityPositions: omnipool.getAllOmnipoolLiquidityPositions,
     getPoolData: omnipool.getPoolData,
+    getOmnipoolAllAssetsData: omnipool.getOmnipoolAllAssetsData,
     getOmnipoolAssetData: (
       args: OmnipoolGetAssetDataInput
     ): Promise<OmnipoolAssetData | null> =>

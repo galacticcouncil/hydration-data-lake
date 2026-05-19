@@ -41,7 +41,10 @@ export async function handleAssetSwapFee({
           paraBlockHeight: 'DESC',
         },
       },
-      { className: 'AssetSwapFeeHistoricalData' }
+      {
+        className: 'AssetSwapFeeHistoricalData',
+        originCallFn: 'handleAssetSwapFee',
+      }
     ));
 
   const assetSwapFee = new AssetSwapFeeHistoricalData({

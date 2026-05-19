@@ -6,7 +6,7 @@ import hollarAbi from '../abi/aave/hollar_unstableAbi.json';
 import { ethers } from 'ethers';
 import { EvmLogEventParsers } from './eventParsers';
 import { EvmLogEventParams } from '../../../parsers/types/events';
-import { EvmEventParamsTypeDecorated } from '../types';
+import { EvmEventParamsTypeDecorated } from '../aave/types';
 import { EvmContractName, EvmEventName } from '../../../model';
 import { AppConfig } from '../../../appConfig';
 
@@ -16,19 +16,19 @@ export class EvmLogDecoder extends EvmLogEventParsers {
   private static instance: EvmLogDecoder;
   private interfacesMap = new Map([
     [
-      aavePoolImplementation.address,
+      EvmContractName.AavePoolImpl,
       new ethers.utils.Interface(aavePoolImplementation.abi),
     ],
-    [aTokenHydration.address, new ethers.utils.Interface(aTokenHydration.abi)],
-    [diaOracleV2.address, new ethers.utils.Interface(diaOracleV2.abi)],
     [
-      poolConfiguratorImplementation.address,
+      EvmContractName.AaveAToken,
+      new ethers.utils.Interface(aTokenHydration.abi),
+    ],
+    [EvmContractName.DiaOracleV2, new ethers.utils.Interface(diaOracleV2.abi)],
+    [
+      EvmContractName.AavePoolConfiguratorImpl,
       new ethers.utils.Interface(poolConfiguratorImplementation.abi),
     ],
-    [
-      appConfig.evm.HOLLAR_CONTRACT_ADDRESS,
-      new ethers.utils.Interface(hollarAbi),
-    ],
+    [EvmContractName.HollarToken, new ethers.utils.Interface(hollarAbi)],
   ]);
 
   constructor() {
@@ -59,7 +59,7 @@ export class EvmLogDecoder extends EvmLogEventParsers {
 
     try {
       parsedLog = this.interfacesMap
-        .get(aavePoolImplementation.address)!
+        .get(EvmContractName.AavePoolImpl)!
         .parseLog({ topics, data });
       contractName = EvmContractName.AavePoolImpl;
     } catch (error) {}
@@ -67,7 +67,7 @@ export class EvmLogDecoder extends EvmLogEventParsers {
     if (!parsedLog) {
       try {
         parsedLog = this.interfacesMap
-          .get(aTokenHydration.address)!
+          .get(EvmContractName.AaveAToken)!
           .parseLog({ topics, data });
         contractName = EvmContractName.AaveAToken;
       } catch (error) {}
@@ -76,7 +76,7 @@ export class EvmLogDecoder extends EvmLogEventParsers {
     if (!parsedLog) {
       try {
         parsedLog = this.interfacesMap
-          .get(diaOracleV2.address)!
+          .get(EvmContractName.DiaOracleV2)!
           .parseLog({ topics, data });
         contractName = EvmContractName.DiaOracleV2;
       } catch (error) {}
@@ -85,7 +85,7 @@ export class EvmLogDecoder extends EvmLogEventParsers {
     if (!parsedLog) {
       try {
         parsedLog = this.interfacesMap
-          .get(poolConfiguratorImplementation.address)!
+          .get(EvmContractName.AavePoolConfiguratorImpl)!
           .parseLog({ topics, data });
         contractName = EvmContractName.AavePoolConfiguratorImpl;
       } catch (error) {}
@@ -94,7 +94,7 @@ export class EvmLogDecoder extends EvmLogEventParsers {
     if (!parsedLog) {
       try {
         parsedLog = this.interfacesMap
-          .get(appConfig.evm.HOLLAR_CONTRACT_ADDRESS)!
+          .get(EvmContractName.HollarToken)!
           .parseLog({ topics, data });
         contractName = EvmContractName.HollarToken;
       } catch (error) {}
@@ -171,6 +171,10 @@ export class EvmLogDecoder extends EvmLogEventParsers {
         ) as unknown as EvmEventParamsTypeDecorated<N>;
       case EvmEventName.MintedToTreasury:
         return this.parseMintedToTreasuryEvent(
+          evmLogParams
+        ) as unknown as EvmEventParamsTypeDecorated<N>;
+      case EvmEventName.ReserveInitialized:
+        return this.parsePoolReserveInitializedEvent(
           evmLogParams
         ) as unknown as EvmEventParamsTypeDecorated<N>;
       default:

@@ -11,7 +11,7 @@ import {
   MmWithdrawEventParams,
   OracleUpdateEventParams,
 } from '../../parsers/types/events';
-import { ResourceType } from '../../model';
+import { AssetResourceType } from '../../model';
 
 export type EvmEventParamsTypeDecorated<N extends EvmEventName> =
   N extends EvmEventName.Transfer
@@ -48,7 +48,7 @@ export type AccountMmPositionDataContractData = {
 
 export type MoneyMarketTokenDetails = {
   address: string;
-  resourceType: ResourceType;
+  resourceType: AssetResourceType;
   underlyingAssetAddress?: string;
   name?: string;
   symbol?: string;

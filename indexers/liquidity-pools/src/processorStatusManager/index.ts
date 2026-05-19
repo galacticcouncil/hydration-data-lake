@@ -35,9 +35,13 @@ export class ProcessorStatusManager {
   async getStatus(ensure = false) {
     if (this.currentStatusEntity) return this.currentStatusEntity;
 
-    let statusEntity = await this.ctx.storeUtils.findOneWithLogs(ProcessorStatus, {
-      where: { id: this.ctx.appConfig.STATE_SCHEMA_NAME },
-    }, { className: 'ProcessorStatus' });
+    let statusEntity = await this.ctx.storeUtils.findOneWithLogs(
+      ProcessorStatus,
+      {
+        where: { id: this.ctx.appConfig.STATE_SCHEMA_NAME },
+      },
+      { className: 'ProcessorStatus', originCallFn: 'getStatus' }
+    );
 
     if (statusEntity) {
       this.currentStatusEntity = statusEntity;

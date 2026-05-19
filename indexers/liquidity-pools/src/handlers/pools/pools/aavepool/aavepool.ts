@@ -3,10 +3,7 @@ import { FindOptionsRelations } from 'typeorm';
 import { Store } from '@subsquid/typeorm-store';
 
 import { Aavepool, Asset } from '../../../../model';
-import {
-  SqdBlock,
-  SqdProcessorContext,
-} from '../../../../processor';
+import { SqdBlock, SqdProcessorContext } from '../../../../processor';
 import { getAavePoolAddress } from '../../../../utils/helpers';
 import { batchGetOrCreateAssets } from '../../../assets/asset';
 
@@ -34,10 +31,14 @@ export async function getOrCreateAavepool({
 
   let pool = batchState.aavePools.get(poolId);
   if (pool) return pool;
-  pool = await ctx.storeUtils.findOneWithLogs(Aavepool, {
-    where: { id: poolId },
-    relations,
-  }, { className: 'Aavepool' });
+  pool = await ctx.storeUtils.findOneWithLogs(
+    Aavepool,
+    {
+      where: { id: poolId },
+      relations,
+    },
+    { className: 'Aavepool', originCallFn: 'getOrCreateAavepool' }
+  );
 
   if (pool) {
     ctx.batchState.state.aavePools.set(pool.id, pool);
@@ -88,8 +89,8 @@ export async function getOrCreateAavepool({
 
   const newPool = new Aavepool({
     id: poolId,
-    reserveAssetId: reserveAsset.id,  // Use Asset.id, not assetRegistryId
-    aTokenId: aTokenAsset.id,          // Use Asset.id, not assetRegistryId
+    reserveAssetId: reserveAsset.id, // Use Asset.id, not assetRegistryId
+    aTokenId: aTokenAsset.id, // Use Asset.id, not assetRegistryId
   });
 
   await ctx.store.upsert(newPool);

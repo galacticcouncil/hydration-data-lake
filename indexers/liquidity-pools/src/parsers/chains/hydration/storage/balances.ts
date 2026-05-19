@@ -12,7 +12,7 @@ async function getTotalIssuance({
   block,
 }: GetConstantsInput): Promise<bigint | null> {
   return measureStorageFetch({
-    storageName: 'balances.totalIssuance',
+    storageName: 'balances.totalIssuance.get',
     originFn: 'getTotalIssuance',
     blockHeight: block.height,
     fn: async () => {

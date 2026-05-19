@@ -10,7 +10,7 @@ export class MoneyMarketReserve {
   }
 
   /**
-   * <underlying_asset_address>
+   * <underlying_asset_address>-<money-market-pool-address>
    */
   @PrimaryColumn_()
   id!: string

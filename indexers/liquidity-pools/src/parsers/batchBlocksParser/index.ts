@@ -28,12 +28,13 @@ import {
 import {
   calls as hydrationPaseoNextCalls,
   events as hydrationPaseoNextEvents,
-} from '../chains/hydration-paseo-next/typegenTypes';
+} from '../chains/hydration-lark/typegenTypes';
 
 import { ChainActivityTraceManager } from '../../chainActivityTracingManagers';
 import { EventDataParserHelper } from './eventDataParserHelper';
 import { ChainName } from '../../utils/types';
 import { SwapFillerType } from '../../model';
+import { AccountEvmExtensionsCacheManager } from '../../utils/accountEvmExtensionsCacheManager';
 
 export class BatchBlocksParsedDataManager {
   private scope: BatchBlocksParsedDataScope;
@@ -1205,6 +1206,42 @@ export async function getParsedEventsData(
         }
 
         /**
+         * ==== Tokens Deposited ====
+         */
+        case events.tokens.deposited.name: {
+          const preparedData = parserHelper.parseTokensDepositedData();
+          parsedDataManager.set(EventName.Tokens_Deposited, preparedData);
+          break;
+        }
+
+        /**
+         * ==== Tokens Withdrawn ====
+         */
+        case events.tokens.withdrawn.name: {
+          const preparedData = parserHelper.parseTokensWithdrawnData();
+          parsedDataManager.set(EventName.Tokens_Withdrawn, preparedData);
+          break;
+        }
+
+        /**
+         * ==== Tokens Reserved ====
+         */
+        case events.tokens.reserved.name: {
+          const preparedData = parserHelper.parseTokensReservedData();
+          parsedDataManager.set(EventName.Tokens_Reserved, preparedData);
+          break;
+        }
+
+        /**
+         * ==== Tokens Unreserved ====
+         */
+        case events.tokens.unreserved.name: {
+          const preparedData = parserHelper.parseTokensUnreservedData();
+          parsedDataManager.set(EventName.Tokens_Unreserved, preparedData);
+          break;
+        }
+
+        /**
          * ======================== B A L A N C E S ============================
          */
 
@@ -1219,6 +1256,42 @@ export async function getParsedEventsData(
             preparedData.eventData.params.from,
             preparedData.eventData.params.to,
           ]);
+          break;
+        }
+
+        /**
+         * ==== Balances Deposit ====
+         */
+        case events.balances.deposit.name: {
+          const preparedData = parserHelper.parseBalancesDepositData();
+          parsedDataManager.set(EventName.Balances_Deposit, preparedData);
+          break;
+        }
+
+        /**
+         * ==== Balances Withdraw ====
+         */
+        case events.balances.withdraw.name: {
+          const preparedData = parserHelper.parseBalancesWithdrawData();
+          parsedDataManager.set(EventName.Balances_Withdraw, preparedData);
+          break;
+        }
+
+        /**
+         * ==== Balances Reserved ====
+         */
+        case events.balances.reserved.name: {
+          const preparedData = parserHelper.parseBalancesReservedData();
+          parsedDataManager.set(EventName.Balances_Reserved, preparedData);
+          break;
+        }
+
+        /**
+         * ==== Balances Unreserved ====
+         */
+        case events.balances.unreserved.name: {
+          const preparedData = parserHelper.parseBalancesUnreservedData();
+          parsedDataManager.set(EventName.Balances_Unreserved, preparedData);
           break;
         }
 
@@ -1480,6 +1553,9 @@ export async function getParsedEventsData(
           parserHelper.addAccountIdsForPrefetch([
             preparedData.eventData.params.accountAddress,
           ]);
+          AccountEvmExtensionsCacheManager.getInstance().addBoundedAccount(
+            preparedData.eventData.params
+          );
           break;
         }
 
