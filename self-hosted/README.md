@@ -77,13 +77,13 @@ For details on environment variable configurations, refer to the documentation:
   - Runs all necessary components for the Liquidity Pools Indexer.
   - **Exclusion**: Does not run the Storage Dictionary Indexer.
 
-- **Storage Dictionary Mono-Processor Stack**: [storage-dictionary-mono-processor.stack.yml](storage-dictionary-indexer/storage-dictionary-mono-processor.stack.yml)
+- **Storage Dictionary Mono-Processor Stack**: [storage-dictionary-mono-processor.stack.yml](storage-dictionary-indexer/legacy/storage-dictionary-mono-processor.stack.ymlack.yml)
 
   - Establishes a single indexer with one processor app for all pool types.
   - Provides a unified API endpoint usable across all `STORAGE_DICTIONARY_<pool_kind>_URL` environment variables.
   - **Efficiency**: Less efficient in indexing time.
 
-- **Storage Dictionary Multi-Processor Stack**: [storage-dictionary-multiprocessor.stack.yml](storage-dictionary-indexer/storage-dictionary-multiprocessor.stack.yml)
+- **Storage Dictionary Multi-Processor Stack**: [storage-dictionary-multiprocessor.stack.yml](storage-dictionary-indexer/legacy/storage-dictionary-multiprocessor.stack.ymlack.yml)
   - Creates an infrastructure with one indexer and two processor apps per liquidity pool type, leading to:
     - **4 Indexers**: Distinct data gathering per pool type.
     - **4 Databases**: Unique data storage for each indexer.

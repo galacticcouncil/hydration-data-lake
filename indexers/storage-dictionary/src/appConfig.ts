@@ -275,6 +275,8 @@ export class AppConfig {
 
   readonly GATEWAY_HYDRATION_HTTPS: string | null = null;
 
+  readonly GATEWAY_HYDRATION_API_KEY: string | null = null;
+
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly PROCESS_LBP_POOLS: boolean = true;
 
