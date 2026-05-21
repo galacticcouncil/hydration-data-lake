@@ -72,7 +72,7 @@ For details on environment variable configurations, refer to the documentation:
 
 ### Stack Files to Run
 
-- **Liquidity Pools Stack**: [liquidity-pools.stack.yml](data-lake-indexer/liquidity-pools.stack.yml)
+- **Liquidity Pools Stack**: [liquidity-pools.stack.yml](aggregation-indexer/legacy/liquidity-pools.stack.ymlack.yml)
 
   - Runs all necessary components for the Liquidity Pools Indexer.
   - **Exclusion**: Does not run the Storage Dictionary Indexer.

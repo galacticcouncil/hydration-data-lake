@@ -1,3 +1,8 @@
+# ======================================================================================================================
+# =============================================== I M P O R T A N T ====================================================
+# ======================================================================================================================
+# Deployment must have name "stdict-gen-data-v2-self" to satisfy traefik routing rules configured for this stack
+
 version: "3.7"
 
 # ======================================================================================================================
@@ -14,7 +19,7 @@ x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/
 x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-owl-5.owl.shadow-senate.com"
 x-dict-rpc-url-https: &dict-rpc-url-https "https://node-owl-5.owl.shadow-senate.com"
 
-x-dict-indexer-image: &dict-indexer-image "ghcr.io/galacticcouncil/data-lake-storage-dictionary-indexer:9b1d014db08695ccef6ab6ecfac8aa20cfa93f83"
+x-dict-indexer-image: &dict-indexer-image "ghcr.io/galacticcouncil/data-lake-storage-dictionary-indexer:43186c9547d76eea2d5528cdd91cbde294390f7a"
 
 # ======================================================================================================================
 # ======================================== C O N F I G   S E G M E N T S ===============================================
@@ -36,6 +41,7 @@ x-dict-proc-default-envs: &dict-proc-default-envs
   GQL_PORT: 8080
   NODE_ENV: production
   OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+  AAVE_MONEY_MARKET_INSTANCES: '[{"marketId":"main","treasuryAddress":"0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9","poolDataProviderAddress":"0x112b087b60C1a166130d59266363C45F8aa99db0","poolAddressProviderAddress":"0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691","poolImplementationProxyAddress":"0x1b02e051683b5cfac5929c25e84adb26ecf87b38"}]'
 
   SUB_BATCH_SIZE: 50
   INDEXER_MAX_SUB_BATCH_SIZE: 200

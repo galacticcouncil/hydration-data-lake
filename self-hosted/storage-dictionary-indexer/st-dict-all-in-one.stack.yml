@@ -1,7 +1,7 @@
 # ======================================================================================================================
 # =============================================== I M P O R T A N T ====================================================
 # ======================================================================================================================
-# Deployment must have name "stdict-acc-v2-self" to satisfy traefik routing rules configured for this stack
+# Deployment must have name "stdict-all-in-one" to satisfy traefik routing rules configured for this stack
 
 version: '3.7'
 
@@ -11,8 +11,8 @@ version: '3.7'
 
 x-dict-pg-db-name: &dict-pg-db-name 'dictionary_indexer'
 x-dict-pg-user: &dict-pg-user 'postgres'
-x-dict-pg-host: &dict-pg-host 'db-dict-indexer-acc-h-d'
-x-dict-pg-bouncer-host: &dict-pg-bouncer-host 'dict-db-pgbouncer-acc-h-d'
+x-dict-pg-host: &dict-pg-host 'db-dict-indexer-all-in-one'
+x-dict-pg-bouncer-host: &dict-pg-bouncer-host 'dict-db-pgbouncer-all-in-one'
 
 x-gateway-hydration-url: &gateway-hydration-url 'https://v2.archive.subsquid.io/network/hydradx'
 
@@ -51,13 +51,13 @@ x-dict-proc-default-envs: &dict-proc-default-envs
   EVM_CONTRACT_CALL_CONCURRENCY: 10
   RUNTIME_API_CALLS_CONCURRENCY: 10
 
-  PROCESS_LBP_POOLS: 'false'
-  PROCESS_XYK_POOLS: 'false'
-  PROCESS_OMNIPOOLS: 'false'
-  PROCESS_STABLEPOOLS: 'false'
-  PROCESS_GENERIC_HIST_DATA: 'false'
+  PROCESS_LBP_POOLS: 'true'
+  PROCESS_XYK_POOLS: 'true'
+  PROCESS_OMNIPOOLS: 'true'
+  PROCESS_STABLEPOOLS: 'true'
+  PROCESS_GENERIC_HIST_DATA: 'true'
   PROCESS_ACCOUNTS: 'true'
-  INDEXING_IS_PAUSED: 'false'
+  INDEXING_IS_PAUSED: 'true'
 
   PROCESS_ONLY_MISSED_BLOCKS: 'false'
 
@@ -66,7 +66,7 @@ x-dict-proc-default-config: &dict-proc-default-config
   networks:
     - default
   depends_on:
-    - dict-db-pgbouncer-acc-h-d
+    - dict-db-pgbouncer-all-in-one
   secrets:
     - STORAGE_DICTIONARY_PG_PASSWORD
     - GATEWAY_HYDRATION_API_KEY
@@ -106,7 +106,7 @@ secrets:
 services:
   # ------------------------------------ A G G R E G A T I O N   I N D E X E R -------------------------------------------
 
-  db-dict-indexer-acc-h-d:
+  db-dict-indexer-all-in-one:
     image: postgres:15
     shm_size: '2gb'
     environment:
@@ -190,7 +190,7 @@ services:
       restart_policy:
         condition: on-failure
 
-  dict-db-pgbouncer-acc-h-d:
+  dict-db-pgbouncer-all-in-one:
     image: edoburu/pgbouncer:latest
     secrets:
       - source: STORAGE_DICTIONARY_PGBOUNCER_USERLIST
@@ -217,7 +217,7 @@ services:
     #    ports:
     #      - "5497:5432"
     depends_on:
-      - db-dict-indexer-acc-h-d
+      - db-dict-indexer-all-in-one
     networks:
       - default
     logging:
@@ -226,10 +226,10 @@ services:
       restart_policy:
         condition: on-failure
 
-  dict-api-acc-h-d:
+  dict-api-all-in-one:
     image: *dict-indexer-image
     depends_on:
-      - dict-db-pgbouncer-acc-h-d
+      - dict-db-pgbouncer-all-in-one
     secrets:
       - STORAGE_DICTIONARY_PG_PASSWORD
     environment:
@@ -251,230 +251,31 @@ services:
     deploy:
       labels:
         traefik.http.routers.storage-dict-route-acc-v2-http.rule: Host(`storage-dict-accounts-hist-data-v2.orca.hydration.cloud`)
-        traefik.http.routers.storage-dict-route-acc-v2-http.service: stdict-acc-v2-self-dict-api-acc-h-d
+        traefik.http.routers.storage-dict-route-acc-v2-http.service: stdict-all-in-one-dict-api-all-in-one
         traefik.http.routers.storage-dict-route-acc-v2.tls: 'true'
-        traefik.http.services.stdict-acc-v2-self-dict-api-acc-h-d.loadbalancer.server.port: '8080'
+        traefik.http.services.stdict-all-in-one-dict-api-all-in-one.loadbalancer.server.port: '8080'
         traefik.http.routers.storage-dict-route-acc-v2-http.entrypoints: web
         traefik.http.routers.storage-dict-route-acc-v2.entrypoints: websecure
         traefik.http.routers.storage-dict-route-acc-v2-http.middlewares: https-redirect
         traefik.http.routers.storage-dict-route-acc-v2.rule: Host(`storage-dict-accounts-hist-data-v2.orca.hydration.cloud`)
-        traefik.http.routers.storage-dict-route-acc-v2.service: stdict-acc-v2-self-dict-api-acc-h-d
+        traefik.http.routers.storage-dict-route-acc-v2.service: stdict-all-in-one-dict-api-all-in-one
         traefik.docker.network: gateway
         traefik.enable: 'true'
         traefik.http.routers.storage-dict-route-acc-v2.tls.certresolver: myresolver
       restart_policy:
         condition: on-failure
 
-  dict-processor-acc-h-d-1:
+  dict-processor-all-in-one-1:
     <<: *dict-proc-default-config
     environment:
       <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
       PROCESS_FROM_BLOCK: 1439857
-      PROCESS_TO_BLOCK: 3500000
-
+      PROCESS_TO_BLOCK: -1
+      PROCESS_ACCOUNTS: 'true'
       ASYNC_OPERATIONS_CONCURRENCY_COMMON: 7
       EVM_CONTRACT_CALL_CONCURRENCY: 7
       RUNTIME_API_CALLS_CONCURRENCY: 7
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
 
       STATE_SCHEMA_NAME: acc_hist_data__batch_proc_1
       ASSETS_TRACKER_PROCESSOR: 'true'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-2:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      PROCESS_FROM_BLOCK: 3500001
-      PROCESS_TO_BLOCK: 5000000
-
-      ASYNC_OPERATIONS_CONCURRENCY_COMMON: 7
-      EVM_CONTRACT_CALL_CONCURRENCY: 7
-      RUNTIME_API_CALLS_CONCURRENCY: 7
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_2
-      ASSETS_TRACKER_PROCESSOR: 'true'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-3:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      PROCESS_FROM_BLOCK: 5000001
-      PROCESS_TO_BLOCK: 6500000
-
-      ASYNC_OPERATIONS_CONCURRENCY_COMMON: 7
-      EVM_CONTRACT_CALL_CONCURRENCY: 7
-      RUNTIME_API_CALLS_CONCURRENCY: 7
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_3
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-4:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      PROCESS_FROM_BLOCK: 5000001
-      PROCESS_TO_BLOCK: 6500000
-
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_4
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-5:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      PROCESS_FROM_BLOCK: 6500001
-      PROCESS_TO_BLOCK: 7500000
-
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_5
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-6:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      PROCESS_FROM_BLOCK: 7500001
-      PROCESS_TO_BLOCK: 8500000
-
-      ASYNC_OPERATIONS_CONCURRENCY_COMMON: 5
-      EVM_CONTRACT_CALL_CONCURRENCY: 5
-      RUNTIME_API_CALLS_CONCURRENCY: 5
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_6
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-7:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      PROCESS_FROM_BLOCK: 8500001
-      PROCESS_TO_BLOCK: 9500000
-
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_7
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-8:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-orca-5.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-5.orca.hydration.cloud
-      PROCESS_FROM_BLOCK: 9500001
-      PROCESS_TO_BLOCK: 9800000
-
-      EVM_CONTRACT_CALL_CONCURRENCY: 20
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_8
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-8-2:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      PROCESS_FROM_BLOCK: 9800001
-      PROCESS_TO_BLOCK: 10000000
-
-      EVM_CONTRACT_CALL_CONCURRENCY: 20
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_8-2
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-9:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-orca-5.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-5.orca.hydration.cloud
-      PROCESS_FROM_BLOCK: 10000001
-      PROCESS_TO_BLOCK: 10350000
-
-      EVM_CONTRACT_CALL_CONCURRENCY: 20
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_9
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-9-2:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      PROCESS_FROM_BLOCK: 10350001
-      PROCESS_TO_BLOCK: 10400000
-
-      EVM_CONTRACT_CALL_CONCURRENCY: 20
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_9-2
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-10:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-orca-4.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-4.orca.hydration.cloud
-      PROCESS_FROM_BLOCK: 10400001
-      PROCESS_TO_BLOCK: 10700000
-
-      ASYNC_OPERATIONS_CONCURRENCY_COMMON: 2
-      EVM_CONTRACT_CALL_CONCURRENCY: 2
-      RUNTIME_API_CALLS_CONCURRENCY: 2
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_10
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-11:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-orca-5.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-5.orca.hydration.cloud
-      PROCESS_FROM_BLOCK: 10700001
-      PROCESS_TO_BLOCK: 11000000
-
-      ASYNC_OPERATIONS_CONCURRENCY_COMMON: 2
-      EVM_CONTRACT_CALL_CONCURRENCY: 2
-      RUNTIME_API_CALLS_CONCURRENCY: 2
-      IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_11
-      ASSETS_TRACKER_PROCESSOR: 'false'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-
-  dict-processor-acc-h-d-12:
-    <<: *dict-proc-default-config
-    environment:
-      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-owl-1.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-1.owl.shadow-senate.com
-      PROCESS_FROM_BLOCK: 11000001
-      PROCESS_TO_BLOCK: -1
-
-      EVM_CONTRACT_CALL_RETRIES: 2
-
-      STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
-      ASSETS_TRACKER_PROCESSOR: 'true'
-      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_12
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: acc_hist_data__batch_proc_1
