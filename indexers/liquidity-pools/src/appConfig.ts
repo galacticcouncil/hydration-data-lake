@@ -478,15 +478,6 @@ export class AppConfig {
   readonly DB_CUSTOM_MIGRATIONS_LOCK_TIMEOUT: string = '30s';
 
   @IsNotEmpty()
-  readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
-
-  @IsNotEmpty()
-  readonly ORCHESTRATOR_QUEUE_REDIS_PASS: string = 'orchestra';
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly ORCHESTRATOR_QUEUE_REDIS_PORT: number = 6379;
-
-  @IsNotEmpty()
   readonly TS_REDIS_HOST: string = 'localhost';
 
   @IsNotEmpty()

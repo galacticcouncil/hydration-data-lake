@@ -19,7 +19,11 @@
       "cmd": ["docker", "compose", "down"]
     },
     "migration:create": {
-      "description": "Generate a DB migration matching the TypeORM entities",
+      "description": "Generate a DB migration matching the TypeORM entities using an isolated shadow DB (safe — preserves objects created by custom migrations in src/customDbMigrations)",
+      "cmd": ["node", "scripts/safe-migration-create.js"]
+    },
+    "migration:create:unsafe": {
+      "description": "Generate a DB migration against the live local DB (legacy — may drop indexes/views/columns created by custom migrations). Use only when you know what you're doing.",
       "cmd": ["npx", "squid-typeorm-migration", "generate"]
     },
     "migration:apply": {

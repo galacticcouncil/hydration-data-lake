@@ -55,7 +55,6 @@ import { AaveMoneyMarketsRegistry } from './utils/evm/aave/aaveMoneyMarketsRegis
 import { prefetchAllAccountHistDataRecordsForBlocksRangeToEnsureMissedBlocks } from './handlers/balances/historicalData';
 import { getAccAssetBalanceHistDataWithUniqueData } from './handlers/balances/utils';
 import {
-  handleEvmEventsInBlock,
   handleEvmEventsInBlocksBatch,
   prefetchAllAccountsExtensions,
 } from './handlers/evm';
@@ -247,10 +246,6 @@ async function runProcessor() {
               ]);
             }
             if (appConfig.PROCESS_ACCOUNTS) {
-              // await handleEvmEventsInBlock(
-              //   block,
-              //   ctxWithBatchState as ProcessorContext<Store>
-              // );
               await handleAssetAccountBalancesPerBlock(
                 block,
                 ctxWithBatchState as ProcessorContext<Store>

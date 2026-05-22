@@ -1,37 +1,64 @@
-version: "3.7"
+# ======================================================================================================================
+# =============================================== I M P O R T A N T ====================================================
+# ======================================================================================================================
+# All-in-one self-hosted deployment of the Hydration Data Lake.
+# Combines the aggregation indexer (liquidity-pools) and the storage dictionary indexer (single instance,
+# processing all pool types) with the full required infra (Postgres + PgBouncer for each indexer, Redis for
+# time-series data, GraphQL APIs and processors).
+#
+# Deployment must have name "datalake-all-in-one" to satisfy traefik routing rules configured for this stack.
+# Required external secrets:
+#   - AGGREGATION_INDEXER_PG_PASSWORD
+#   - AGGREGATION_INDEXER_PGBOUNCER_USERLIST
+#   - AGGREGATION_INDEXER_REDIS_PASSWORD
+#   - STORAGE_DICTIONARY_PG_PASSWORD
+#   - STORAGE_DICTIONARY_PGBOUNCER_USERLIST
+#   - GATEWAY_HYDRATION_API_KEY
+#   - SUBSCAN_PRO_API_SECRET
+# Required external network:
+#   - gateway (traefik-attached overlay network)
+
+version: '3.7'
 
 # ======================================================================================================================
 # =============================================== V A R I A B L E S ====================================================
 # ======================================================================================================================
 
-x-chain-name: &chain-name "hydration"
+x-chain-name: &chain-name 'hydration'
 
-x-aggregator-pg-db: &aggregator-pg-db "aggregator_indexer"
-x-aggregator-pg-user: &aggregator-pg-user "postgres"
-x-aggregator-pg-password: &aggregator-pg-password "postgres"
-x-aggregator-pg-host: &aggregator-pg-host "db-aggregator-pgbouncer"
+# ---------- Aggregation indexer ----------
+x-aggregator-pg-db: &aggregator-pg-db 'aggregator_indexer'
+x-aggregator-pg-user: &aggregator-pg-user 'postgres'
+x-aggregator-pg-bouncer-host: &aggregator-pg-bouncer-host 'db-aggregator-pgbouncer-all-in-one'
 
-x-dictionary-pg-db: &dictionary-pg-db "dictionary_indexer"
-x-dictionary-pg-user: &dictionary-pg-user "postgres"
-x-dictionary-pg-password: &dictionary-pg-password "postgres"
-x-dictionary-pg-host: &dictionary-pg-host "db-dictionary-indexer"
-
-x-ts-redis-host: &ts-redis-host "db-ts-redis"
-x-ts-redis-pass: &ts-redis-pass "password"
+x-ts-redis-host: &ts-redis-host 'db-ts-redis-all-in-one'
 x-ts-redis-port: &ts-redis-port 6379
 
-x-aggregator-indexer-id: &aggregator-indexer-id "swarm_1"
+x-aggregator-indexer-id: &aggregator-indexer-id 'swarm_1'
+x-aggregator-indexer-version: &aggregator-indexer-version 'sh-all-in-one-101'
 
-x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/network/hydradx"
+x-aggregator-rpc-url-wss: &aggregator-rpc-url-wss 'wss://node-sparrow-1.sparrow.shadow-senate.com'
+x-aggregator-rpc-url-https: &aggregator-rpc-url-https 'https://node-sparrow-1.sparrow.shadow-senate.com'
+x-asset-hub-rpc-url-wws: &asset-hub-rpc-url-wws 'wss://rpc-asset-hub-polkadot.luckyfriday.io'
 
-x-aggregator-rpc-url-wss: &aggregator-rpc-url-wss "wss://node-subwhale-4.shellfish.hydration.cloud"
-x-aggregator-rpc-url-https: &aggregator-rpc-url-https "https://node-subwhale-4.shellfish.hydration.cloud"
+x-aggregation-indexer-image: &aggregation-indexer-image 'ghcr.io/galacticcouncil/data-lake-aggregation-indexer:latest'
 
-x-dictionary-rpc-url-wss: &dictionary-rpc-url-wss "wss://node-subwhale-5.shellfish.hydration.cloud"
-x-dictionary-rpc-url-https: &dictionary-rpc-url-https "https://node-subwhale-5.shellfish.hydration.cloud"
+# ---------- Storage dictionary indexer ----------
+x-dict-pg-db-name: &dict-pg-db-name 'dictionary_indexer'
+x-dict-pg-user: &dict-pg-user 'postgres'
+x-dict-pg-host: &dict-pg-host 'db-dict-indexer-all-in-one'
+x-dict-pg-bouncer-host: &dict-pg-bouncer-host 'dict-db-pgbouncer-all-in-one'
 
-x-aggregator-indexer-image: &aggregator-indexer-image "ghcr.io/mckrava/liquidity-pools-indexer:wip-versions-agg-ind-hydration-pools-741"
-x-dictionary-indexer-image: &dictionary-indexer-image "ghcr.io/mckrava/storage-dictionary-indexer:wip-versions-agg-ind-hydration-pools-741"
+x-dict-rpc-url-wss: &dict-rpc-url-wss 'wss://node-owl-4.owl.shadow-senate.com'
+x-dict-rpc-url-https: &dict-rpc-url-https 'https://node-owl-4.owl.shadow-senate.com'
+
+x-dict-indexer-image: &dict-indexer-image 'ghcr.io/galacticcouncil/data-lake-storage-dictionary-indexer:latest'
+
+# ---------- Shared ----------
+x-gateway-hydration-url: &gateway-hydration-url 'https://v2.archive.subsquid.io/network/hydradx'
+
+# Storage dictionary API URL used by the aggregator. A single dict-api service serves all pool types.
+x-storage-dict-api-url: &storage-dict-api-url 'http://dict-api-all-in-one:8080/graphql'
 
 # ======================================================================================================================
 # ======================================== C O N F I G   S E G M E N T S ===============================================
@@ -40,7 +67,6 @@ x-dictionary-indexer-image: &dictionary-indexer-image "ghcr.io/mckrava/storage-d
 x-db-ts-redis-creds: &db-ts-redis-creds
   TS_REDIS_HOST: *ts-redis-host
   TS_REDIS_PORT: *ts-redis-port
-  TS_REDIS_PASS: *ts-redis-pass
   TS_REDIS_KEY_SPACE_ID: 5
 
 # ------------------------------------ A G G R E G A T I O N   I N D E X E R -------------------------------------------
@@ -49,110 +75,162 @@ x-db-aggregator-creds: &db-aggregator-creds
   DB_PORT: 5432
   DB_NAME: *aggregator-pg-db
   DB_USER: *aggregator-pg-user
-  DB_PASS: *aggregator-pg-password
-  DB_HOST: *aggregator-pg-host
+  DB_HOST: *aggregator-pg-bouncer-host
 
 x-aggregator-proc-default-envs: &aggregator-proc-default-envs
+  REAGGREGATION_PROCESSING_MODE: 'false'
+
+  PROCESS_FROM_BLOCK: 11565981
+  PROCESS_TO_BLOCK: -1
+
   INDEXER_ID: *aggregator-indexer-id
-  NODE_OPTIONS: "--max-old-space-size=8048"
-  NODE_ENV: "self-hosted"
+  NODE_OPTIONS: '--max-old-space-size=12048'
+  NODE_ENV: 'self-hosted'
   CHAIN: *chain-name
   RPC_URL: *aggregator-rpc-url-wss
   RPC_URL_HTTPS: *aggregator-rpc-url-https
+  ASSET_HUB_RPC_URL: *asset-hub-rpc-url-wws
+
+  BLOCKS_FINALITY_OFFSET: 50
+
+  UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
+  INDEXING_IS_PAUSED: 'false'
 
   # Set IGNORE_ARCHIVE_DATA_SOURCE to true if indexer has to work without SQD archive.
-  IGNORE_ARCHIVE_DATA_SOURCE: "false"
+  IGNORE_ARCHIVE_DATA_SOURCE: 'false'
   GATEWAY_HYDRATION_HTTPS: *gateway-hydration-url
 
-  OMNIPOOL_ADDRESS: "0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000"
-  HSMPOOL_ADDRESS: "0x6d6f646c70792f68736d6f640000000000000000000000000000000000000000"
-  HOLLAR_CONTRACT_ADDRESS: "0x531a654d1696ed52e7275a8cede955e82620f99a"
+  OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+  HSMPOOL_ADDRESS: '0x6d6f646c70792f68736d6f640000000000000000000000000000000000000000'
+  HOLLAR_CONTRACT_ADDRESS: '0x531a654d1696ed52e7275a8cede955e82620f99a'
+  AAVE_MONEY_MARKET_INSTANCES: '[{"marketId":"main","treasuryAddress":"0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9","poolDataProviderAddress":"0x112b087b60C1a166130d59266363C45F8aa99db0","poolAddressProviderAddress":"0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691","poolImplementationProxyAddress":"0x1b02e051683b5cfac5929c25e84adb26ecf87b38"}]'
 
+  HLOG_DB_FLUSH_ENABLED: 'false'
+
+  ACCOUNT_BALANCES_REAGGREGATION_BATCH_SIZE: 2
+  ACCOUNT_BALANCES_REAGGREGATION_MIN_PERIOD_BLOCKS: 14000
+  ENABLE_ALL_ACCOUNT_BALANCES_INIT: 'true'
+  ACCOUNT_BALANCES_REAGGREGATION_ENABLED: 'true'
+  ENABLE_PERSISTENT_ACCOUNT_ASSET_BALANCES_NORMALISED: 'true'
+  ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED: 'false'
+  USE_EVENTS_DRIVEN_BALANCE_TRACKING: 'true'
+  BALANCES_LOG_ENABLED: 'true'
+  ENABLE_ALL_ACCOUNT_BALANCES_REFRESH: 'false'
+
+  ENABLE_CACHED_ROUTES_FOR_PRICE_CALCULATION: 'true'
+  USE_XYKPOOLS_DATA_IN_TRADE_ROUTER: 'false'
+  ENSURE_PREFETCH_PERSISTENT_DATA_FOR_SPOT_PRICE: 'false'
+
+  PERSIST_HIST_EMA_ORACLE_DATA_TO_DB: 'false'
+  ENABLE_ACCOUNT_ASSET_SWAP_FEE_AGGREGATION: 'false'
+  ENABLE_ASSET_SWAP_FEE_AGGREGATION: 'false'
+  PERSIST_HIST_DATA_ONLY_ON_CHANGE: 'true'
+
+  COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: 'true'
+  ENABLE_REDIS_TS_UPDATE_COMMIT_DATA_COUNTER_ON_COMMIT: 'false'
+
+  EVM_CONTRACT_CALL_RETRIES: 2
+  ASYNC_OPERATIONS_CONCURRENCY_COMMON: 10
+  EVM_CONTRACT_CALL_CONCURRENCY: 10
+  RUNTIME_API_CALLS_CONCURRENCY: 10
   MAX_JOB_BATCH_SIZE: 20
   HISTORICAL_DATA_PROCESSING_SUB_BATCH_SIZE: 10
+  BD_FETCH_BATCH_SIZE: 1000
+  DB_ACTION_MAX_BATCH_SIZE: 301
+  XYKPOOL_HIST_DATA_TRACKING_BATCH_SIZE_PER_BLOCK: 3
 
-  ASSET_SPOT_PRICE_ASSET_OUT_IDS: "10"
-  ASSET_PRICE_BASE_ASSET_ID: "10"
-
-  PERSIST_HIST_DATA_ONLY_ON_CHANGE: "true"
-  UNIFIED_EVENTS_GENESIS_SPEC_VERSION: 282
-  INDEXING_IS_PAUSED: "false"
   # If USE_STORAGE_DICTIONARY == false, STORAGE_DICTIONARY_..._URLs can be omitted.
-  USE_STORAGE_DICTIONARY: "true"
-  # In cases where the Storage Dictionary indexer uses a single instance for all pool types,
-  # you must provide the same API URL to all STORAGE_DICTIONARY_..._URL parameters.
-  # For example, if the Storage Dictionary is running as a single processor indexer
-  # within the same Swarm stack as the Liquidity Pools indexer,
-  # the URL for all pools should be set uniformly, such as:
-  #   http://storage-dictionary-api:8090/graphql
-  STORAGE_DICTIONARY_LBPPOOL_URL: "http://dictionary-api:8080/graphql"
-  STORAGE_DICTIONARY_XYKPOOL_URL: "http://dictionary-api:8080/graphql"
-  STORAGE_DICTIONARY_OMNIPOOL_URL: "http://dictionary-api:8080/graphql"
-  STORAGE_DICTIONARY_STABLEPOOL_URL: "http://dictionary-api:8080/graphql"
-  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "http://dictionary-api:8080/graphql"
-  STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: "http://dictionary-api:8080/graphql"
-
-#  STORAGE_DICTIONARY_LBPPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:lbppool-v2/api/graphql"
-#  STORAGE_DICTIONARY_XYKPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:xykpool-v2/api/graphql"
-#  STORAGE_DICTIONARY_OMNIPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:omnipool-v2/api/graphql"
-#  STORAGE_DICTIONARY_STABLEPOOL_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:stablepool-v2/api/graphql"
-#  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:generic-data-v2/api/graphql"
-#  STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: "https://galacticcouncil.squids.live/hydration-storage-dictionary:account-data-v2/api/graphql"
+  USE_STORAGE_DICTIONARY: 'true'
+  # All STORAGE_DICTIONARY_..._URL values point to the same in-stack dict-api service because in this
+  # all-in-one stack a single Storage Dictionary processor handles all pool types.
+  STORAGE_DICTIONARY_LBPPOOL_URL: *storage-dict-api-url
+  STORAGE_DICTIONARY_XYKPOOL_URL: *storage-dict-api-url
+  STORAGE_DICTIONARY_OMNIPOOL_URL: *storage-dict-api-url
+  STORAGE_DICTIONARY_STABLEPOOL_URL: *storage-dict-api-url
+  STORAGE_DICTIONARY_GEN_HIST_DATA_URL: *storage-dict-api-url
+  STORAGE_DICTIONARY_ACCOUNT_HIST_DATA_URL: *storage-dict-api-url
 
 x-aggregator-proc-default-config: &aggregator-proc-default-config
-  image: *aggregator-indexer-image
+  image: *aggregation-indexer-image
   networks:
     - default
+  secrets:
+    - AGGREGATION_INDEXER_PG_PASSWORD
+    - GATEWAY_HYDRATION_API_KEY
+    - AGGREGATION_INDEXER_REDIS_PASSWORD
   command:
     - sh
     - -c
-    - "sqd migration:apply && node lib/main.js"
+    - |
+      export DB_PASS=$$(cat /run/secrets/AGGREGATION_INDEXER_PG_PASSWORD) &&
+      export GATEWAY_HYDRATION_API_KEY=$$(cat /run/secrets/GATEWAY_HYDRATION_API_KEY) &&
+      export TS_REDIS_PASS=$$(cat /run/secrets/AGGREGATION_INDEXER_REDIS_PASSWORD) &&
+      sqd migration:apply &&
+      node lib/main.js
   deploy:
     restart_policy:
       condition: on-failure
 
 # -------------------------------------- D I C T I O N A R Y   I N D E X E R -------------------------------------------
 
-x-db-dictionary-creds: &db-dictionary-creds
+x-dict-db-pgbouncer-creds: &dict-db-pgbouncer-creds
   DB_PORT: 5432
-  DB_NAME: *dictionary-pg-db
-  DB_USER: *dictionary-pg-user
-  DB_PASS: *dictionary-pg-password
-  DB_HOST: *dictionary-pg-host
+  DB_NAME: *dict-pg-db-name
+  DB_USER: *dict-pg-user
+  DB_HOST: *dict-pg-bouncer-host
 
-x-dictionary-proc-default-envs: &dictionary-proc-default-envs
-  NODE_ENV: "self-hosted"
+x-dict-proc-default-envs: &dict-proc-default-envs
+  NODE_ENV: 'self-hosted'
   CHAIN: *chain-name
-  RPC_URL: *dictionary-rpc-url-wss
-  RPC_URL_HTTPS: *dictionary-rpc-url-https
-  IGNORE_ARCHIVE_DATA_SOURCE: "false"
+  RPC_URL: *dict-rpc-url-wss
+  RPC_URL_HTTPS: *dict-rpc-url-https
   GATEWAY_HYDRATION_HTTPS: *gateway-hydration-url
+  IGNORE_ARCHIVE_DATA_SOURCE: 'false'
 
-  PROCESS_LBP_POOLS: "true"
-  PROCESS_XYK_POOLS: "true"
-  PROCESS_OMNIPOOLS: "true"
-  PROCESS_STABLEPOOLS: "true"
-  PROCESS_GENERIC_HIST_DATA: "true"
-  PROCESS_ACCOUNTS: "true"
+  GQL_PORT: 8080
+  OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+  AAVE_MONEY_MARKET_INSTANCES: '[{"marketId":"main","treasuryAddress":"0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9","poolDataProviderAddress":"0x112b087b60C1a166130d59266363C45F8aa99db0","poolAddressProviderAddress":"0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691","poolImplementationProxyAddress":"0x1b02e051683b5cfac5929c25e84adb26ecf87b38"}]'
 
-  INDEXER_MAX_SUB_BATCH_SIZE: 500
+  SUB_BATCH_SIZE: 50
+  INDEXER_MAX_SUB_BATCH_SIZE: 200
   SUB_BATCH_MAX_TIMEOUT_MS: 500
-  RUNTIME_API_CALLS_CONCURRENCY: 5
-  ASSETS_TRACKER_PROCESSOR: "true"
-  PERSIST_HIST_DATA_ONLY_ON_CHANGE: "true"
-  INDEXING_IS_PAUSED: "false"
+  PERSIST_HIST_DATA_ONLY_ON_CHANGE: 'true'
 
-x-dictionary-proc-default-config: &dictionary-proc-default-config
-  image: *dictionary-indexer-image
+  ASYNC_OPERATIONS_CONCURRENCY_COMMON: 10
+  EVM_CONTRACT_CALL_CONCURRENCY: 10
+  RUNTIME_API_CALLS_CONCURRENCY: 10
+
+  # Single processor instance handles every category in this all-in-one stack.
+  PROCESS_LBP_POOLS: 'true'
+  PROCESS_XYK_POOLS: 'true'
+  PROCESS_OMNIPOOLS: 'true'
+  PROCESS_STABLEPOOLS: 'true'
+  PROCESS_GENERIC_HIST_DATA: 'true'
+  PROCESS_ACCOUNTS: 'true'
+
+  ASSETS_TRACKER_PROCESSOR: 'true'
+  INDEXING_IS_PAUSED: 'false'
+  PROCESS_ONLY_MISSED_BLOCKS: 'false'
+
+x-dict-proc-default-config: &dict-proc-default-config
+  image: *dict-indexer-image
   networks:
     - default
+  depends_on:
+    - dict-db-pgbouncer-all-in-one
+  secrets:
+    - STORAGE_DICTIONARY_PG_PASSWORD
+    - GATEWAY_HYDRATION_API_KEY
   command:
     - sh
     - -c
-    - "sqd migration:apply && node lib/main.js"
+    - 'export DB_PASS=$$(cat /run/secrets/STORAGE_DICTIONARY_PG_PASSWORD) && export GATEWAY_HYDRATION_API_KEY=$$(cat /run/secrets/GATEWAY_HYDRATION_API_KEY) && sqd migration:apply && node lib/main.js'
   deploy:
     restart_policy:
       condition: on-failure
+      delay: 30s
+      max_attempts: 15
+      window: 300s
 
 # ======================================================================================================================
 # ============================================ S T A C K   C O N F I G =================================================
@@ -161,98 +239,206 @@ x-dictionary-proc-default-config: &dictionary-proc-default-config
 networks:
   default:
     driver: overlay
+  gateway:
+    external: true
 
 volumes:
   db-aggregator-indexer:
     driver: local
-  db-dictionary-indexer:
+  db-dict-indexer-vol:
     driver: local
   db-ts-redis:
+    driver: local
+  prometheus-config:
+    driver: local
+  prometheus-data:
     driver: local
 
+secrets:
+  SUBSCAN_PRO_API_SECRET:
+    external: true
+  AGGREGATION_INDEXER_PG_PASSWORD:
+    external: true
+  AGGREGATION_INDEXER_PGBOUNCER_USERLIST:
+    external: true
+  AGGREGATION_INDEXER_REDIS_PASSWORD:
+    external: true
+  STORAGE_DICTIONARY_PG_PASSWORD:
+    external: true
+  STORAGE_DICTIONARY_PGBOUNCER_USERLIST:
+    external: true
+  GATEWAY_HYDRATION_API_KEY:
+    external: true
+
 services:
-  # ------------------------------------ A G G R E G A T I O N   I N D E X E R -------------------------------------------
-  db-ts-redis:
+  # ====================================================================================================================
+  # ================================ A G G R E G A T I O N   I N D E X E R  ===========================================
+  # ====================================================================================================================
+
+  db-ts-redis-all-in-one:
     image: redis/redis-stack:latest
+    secrets:
+      - AGGREGATION_INDEXER_REDIS_PASSWORD
     command:
       - sh
       - -c
       - |
         redis-stack-server \
-        --requirepass password
-    ports:
-      - "6379:6379"
+        --requirepass "$$(cat /run/secrets/AGGREGATION_INDEXER_REDIS_PASSWORD)" \
+        --dir /data \
+        --appendonly yes \
+        --appendfsync everysec \
+        --save 900 1 \
+        --save 300 10 \
+        --save 60 10000
     volumes:
-      - "db-ts-redis:/var/lib/redis/data"
+      - 'db-ts-redis:/data'
     networks:
       - default
     logging:
       driver: json-file
+    deploy:
+      restart_policy:
+        condition: on-failure
 
-  db-aggregator-indexer:
+  db-aggregator-indexer-all-in-one:
     image: postgres:15
     environment:
       POSTGRES_DB: *aggregator-pg-db
       POSTGRES_USER: *aggregator-pg-user
-      POSTGRES_PASSWORD: *aggregator-pg-password
+      POSTGRES_PASSWORD_FILE: /run/secrets/AGGREGATION_INDEXER_PG_PASSWORD
+    secrets:
+      - AGGREGATION_INDEXER_PG_PASSWORD
     command:
-      - "postgres"
-      - "-c"
-      - "statement_timeout=3000000"
-      - "-c"
-      - "tcp_keepalives_idle=600"
-      - "-c"
-      - "tcp_keepalives_interval=30"
-      - "-c"
-      - "tcp_keepalives_count=3"
-      - "-c"
-      - "max_connections=200"
-      - "-c"
-      - "idle_in_transaction_session_timeout=1800000"
-      - "-c"
-      - "log_disconnections=on"
-      - "-c"
-      - "log_connections=on"
+      - 'postgres'
+      - '-c'
+      - 'shared_buffers=12GB'
+      - '-c'
+      - 'effective_cache_size=12GB'
+      - '-c'
+      - 'work_mem=128MB'
+      - '-c'
+      - 'maintenance_work_mem=1GB'
+      - '-c'
+      - 'checkpoint_completion_target=0.9'
+      - '-c'
+      - 'wal_buffers=16MB'
+      - '-c'
+      - 'max_wal_size=4GB'
+      - '-c'
+      - 'wal_compression=on'
+      - '-c'
+      - 'synchronous_commit=off'
+      - '-c'
+      - 'commit_delay=10000'
+      - '-c'
+      - 'wal_writer_delay=10ms'
+      - '-c'
+      - 'bgwriter_delay=50ms'
+      - '-c'
+      - 'bgwriter_lru_maxpages=1000'
+      - '-c'
+      - 'checkpoint_timeout=15min'
+      - '-c'
+      - 'max_parallel_maintenance_workers=4'
+      - '-c'
+      - 'random_page_cost=1.1'
+      - '-c'
+      - 'effective_io_concurrency=200'
+      - '-c'
+      - 'autovacuum_max_workers=4'
+      - '-c'
+      - 'autovacuum_naptime=10s'
+      - '-c'
+      - 'autovacuum_vacuum_scale_factor=0.01'
+      - '-c'
+      - 'autovacuum_analyze_scale_factor=0.005'
+      - '-c'
+      - 'statement_timeout=0'
+      - '-c'
+      - 'tcp_keepalives_idle=3600'
+      - '-c'
+      - 'tcp_keepalives_interval=30'
+      - '-c'
+      - 'tcp_keepalives_count=3'
+      - '-c'
+      - 'max_connections=200'
+      - '-c'
+      - 'idle_in_transaction_session_timeout=0'
+      - '-c'
+      - 'log_disconnections=on'
+      - '-c'
+      - 'log_connections=on'
+      - '-c'
+      - 'shared_preload_libraries=pg_stat_statements'
+      - '-c'
+      - 'log_statement=ddl'
+      - '-c'
+      - 'log_min_duration_statement=5000'
+      - '-c'
+      - 'track_io_timing=on'
+      - '-c'
+      - 'logging_collector=on'
+      - '-c'
+      - 'log_directory=/var/log/postgresql'
+      - '-c'
+      - 'log_filename=postgresql-%Y-%m-%d_%H%M%S.log'
+      - '-c'
+      - 'log_rotation_age=1d'
+      - '-c'
+      - 'log_rotation_size=100MB'
+      - '-c'
+      - 'log_line_prefix=%t [%p]: [ %l-1 ] user=%u,db=%d,app=%a,client=%h'
+      - '-c'
+      - 'log_checkpoints=on'
+      - '-c'
+      - 'log_lock_waits=on'
+      - '-c'
+      - 'log_temp_files=0'
+      - '-c'
+      - 'log_autovacuum_min_duration=0'
     volumes:
-      - "db-aggregator-indexer:/var/lib/postgresql/data"
+      - 'db-aggregator-indexer:/var/lib/postgresql/data'
+      - '/dev/shm:/dev/shm'
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d aggregator_indexer"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d aggregator_indexer']
       interval: 5s
       timeout: 3s
-      retries: 20
+      retries: 21
     logging:
       driver: json-file
     networks:
       - default
-
+    ports:
+      - '16201:5432'
     deploy:
       restart_policy:
         condition: on-failure
 
-  db-aggregator-pgbouncer:
+  db-aggregator-pgbouncer-all-in-one:
     image: edoburu/pgbouncer:latest
+    secrets:
+      - source: AGGREGATION_INDEXER_PGBOUNCER_USERLIST
+        target: /etc/pgbouncer/userlist.txt
+        mode: 0444
     environment:
-      DB_HOST: db-aggregator-indexer
+      DB_HOST: db-aggregator-indexer-all-in-one
       DB_PORT: 5432
       DB_USER: *aggregator-pg-user
-      DB_PASSWORD: *aggregator-pg-password
       DB_DBNAME: *aggregator-pg-db
-      AUTH_TYPE: scram-sha-256
+      AUTH_TYPE: plain
       DNS_MAX_TTL: 15
       DNS_NXDOMAIN_TTL: 15
-      PGBOUNCER_LISTEN_PORT: 5433
-      POOL_MODE: transaction
-      SERVER_RESET_QUERY: DISCARD ALL
+      POOL_MODE: session
       MAX_CLIENT_CONN: 100
       DEFAULT_POOL_SIZE: 20
       MIN_POOL_SIZE: 5
       RESERVE_POOL_SIZE: 5
-      SERVER_LIFETIME: 3600
-      SERVER_IDLE_TIMEOUT: 2400
-    ports:
-      - "5491:5432"
+      SERVER_LIFETIME: 14400
+      SERVER_IDLE_TIMEOUT: 14400
+      SERVER_QUERY_TIMEOUT: 14400
     depends_on:
-      - db-aggregator-indexer
+      - db-aggregator-indexer-all-in-one
     networks:
       - default
     logging:
@@ -261,10 +447,12 @@ services:
       restart_policy:
         condition: on-failure
 
-  aggregator-processor:
+  aggregator-processor-all-in-one:
     <<: *aggregator-proc-default-config
     depends_on:
-      - db-aggregator-pgbouncer
+      - db-aggregator-pgbouncer-all-in-one
+      - db-ts-redis-all-in-one
+      - dict-api-all-in-one
     environment:
       <<:
         [
@@ -272,67 +460,209 @@ services:
           *db-ts-redis-creds,
           *aggregator-proc-default-envs,
         ]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 15
+        window: 300s
 
-      PROCESS_FROM_BLOCK: 9333143
-      PROCESS_TO_BLOCK: -1
-
-  aggregator-api:
-    image: *aggregator-indexer-image
+  aggregator-api-all-in-one:
+    image: *aggregation-indexer-image
     depends_on:
-      - db-aggregator-pgbouncer
+      - db-aggregator-pgbouncer-all-in-one
+      - db-ts-redis-all-in-one
     environment:
       <<: [*db-aggregator-creds, *db-ts-redis-creds]
       INDEXER_ID: *aggregator-indexer-id
-      NODE_ENV: "self-hosted"
+      INDEXER_VERSION: *aggregator-indexer-version
+      IS_MASTER_INSTANCE: 'true'
+      NODE_ENV: 'self-hosted'
       CHAIN: *chain-name
       GQL_PORT: 8080
-      SUB_PROCESSOR_SCHEMAS: "core_processor"
-      ASSET_SPOT_PRICE_ASSET_OUT_IDS: "10"
-      ASSET_PRICE_BASE_ASSET_ID: "10"
-    ports:
-      - "8088:8080"
+      RPC_URL: *aggregator-rpc-url-wss
+      RPC_URL_HTTPS: *aggregator-rpc-url-https
+      SUB_PROCESSOR_SCHEMAS: 'core_processor'
+      COMMIT_HIST_DATA_TO_REDIS_TIME_SERIES: 'false'
+      TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE: 1500
+      ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE: 600
+      TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: 2000
+      DB_POOL_MAX_SIZE: 1
+      SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: hydration.net::-hydra-app.netlify.app::-hydration.netlify.app
+    secrets:
+      - SUBSCAN_PRO_API_SECRET
+      - AGGREGATION_INDEXER_PG_PASSWORD
+      - AGGREGATION_INDEXER_REDIS_PASSWORD
     networks:
       - default
+      - gateway
     logging:
       driver: json-file
     command:
       - sh
       - -c
-      - "sqd api:prod"
+      - 'export SUBSCAN_PRO_API_SECRET=$$(cat /run/secrets/SUBSCAN_PRO_API_SECRET) && export DB_PASS=$$(cat /run/secrets/AGGREGATION_INDEXER_PG_PASSWORD) && export TS_REDIS_PASS=$$(cat /run/secrets/AGGREGATION_INDEXER_REDIS_PASSWORD) && sqd api:prod'
+    deploy:
+      labels:
+        traefik.enable: 'true'
+        traefik.docker.network: gateway
+        traefik.http.services.datalake-all-in-one-aggregator-api-all-in-one.loadbalancer.server.port: '8080'
+        traefik.http.routers.datalake-all-in-one-aggregator-api.entrypoints: websecure
+        traefik.http.routers.datalake-all-in-one-aggregator-api.tls: 'true'
+        traefik.http.routers.datalake-all-in-one-aggregator-api.tls.certresolver: myresolver
+        traefik.http.routers.datalake-all-in-one-aggregator-api.rule: Host(`datalake-all-in-one.orca.hydration.cloud`)
+        traefik.http.routers.datalake-all-in-one-aggregator-api.service: datalake-all-in-one-aggregator-api-all-in-one
+        traefik.http.routers.datalake-all-in-one-aggregator-api-http.entrypoints: web
+        traefik.http.routers.datalake-all-in-one-aggregator-api-http.middlewares: https-redirect
+        traefik.http.routers.datalake-all-in-one-aggregator-api-http.rule: Host(`datalake-all-in-one.orca.hydration.cloud`)
+        traefik.http.routers.datalake-all-in-one-aggregator-api-http.service: datalake-all-in-one-aggregator-api-all-in-one
+      restart_policy:
+        condition: on-failure
+
+  prometheus-config-writer-all-in-one:
+    image: alpine:latest
+    volumes:
+      - prometheus-config:/config
+    command:
+      - sh
+      - -c
+      - |
+        cat > /config/prometheus.yml <<'EOF'
+        global:
+          scrape_interval: 15s
+          evaluation_interval: 15s
+
+        scrape_configs:
+          - job_name: 'aggregator-processor'
+            static_configs:
+              - targets: ['aggregator-processor-all-in-one:3030']
+                labels:
+                  instance: 'datalake-all-in-one'
+                  deployment: 'datalake-selfhosted'
+        EOF
+        echo "Config file created successfully"
+        cat /config/prometheus.yml
+        sleep infinity
+    networks:
+      - default
+    logging:
+      driver: json-file
     deploy:
       restart_policy:
         condition: on-failure
 
-  # -------------------------------------- D I C T I O N A R Y   I N D E X E R -------------------------------------------
-
-  db-dictionary-indexer:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: *dictionary-pg-db
-      POSTGRES_USER: *dictionary-pg-user
-      POSTGRES_PASSWORD: *dictionary-pg-password
-    command:
-      - "postgres"
-      - "-c"
-      - "statement_timeout=3000000"
-      - "-c"
-      - "tcp_keepalives_idle=600"
-      - "-c"
-      - "tcp_keepalives_interval=30"
-      - "-c"
-      - "tcp_keepalives_count=3"
-      - "-c"
-      - "max_connections=200"
-      - "-c"
-      - "idle_in_transaction_session_timeout=1800000"
-      - "-c"
-      - "log_disconnections=on"
-      - "-c"
-      - "log_connections=on"
+  prometheus-all-in-one:
+    image: prom/prometheus:v2.45.3
+    depends_on:
+      - aggregator-processor-all-in-one
+      - prometheus-config-writer-all-in-one
     volumes:
-      - "db-dictionary-indexer:/var/lib/postgresql/data"
+      - prometheus-data:/prometheus
+      - prometheus-config:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - default
+      - gateway
+    logging:
+      driver: json-file
+    deploy:
+      labels:
+        traefik.enable: 'true'
+        traefik.docker.network: gateway
+        traefik.http.services.datalake-all-in-one-prometheus-all-in-one.loadbalancer.server.port: '9090'
+        traefik.http.routers.datalake-all-in-one-prometheus.entrypoints: websecure
+        traefik.http.routers.datalake-all-in-one-prometheus.tls: 'true'
+        traefik.http.routers.datalake-all-in-one-prometheus.tls.certresolver: myresolver
+        traefik.http.routers.datalake-all-in-one-prometheus.rule: Host(`datalake-all-in-one-stats.orca.hydration.cloud`)
+        traefik.http.routers.datalake-all-in-one-prometheus.service: datalake-all-in-one-prometheus-all-in-one
+        traefik.http.routers.datalake-all-in-one-prometheus-http.entrypoints: web
+        traefik.http.routers.datalake-all-in-one-prometheus-http.middlewares: https-redirect
+        traefik.http.routers.datalake-all-in-one-prometheus-http.rule: Host(`datalake-all-in-one-stats.orca.hydration.cloud`)
+        traefik.http.routers.datalake-all-in-one-prometheus-http.service: datalake-all-in-one-prometheus-all-in-one
+      restart_policy:
+        condition: on-failure
+
+  # ====================================================================================================================
+  # ============================= S T O R A G E   D I C T I O N A R Y   I N D E X E R =================================
+  # ====================================================================================================================
+
+  db-dict-indexer-all-in-one:
+    image: postgres:15
+    shm_size: '2gb'
+    environment:
+      POSTGRES_DB: *dict-pg-db-name
+      POSTGRES_USER: *dict-pg-user
+      POSTGRES_PASSWORD_FILE: /run/secrets/STORAGE_DICTIONARY_PG_PASSWORD
+    secrets:
+      - STORAGE_DICTIONARY_PG_PASSWORD
+    command:
+      - 'postgres'
+      - '-c'
+      - 'shared_buffers=4GB'
+      - '-c'
+      - 'effective_cache_size=12GB'
+      - '-c'
+      - 'work_mem=256MB'
+      - '-c'
+      - 'maintenance_work_mem=1GB'
+      - '-c'
+      - 'checkpoint_completion_target=0.9'
+      - '-c'
+      - 'wal_buffers=16MB'
+      - '-c'
+      - 'max_wal_size=4GB'
+      - '-c'
+      - 'statement_timeout=3000000'
+      - '-c'
+      - 'tcp_keepalives_idle=600'
+      - '-c'
+      - 'tcp_keepalives_interval=30'
+      - '-c'
+      - 'tcp_keepalives_count=3'
+      - '-c'
+      - 'max_connections=200'
+      - '-c'
+      - 'idle_in_transaction_session_timeout=1800000'
+      - '-c'
+      - 'log_disconnections=on'
+      - '-c'
+      - 'log_connections=on'
+      - '-c'
+      - 'shared_preload_libraries=pg_stat_statements'
+      - '-c'
+      - 'log_statement=ddl'
+      - '-c'
+      - 'log_min_duration_statement=1000'
+      - '-c'
+      - 'track_io_timing=on'
+      - '-c'
+      - 'logging_collector=on'
+      - '-c'
+      - 'log_directory=/var/log/postgresql'
+      - '-c'
+      - 'log_filename=postgresql-%Y-%m-%d_%H%M%S.log'
+      - '-c'
+      - 'log_rotation_age=1d'
+      - '-c'
+      - 'log_rotation_size=100MB'
+      - '-c'
+      - 'log_line_prefix=%t [%p]: [ %l-1 ] user=%u,db=%d,app=%a,client=%h'
+      - '-c'
+      - 'log_checkpoints=on'
+      - '-c'
+      - 'log_lock_waits=on'
+      - '-c'
+      - 'log_temp_files=0'
+    volumes:
+      - 'db-dict-indexer-vol:/var/lib/postgresql/data'
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d aggregator_indexer"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d dictionary_indexer']
       interval: 5s
       timeout: 3s
       retries: 20
@@ -340,34 +670,37 @@ services:
       driver: json-file
     networks:
       - default
+    ports:
+      - '15777:5432'
     deploy:
       restart_policy:
         condition: on-failure
 
-  db-dictionary-pgbouncer:
+  dict-db-pgbouncer-all-in-one:
     image: edoburu/pgbouncer:latest
+    secrets:
+      - source: STORAGE_DICTIONARY_PGBOUNCER_USERLIST
+        target: /etc/pgbouncer/userlist.txt
+        mode: 0444
     environment:
-      DB_HOST: db-dictionary-indexer
+      DB_HOST: *dict-pg-host
       DB_PORT: 5432
-      DB_USER: *dictionary-pg-user
-      DB_PASSWORD: *dictionary-pg-password
-      DB_DBNAME: *dictionary-pg-db
-      AUTH_TYPE: scram-sha-256
+      DB_USER: *dict-pg-user
+      DB_DBNAME: *dict-pg-db-name
+      AUTH_TYPE: plain
       DNS_MAX_TTL: 15
       DNS_NXDOMAIN_TTL: 15
       PGBOUNCER_LISTEN_PORT: 5433
-      POOL_MODE: transaction
-      SERVER_RESET_QUERY: DISCARD ALL
+      POOL_MODE: session
       MAX_CLIENT_CONN: 100
       DEFAULT_POOL_SIZE: 20
       MIN_POOL_SIZE: 5
       RESERVE_POOL_SIZE: 5
-      SERVER_LIFETIME: 3600
-      SERVER_IDLE_TIMEOUT: 2400
-    ports:
-      - "5490:5432"
+      SERVER_LIFETIME: 14400
+      SERVER_IDLE_TIMEOUT: 14400
+      SERVER_QUERY_TIMEOUT: 14400
     depends_on:
-      - db-dictionary-indexer
+      - db-dict-indexer-all-in-one
     networks:
       - default
     logging:
@@ -376,41 +709,50 @@ services:
       restart_policy:
         condition: on-failure
 
-  dictionary-processor:
-    <<: *dictionary-proc-default-config
-    depends_on:
-      - db-dictionary-pgbouncer
+  dict-processor-all-in-one:
+    <<: *dict-proc-default-config
     environment:
-      <<: [*db-dictionary-creds, *dictionary-proc-default-envs]
-
-      PROCESS_FROM_BLOCK: 9333143
+      <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
+      PROCESS_FROM_BLOCK: 11565981
       PROCESS_TO_BLOCK: -1
+      STATE_SCHEMA_NAME: squid_processor
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: squid_processor
 
-  dictionary-api:
-    image: *dictionary-indexer-image
+  dict-api-all-in-one:
+    image: *dict-indexer-image
     depends_on:
-      - db-dictionary-pgbouncer
+      - dict-db-pgbouncer-all-in-one
+    secrets:
+      - STORAGE_DICTIONARY_PG_PASSWORD
     environment:
-      <<: *db-dictionary-creds
-      NODE_ENV: "self-hosted"
+      <<: *dict-db-pgbouncer-creds
+      NODE_ENV: 'self-hosted'
       CHAIN: *chain-name
       GQL_PORT: 8080
-      #
-      # Configuration settings for running the indexer in multiprocessor mode.
-      #
-      # Config for squidStatus API query to show statuses of all running processors with information about target
-      # blocks range of each processor.
-      SUB_PROCESSORS_RANGES: "squid_processor:9333143:-1"
-    ports:
-      - "8089:8080"
+      # Single processor in this stack — squidStatus reports only that range.
+      SUB_PROCESSORS_RANGES: 'squid_processor:11565981:-1'
     networks:
       - default
+      - gateway
     logging:
       driver: json-file
     command:
       - sh
       - -c
-      - "sqd api:prod"
+      - 'export DB_PASS=$$(cat /run/secrets/STORAGE_DICTIONARY_PG_PASSWORD) && sqd api:prod'
     deploy:
+      labels:
+        traefik.enable: 'true'
+        traefik.docker.network: gateway
+        traefik.http.services.datalake-all-in-one-dict-api-all-in-one.loadbalancer.server.port: '8080'
+        traefik.http.routers.datalake-all-in-one-dict-api.entrypoints: websecure
+        traefik.http.routers.datalake-all-in-one-dict-api.tls: 'true'
+        traefik.http.routers.datalake-all-in-one-dict-api.tls.certresolver: myresolver
+        traefik.http.routers.datalake-all-in-one-dict-api.rule: Host(`datalake-all-in-one-dict.orca.hydration.cloud`)
+        traefik.http.routers.datalake-all-in-one-dict-api.service: datalake-all-in-one-dict-api-all-in-one
+        traefik.http.routers.datalake-all-in-one-dict-api-http.entrypoints: web
+        traefik.http.routers.datalake-all-in-one-dict-api-http.middlewares: https-redirect
+        traefik.http.routers.datalake-all-in-one-dict-api-http.rule: Host(`datalake-all-in-one-dict.orca.hydration.cloud`)
+        traefik.http.routers.datalake-all-in-one-dict-api-http.service: datalake-all-in-one-dict-api-all-in-one
       restart_policy:
         condition: on-failure

@@ -14,11 +14,13 @@ For more details on the indexer's GraphQL API queries and subscriptions, refer t
 
 Aggregation Indexer is implemented with the flexibility to use multiple sources of blockchain data. These data sources are prioritized in a fallback sequence to ensure robust data retrieval:
 
-1. **Storage Dictionary** (primary source for prefetched data)
+1. **Storage Dictionary** (primary source for prefetched data — see [`indexers/storage-dictionary`](../storage-dictionary))
 2. **Runtime API Calls** (specific data on-demand)
 3. **RPC Calls to Storage** (fallback for all other methods)
 
 The **StorageResolver** orchestrates this process by attempting to fetch the required data in the order listed above. If a primary source is unavailable or incomplete, the resolver falls back to the next source.
+
+> 🧠 **Architecture spec**: the authoritative description of this indexer's internals (single-flow processor, batch lifecycle, reorg safety, spot-price calculation, account-balance aggregation, two-track DB migrations, etc.) lives in [`CLAUDE.md`](./CLAUDE.md). The README only covers the user-facing configuration surface.
 
 ---
 
@@ -73,7 +75,10 @@ All environment variables with default values can be found here - [.env.example]
 
 ## Docker Image
 
-A Docker image has been built and published based on the [Dockerfile](Dockerfile): [ghcr.io/mckrava/liquidity-pools-indexer](https://ghcr.io/mckrava/liquidity-pools-indexer).
+A Docker image is built and published from this folder's [Dockerfile](Dockerfile) by the monorepo CI workflow ([.github/workflows/docker-images-build-publish.yml](../../.github/workflows/docker-images-build-publish.yml)) and pushed to GitHub Container Registry:
+
+- **Image**: `ghcr.io/galacticcouncil/data-lake-aggregation-indexer`
+- **Tags**: `latest` for `main`; `wip-<sanitized-branch>` for feature branches; every build is also tagged with the commit SHA.
 
 ### Environment Variables Explanation
 
@@ -110,4 +115,4 @@ A Docker image has been built and published based on the [Dockerfile](Dockerfile
 - **`STORAGE_DICTIONARY_<LBPPOOL | XYKPOOL | OMNIPOOL | STABLEPOOL>_URL: string`**  
   API URL for the Storage Dictionary Indexer containing the appropriate data. If the dictionary is a single instance indexer that processes all types of pools, all four variables will share the same value.
 
-**Examples of environment variable usage can be found in the [SQD cloud deployment manifest files](./deployment-hydration-indexer.yaml) and [Docker Swarm stack files](../../self-hosted/aggregation-indexer/legacy/liquidity-pools.stack.ymlack.yml).**
+**Examples of environment variable usage**: the active production deployment is Docker Swarm. See the stack files under [`self-hosted/aggregation-indexer/`](../../self-hosted/aggregation-indexer) (`orca-full-orca.yml`, `orca-full-catfish.yml`) and the catch-all [`self-hosted/all-in-one/hydration-datalake-full-stack-selfhosted.stack.yml`](../../self-hosted/all-in-one/hydration-datalake-full-stack-selfhosted.stack.yml). The SQD cloud deployment manifests in this folder (`deployment-*.yaml`) are kept as **legacy reference** — SQD cloud is no longer the active hosting target.
