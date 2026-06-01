@@ -27,7 +27,8 @@ import { getOrCreatePriceRoute } from '../priceRoute/priceRoute';
 import { getOrCreateAsset } from '../asset';
 import { OfflineTradeRouterManager } from './utils';
 // import { Amount, Hop, PoolBase, PoolType } from './utils/offlineSdk/sdk/src';
-import type { Amount, PoolType, Hop, PoolBase } from '@galacticcouncil/sdk-next';
+import type { Amount } from '@galacticcouncil/sdk-next';
+import { PoolType } from '@galacticcouncil/sdk';
 import { ensureXykpoolHisDataFromLatestPersistedData } from '../../pools/pools/xykPool/historicalData';
 
 const appConfig = AppConfig.getInstance();
@@ -251,7 +252,6 @@ async function processAssetSpotPrices({
                 decimals: baseAssetEntity.decimals || 6,
               },
               route: [],
-              routeKey: 'ASSET_PRICE_BASE_ASSET_ID',
             };
             if (!priceWithRoute) continue;
           } else if (

@@ -584,6 +584,9 @@ export class AppConfig {
 
   readonly GATEWAY_HYDRATION_HTTPS: string | null = null;
 
+  // SQD Network v2 gateways require an API key — https://docs.sqd.dev/v2-keys
+  readonly GATEWAY_HYDRATION_API_KEY: string | null = null;
+
   @Transform(({ value }: { value: string }) => +value)
   readonly PROCESS_FROM_BLOCK: number = 0;
 

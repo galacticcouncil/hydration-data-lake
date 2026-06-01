@@ -1,16 +1,16 @@
 import { Registry } from 'prom-client';
-import { processor } from '../../processor';
 
 /**
  * Shared Prometheus registry for all custom metrics in this app.
  *
- * SQD framework uses its own private Registry (not the prom-client default
- * global registry) and serves only that registry on port 3030. We extract it
- * from the processor instance so our custom metrics appear alongside SQD
- * built-in metrics (sqd_processor_last_block, sqd_rpc_request_count, etc.)
+ * SQD's PrometheusServer keeps its own private Registry and exposes no getter
+ * for it, so we cannot register onto it directly. Custom metrics register here
+ * instead; `processor.ts` attaches a MetricsSink that copies these metrics into
+ * SQD's registry when the metrics server starts — so they are served alongside
+ * SQD built-in metrics (sqd_processor_last_block, sqd_rpc_request_count, etc.)
  * on the same /metrics endpoint.
  */
-export const sqdRegistry: Registry = (processor as any).prometheus.registry;
+export const sqdRegistry: Registry = new Registry();
 
 /**
  * Label value used by every metric in this folder to identify which
