@@ -1,4 +1,5 @@
-import { StableMath } from '@galacticcouncil/sdk';
+import { pool } from '@galacticcouncil/sdk-next';
+const { StableMath } = pool.stable;
 import { blake2AsHex } from '@polkadot/util-crypto';
 import { Store } from '@subsquid/typeorm-store';
 

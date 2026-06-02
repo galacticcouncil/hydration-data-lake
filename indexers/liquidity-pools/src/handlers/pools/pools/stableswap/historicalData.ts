@@ -1,6 +1,7 @@
 import pMap from 'p-map';
 
-import { StableMath } from '@galacticcouncil/sdk';
+import { pool } from '@galacticcouncil/sdk-next';
+const { StableMath } = pool.stable;
 import { blake2AsHex } from '@polkadot/util-crypto';
 import { BlockHeader } from '@subsquid/substrate-processor';
 import { Store } from '@subsquid/typeorm-store';

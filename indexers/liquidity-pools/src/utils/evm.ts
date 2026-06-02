@@ -1,4 +1,4 @@
-import { HYDRADX_SS58_PREFIX } from '@galacticcouncil/sdk';
+import { HYDRADX_SS58_PREFIX } from './consts';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { Buffer } from 'buffer';
