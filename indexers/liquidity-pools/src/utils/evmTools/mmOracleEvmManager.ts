@@ -5,7 +5,12 @@ import { PQueueManager } from '../pQueueManager';
 import { SqdProcessorContext } from '../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { retryAsync } from '../helpers';
-import { IPersistentMmOracleEntry } from '../../handlers/assets/assetHistoricalData/utils/offlineSdk/sdk/src';
+type IPersistentMmOracleEntry = {
+  address: string;
+  price: string;
+  decimals: number;
+  updatedAt: number;
+};
 
 export class MmOracleManager {
   private static instance: MmOracleManager;
