@@ -354,10 +354,6 @@ class ProcessingModeConfig {
 
   @Transform(({ value }: { value: string }) => value === 'true')
   @IsBoolean()
-  readonly SIMPLIFIED_PROCESSING: boolean = false;
-
-  @Transform(({ value }: { value: string }) => value === 'true')
-  @IsBoolean()
   readonly REAGGREGATION_PROCESSING_MODE: boolean = false;
 
   readonly REAGGREGATION_PROCESSING_FLOW_NAME?: string;
@@ -464,6 +460,9 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_POOL_MAX_SIZE: number = 2;
 
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly IS_CUSTOM_DB_MIGRATIONS_RUNNER: boolean = true;
+
   @Transform(({ value }: { value: string }) => +value)
   readonly DB_CUSTOM_MIGRATIONS_MAX_RETRY: number = 50;
 
@@ -477,15 +476,6 @@ export class AppConfig {
   // lock in this window. Prevents indefinite hangs when a custom migration
   // races with SQD's hot-block rollback transaction on processor restart.
   readonly DB_CUSTOM_MIGRATIONS_LOCK_TIMEOUT: string = '30s';
-
-  @IsNotEmpty()
-  readonly ORCHESTRATOR_QUEUE_REDIS_HOST: string = 'localhost';
-
-  @IsNotEmpty()
-  readonly ORCHESTRATOR_QUEUE_REDIS_PASS: string = 'orchestra';
-
-  @Transform(({ value }: { value: string }) => +value)
-  readonly ORCHESTRATOR_QUEUE_REDIS_PORT: number = 6379;
 
   @IsNotEmpty()
   readonly TS_REDIS_HOST: string = 'localhost';
@@ -572,9 +562,6 @@ export class AppConfig {
     return value.split(';');
   })
   SUB_PROCESSOR_SCHEMAS: string[] = ['squid_processor'];
-
-  @Transform(({ value }: { value: string }) => value === 'true')
-  readonly IS_CUSTOM_DB_MIGRATIONS_RUNNER: boolean = true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly INDEXING_IS_PAUSED: boolean = false;

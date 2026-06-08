@@ -1,0 +1,412 @@
+# ======================================================================================================================
+# =============================================== I M P O R T A N T ====================================================
+# ======================================================================================================================
+# Deployment must have name "stdict-xyk-data-v2-self" to satisfy traefik routing rules configured for this stack
+
+
+version: "3.7"
+
+# ======================================================================================================================
+# =============================================== V A R I A B L E S ====================================================
+# ======================================================================================================================
+
+x-dict-pg-db-name: &dict-pg-db-name "dictionary_indexer"
+x-dict-pg-user: &dict-pg-user "postgres"
+x-dict-pg-host: &dict-pg-host "db-dict-indexer-xyk-h-d"
+x-dict-pg-bouncer-host: &dict-pg-bouncer-host "dict-db-pgbouncer-xyk-h-d"
+
+x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/network/hydradx"
+
+x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-sparrow-2.sparrow.shadow-senate.com"
+x-dict-rpc-url-https: &dict-rpc-url-https "https://node-sparrow-2.sparrow.shadow-senate.com"
+
+x-dict-indexer-image: &dict-indexer-image "ghcr.io/galacticcouncil/data-lake-storage-dictionary-indexer:43186c9547d76eea2d5528cdd91cbde294390f7a"
+
+# ======================================================================================================================
+# ======================================== C O N F I G   S E G M E N T S ===============================================
+# ======================================================================================================================
+
+# --------------------------- S T O R A G E   D I C T I O N A R Y  I N D E X E R ---------------------------------------
+
+x-dict-db-pgbouncer-creds: &dict-db-pgbouncer-creds
+  DB_PORT: 5432
+  DB_NAME: *dict-pg-db-name
+  DB_USER: *dict-pg-user
+  DB_HOST: *dict-pg-bouncer-host
+
+x-dict-proc-default-envs: &dict-proc-default-envs
+  RPC_URL: *dict-rpc-url-wss
+  RPC_URL_HTTPS: *dict-rpc-url-https
+  GATEWAY_HYDRATION_HTTPS: *gateway-hydration-url
+
+  GQL_PORT: 8080
+  NODE_ENV: production
+  OMNIPOOL_ADDRESS: '0x6d6f646c6f6d6e69706f6f6c0000000000000000000000000000000000000000'
+  AAVE_MONEY_MARKET_INSTANCES: '[{"marketId":"main","treasuryAddress":"0xe52567ff06acd6cbe7ba94dc777a3126e180b6d9","poolDataProviderAddress":"0x112b087b60C1a166130d59266363C45F8aa99db0","poolAddressProviderAddress":"0xf3Ba4D1b50f78301BDD7EAEa9B67822A15FCA691","poolImplementationProxyAddress":"0x1b02e051683b5cfac5929c25e84adb26ecf87b38"}]'
+
+  SUB_BATCH_SIZE: 50
+  INDEXER_MAX_SUB_BATCH_SIZE: 200
+  PERSIST_HIST_DATA_ONLY_ON_CHANGE: 'true'
+
+  ASYNC_OPERATIONS_CONCURRENCY_COMMON: 10
+  EVM_CONTRACT_CALL_CONCURRENCY: 10
+  RUNTIME_API_CALLS_CONCURRENCY: 10
+
+  PROCESS_LBP_POOLS: 'false'
+  PROCESS_XYK_POOLS: 'true'
+  PROCESS_OMNIPOOLS: 'false'
+  PROCESS_STABLEPOOLS: 'false'
+  PROCESS_GENERIC_HIST_DATA: 'false'
+  PROCESS_ACCOUNTS: 'false'
+  INDEXING_IS_PAUSED: 'false'
+
+  PROCESS_ONLY_MISSED_BLOCKS: 'false'
+
+
+x-dict-proc-default-config: &dict-proc-default-config
+  image: *dict-indexer-image
+  networks:
+    - default
+  depends_on:
+    - dict-db-pgbouncer-xyk-h-d
+  secrets:
+    - STORAGE_DICTIONARY_PG_PASSWORD
+    - GATEWAY_HYDRATION_API_KEY
+  command:
+    - sh
+    - -c
+    - "export DB_PASS=$$(cat /run/secrets/STORAGE_DICTIONARY_PG_PASSWORD) && export GATEWAY_HYDRATION_API_KEY=$$(cat /run/secrets/GATEWAY_HYDRATION_API_KEY) && sqd migration:apply && node lib/main.js"
+  deploy:
+    restart_policy:
+      condition: on-failure
+      delay: 30s
+      max_attempts: 15
+      window: 300s
+
+# ======================================================================================================================
+# ============================================ S T A C K   C O N F I G =================================================
+# ======================================================================================================================
+
+networks:
+  default:
+    driver: overlay
+  gateway:
+    external: true
+
+volumes:
+  db-dict-indexer-vol:
+    driver: local
+#  pg-migrate-vol-xyk-h-d:
+#    external: true
+
+secrets:
+  STORAGE_DICTIONARY_PG_PASSWORD:
+    external: true
+  STORAGE_DICTIONARY_PGBOUNCER_USERLIST:
+    external: true
+  GATEWAY_HYDRATION_API_KEY:
+    external: true
+
+services:
+  # ------------------------------------ A G G R E G A T I O N   I N D E X E R -------------------------------------------
+
+  db-dict-indexer-xyk-h-d:
+    image: postgres:15
+    shm_size: '2gb'
+    environment:
+      POSTGRES_DB: *dict-pg-db-name
+      POSTGRES_USER: *dict-pg-user
+      POSTGRES_PASSWORD_FILE: /run/secrets/STORAGE_DICTIONARY_PG_PASSWORD
+    secrets:
+      - STORAGE_DICTIONARY_PG_PASSWORD
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=4GB"
+      - "-c"
+      - "effective_cache_size=12GB"
+      - "-c"
+      - "work_mem=256MB"
+      - "-c"
+      - "maintenance_work_mem=1GB"
+      - "-c"
+      - "checkpoint_completion_target=0.9"
+      - "-c"
+      - "wal_buffers=16MB"
+      - "-c"
+      - "max_wal_size=4GB"
+      - "-c"
+      - "statement_timeout=3000000"
+      - "-c"
+      - "tcp_keepalives_idle=600"
+      - "-c"
+      - "tcp_keepalives_interval=30"
+      - "-c"
+      - "tcp_keepalives_count=3"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "idle_in_transaction_session_timeout=1800000"
+      - "-c"
+      - "log_disconnections=on"
+      - "-c"
+      - "log_connections=on"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "log_statement=ddl"
+      - "-c"
+      - "track_io_timing=on"
+      - "-c"
+      - "logging_collector=on"
+      - "-c"
+      - "log_directory=/var/log/postgresql"
+      - "-c"
+      - "log_filename=postgresql-%Y-%m-%d_%H%M%S.log"
+      - "-c"
+      - "log_rotation_age=1d"
+      - "-c"
+      - "log_rotation_size=100MB"
+      - "-c"
+      - "log_line_prefix=%t [%p]: [ %l-1 ] user=%u,db=%d,app=%a,client=%h"
+      - "-c"
+      - "log_checkpoints=on"
+      - "-c"
+      - "log_lock_waits=on"
+      - "-c"
+      - "log_temp_files=0"
+      - "-c"
+      - "fsync=off"
+      - "-c"
+      - "synchronous_commit=off"
+      - "-c"
+      - "full_page_writes=off"
+    volumes:
+      - "db-dict-indexer-vol:/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d dictionary_indexer"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging:
+      driver: json-file
+    networks:
+      - default
+    ports:
+      - "15700:5432"
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  dict-db-pgbouncer-xyk-h-d:
+    image: edoburu/pgbouncer:latest
+    secrets:
+      - source: STORAGE_DICTIONARY_PGBOUNCER_USERLIST
+        target: /etc/pgbouncer/userlist.txt
+        mode: 0444
+    environment:
+      DB_HOST: *dict-pg-host
+      DB_PORT: 5432
+      DB_USER: *dict-pg-user
+      DB_DBNAME: *dict-pg-db-name
+      AUTH_TYPE: plain # shuold be scram-sha-256 if use DB password and plain env variable
+      DNS_MAX_TTL: 15
+      DNS_NXDOMAIN_TTL: 15
+      PGBOUNCER_LISTEN_PORT: 5433
+      POOL_MODE: session
+#      SERVER_RESET_QUERY: "DISCARD ALL"
+      MAX_CLIENT_CONN: 100
+      DEFAULT_POOL_SIZE: 20
+      MIN_POOL_SIZE: 5
+      RESERVE_POOL_SIZE: 5
+      SERVER_LIFETIME: 3600
+      SERVER_IDLE_TIMEOUT: 2400
+    #    ports:
+    #      - "5497:5432"
+    depends_on:
+      - db-dict-indexer-xyk-h-d
+    networks:
+      - default
+    logging:
+      driver: json-file
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  dict-api-xyk-h-d:
+    image: *dict-indexer-image
+    depends_on:
+      - dict-db-pgbouncer-xyk-h-d
+    secrets:
+      - STORAGE_DICTIONARY_PG_PASSWORD
+    environment:
+      <<: *dict-db-pgbouncer-creds
+      NODE_ENV: "self-hosted"
+      GQL_PORT: 8080
+      SUB_PROCESSORS_RANGES: 'acc_hist_data__batch_proc_1:1439857:2752000;acc_hist_data__batch_proc_2:2752001:4064000'
+    #    ports:
+    #      - "8097:8080"
+    networks:
+      - default
+      - gateway
+    logging:
+      driver: json-file
+    command:
+      - sh
+      - -c
+      - "export DB_PASS=$$(cat /run/secrets/STORAGE_DICTIONARY_PG_PASSWORD) && sqd api:prod"
+    deploy:
+      labels:
+        traefik.http.routers.storage-dict-route-xyk-data-v2-http.rule: Host(`storage-dict-xyk-hist-data-v2.orca.hydration.cloud`)
+        traefik.http.routers.storage-dict-route-xyk-data-v2-http.service: stdict-xyk-data-v2-self-dict-api-xyk-h-d
+        traefik.http.routers.storage-dict-route-xyk-data-v2.tls: 'true'
+        traefik.http.services.stdict-xyk-data-v2-self-dict-api-xyk-h-d.loadbalancer.server.port: '8080'
+        traefik.http.routers.storage-dict-route-xyk-data-v2-http.entrypoints: web
+        traefik.http.routers.storage-dict-route-xyk-data-v2.entrypoints: websecure
+        traefik.http.routers.storage-dict-route-xyk-data-v2-http.middlewares: https-redirect
+        traefik.http.routers.storage-dict-route-xyk-data-v2.rule: Host(`storage-dict-xyk-hist-data-v2.orca.hydration.cloud`)
+        traefik.http.routers.storage-dict-route-xyk-data-v2.service: stdict-xyk-data-v2-self-dict-api-xyk-h-d
+        traefik.docker.network: gateway
+        traefik.enable: 'true'
+        traefik.http.routers.storage-dict-route-xyk-data-v2.tls.certresolver: myresolver
+      restart_policy:
+        condition: on-failure
+
+  dict-processor-xyk-h-d-1:
+    <<: *dict-proc-default-config
+    environment:
+      <<:
+        [
+          *dict-db-pgbouncer-creds,
+          *dict-proc-default-envs,
+        ]
+      RPC_URL: wss://node-sparrow-2.sparrow.shadow-senate.com
+      RPC_URL_HTTPS: https://node-sparrow-2.sparrow.shadow-senate.com
+      PROCESS_FROM_BLOCK: 3934550
+      PROCESS_TO_BLOCK: 5000000
+
+      STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_1
+      ASSETS_TRACKER_PROCESSOR: 'false'
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_8
+
+  dict-processor-xyk-h-d-2:
+    <<: *dict-proc-default-config
+    environment:
+      <<:
+        [
+          *dict-db-pgbouncer-creds,
+          *dict-proc-default-envs,
+        ]
+      RPC_URL: wss://node-sparrow-2.sparrow.shadow-senate.com
+      RPC_URL_HTTPS: https://node-sparrow-2.sparrow.shadow-senate.com
+      PROCESS_FROM_BLOCK: 5000001
+      PROCESS_TO_BLOCK: 6000000
+
+      STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_2
+      ASSETS_TRACKER_PROCESSOR: 'false'
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_8
+
+  dict-processor-xyk-h-d-3:
+    <<: *dict-proc-default-config
+    environment:
+      <<:
+        [
+          *dict-db-pgbouncer-creds,
+          *dict-proc-default-envs,
+        ]
+      RPC_URL: wss://node-sparrow-2.sparrow.shadow-senate.com
+      RPC_URL_HTTPS: https://node-sparrow-2.sparrow.shadow-senate.com
+      PROCESS_FROM_BLOCK: 6000001
+      PROCESS_TO_BLOCK: 7000000
+
+      STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_3
+      ASSETS_TRACKER_PROCESSOR: 'false'
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_8
+
+  dict-processor-xyk-h-d-4:
+    <<: *dict-proc-default-config
+    environment:
+      <<:
+        [
+          *dict-db-pgbouncer-creds,
+          *dict-proc-default-envs,
+        ]
+      RPC_URL: wss://node-sparrow-4.sparrow.shadow-senate.com
+      RPC_URL_HTTPS: https://node-sparrow-4.sparrow.shadow-senate.com
+      PROCESS_FROM_BLOCK: 7000001
+      PROCESS_TO_BLOCK: 8000000
+      ASYNC_OPERATIONS_CONCURRENCY_COMMON: 15
+      EVM_CONTRACT_CALL_CONCURRENCY: 15
+      RUNTIME_API_CALLS_CONCURRENCY: 15
+
+      STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_4
+      ASSETS_TRACKER_PROCESSOR: 'false'
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_8
+
+  dict-processor-xyk-h-d-5:
+    <<: *dict-proc-default-config
+    environment:
+      <<:
+        [
+          *dict-db-pgbouncer-creds,
+          *dict-proc-default-envs,
+        ]
+      RPC_URL: wss://node-sparrow-2.sparrow.shadow-senate.com
+      RPC_URL_HTTPS: https://node-sparrow-2.sparrow.shadow-senate.com
+      PROCESS_FROM_BLOCK: 8000001
+      PROCESS_TO_BLOCK: 9000000
+
+      STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_5
+      ASSETS_TRACKER_PROCESSOR: 'false'
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_8
+
+  dict-processor-xyk-h-d-6:
+    <<: *dict-proc-default-config
+    environment:
+      <<:
+        [
+          *dict-db-pgbouncer-creds,
+          *dict-proc-default-envs,
+        ]
+      RPC_URL: wss://node-sparrow-2.sparrow.shadow-senate.com
+      RPC_URL_HTTPS: https://node-sparrow-2.sparrow.shadow-senate.com
+      PROCESS_FROM_BLOCK: 9000001
+      PROCESS_TO_BLOCK: 10000000
+
+      STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_6
+      ASSETS_TRACKER_PROCESSOR: 'false'
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_8
+
+  dict-processor-xyk-h-d-7:
+    <<: *dict-proc-default-config
+    environment:
+      <<:
+        [
+          *dict-db-pgbouncer-creds,
+          *dict-proc-default-envs,
+        ]
+      RPC_URL: wss://node-sparrow-2.sparrow.shadow-senate.com
+      RPC_URL_HTTPS: https://node-sparrow-2.sparrow.shadow-senate.com
+      PROCESS_FROM_BLOCK: 10000001
+      PROCESS_TO_BLOCK: 11000000
+
+      STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_7
+      ASSETS_TRACKER_PROCESSOR: 'false'
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_8
+
+  dict-processor-xyk-h-d-8:
+    <<: *dict-proc-default-config
+    environment:
+      <<:
+        [
+          *dict-db-pgbouncer-creds,
+          *dict-proc-default-envs,
+        ]
+      RPC_URL: wss://node-sparrow-1.sparrow.shadow-senate.com
+      RPC_URL_HTTPS: https://node-sparrow-1.sparrow.shadow-senate.com
+      PROCESS_FROM_BLOCK: 11000001
+      PROCESS_TO_BLOCK: -1
+
+      STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_8
+      ASSETS_TRACKER_PROCESSOR: 'true'
+      ASSETS_ACTUALISATION_PROC_STATE_SCHEMA_NAME: xyk_hist_data__batch_proc_8

@@ -60,15 +60,20 @@ let processor = new SubstrateBatchProcessor()
     to: appConfig.PROCESS_TO_BLOCK > 0 ? appConfig.PROCESS_TO_BLOCK : undefined,
   });
 
-if (appConfig.GATEWAY_HYDRATION_HTTPS && !appConfig.IGNORE_ARCHIVE_DATA_SOURCE)
+if (
+  appConfig.GATEWAY_HYDRATION_HTTPS &&
+  appConfig.GATEWAY_HYDRATION_API_KEY &&
+  !appConfig.IGNORE_ARCHIVE_DATA_SOURCE
+)
   // Lookup archive by the network name in Subsquid registry
   // See https://docs.subsquid.io/substrate-indexing/supported-networks/
-  processor = processor.setGateway(
-    assertNotNull(
+  processor = processor.setGateway({
+    url: assertNotNull(
       appConfig.GATEWAY_HYDRATION_HTTPS,
       'No gateway endpoint supplied'
-    )
-  );
+    ),
+    apiKey: appConfig.GATEWAY_HYDRATION_API_KEY,
+  });
 
 export { processor };
 

@@ -3,13 +3,14 @@
 Substrate blockchain indexer for **Hydration** (Polkadot parachain, 6s block time). Built on the [Subsquid (SQD) framework](https://docs.sqd.ai/).
 
 ## Resources
+
 https://github.com/galacticcouncil/hydration/blob/main/general/hydration.md
 https://github.com/galacticcouncil/hydration/blob/main/general/omnipool.md
 
 ## Stack
 
 - **Framework**: Subsquid (`@subsquid/substrate-processor`)
-- **Postgres**: Main storage. ORM is SQD's TypeORM wrapper (limited functionality). Isolation level: `READ COMMITTED`.
+- **Postgres**: Main storage. ORM is SQD's TypeORM wrapper (limited functionality). Isolation level: `READ COMMITTED`. SQD's per-processor state (current `height`, `fromBlock`, `toBlock`) lives in a dedicated schema named by `STATE_SCHEMA_NAME` — defaults to `squid_processor` (see `src/appConfig.ts`).
 - **Redis + TimeSeries**: Caching and historical chart data.
 - **API**: Express.js + PostGraphile GraphQL server (separate process).
 - **DB MCP server**: `orca-prod-102-read-only` — **READ ONLY**. Never mutate unless the user explicitly asks.
@@ -82,16 +83,31 @@ Entry point: `handleAssetSpotPricesHistoricalDataAtBlock` in `src/handlers/asset
 
 For debugging balances aggregation, the following tables provide layered visibility — from per-asset snapshots up to a full trace of every balance that contributed to an account's total.
 
-| Table | Purpose | Toggle |
-|---|---|---|
-| `account_asset_balance_historical_data` | Per-asset balance snapshot at a given block (one row per `(account, asset, block)`). | Always written. |
-| `account_total_balance_historical_data` | Snapshot of an account's **total balance in the reference asset** at a given block. Aggregates all asset balances **plus** the value of all liquidity positions held by the account. | Always written. |
-| `account_liquidity_balance_historical_data` | Per-liquidity-position snapshots per account per block (the per-position breakdown behind the liquidity component of the total balance). | `ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED` — table may be empty if disabled. |
-| `account_total_balance_historical_data_log` | **Full trace** of every balance line item included in a total-balance snapshot — use this to see exactly which balances/positions rolled up into a given `account_total_balance_historical_data` row. | `BALANCES_LOG_ENABLED` — table may be empty if disabled. |
+| Table                                       | Purpose                                                                                                                                                                                               | Toggle                                                                       |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `account_asset_balance_historical_data`     | Per-asset balance snapshot at a given block (one row per `(account, asset, block)`).                                                                                                                  | Always written.                                                              |
+| `account_total_balance_historical_data`     | Snapshot of an account's **total balance in the reference asset** at a given block. Aggregates all asset balances **plus** the value of all liquidity positions held by the account.                  | Always written.                                                              |
+| `account_liquidity_balance_historical_data` | Per-liquidity-position snapshots per account per block (the per-position breakdown behind the liquidity component of the total balance).                                                              | `ACCOUNT_LIQUIDITY_BALANCES_FLUSH_ENABLED` — table may be empty if disabled. |
+| `account_total_balance_historical_data_log` | **Full trace** of every balance line item included in a total-balance snapshot — use this to see exactly which balances/positions rolled up into a given `account_total_balance_historical_data` row. | `BALANCES_LOG_ENABLED` — table may be empty if disabled.                     |
 
 **Debugging hint**: start at `account_total_balance_historical_data` for the suspect block, then join into `account_total_balance_historical_data_log` (if enabled) to inspect the contributing rows. Cross-check individual components against `account_asset_balance_historical_data` and `account_liquidity_balance_historical_data`.
 
 ## Local development
+
+### Running locally (full flow)
+
+All commands below come from `./commands.json` and require the SQD CLI (`npm i -g @subsquid/cli@latest`).
+
+1. **Typegen** — `sqd typegen` reads `/typegenConfig/*` and emits TypeScript for events, calls, and storage. For chains without an SQD Archive (e.g. testnet), first generate a local metadata file and point the relevant typegen config's `specVersions` at it:
+   ```bash
+   npx squid-substrate-metadata-explorer --rpc wss://paseo-rpc.play.hydration.cloud --out ./typegenAssets/paseo-metadata.jsonl
+   ```
+2. **Codegen** (only if `schema.graphql` changed) — `sqd codegen` regenerates TypeORM entities and enums. An enum must be referenced by an entity, otherwise it won't be emitted.
+3. **Build** — `sqd build` (required before generating migrations).
+4. **Native migrations** — `sqd migration:create` generates against an isolated shadow DB (see "DB migrations — two parallel tracks" below).
+5. **Start infra** — `sqd up` boots the Docker containers (Postgres, Redis, etc.).
+6. **Run processor** — `sqd process` rebuilds, applies all native + custom processor migrations (`src/customDbMigrations/migrations`), and starts the indexer.
+7. **Run API** — `sqd api` starts the GraphQL + REST server and applies API-side custom migrations (`src/apiSupport/apiMigrations/migrations`).
 
 ### DB migrations — two parallel tracks
 
@@ -113,6 +129,7 @@ Onboarding / full local dev workflow: `docs/ai/runbooks/local-development.md`.
 Deep documentation lives in `docs/ai/`. Start with `docs/ai/INDEX.md`, then load only the topic(s) relevant to the task.
 
 Quick links by topic:
+
 - Batch / reorg / transactions → `docs/ai/architecture/`
 - Spot price calculation → `docs/ai/domain/spot-prices.md`
 - Money market pricing → `docs/ai/domain/money-market-pricing.md`

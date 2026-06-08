@@ -56,6 +56,7 @@ export class LatestProcessedDataCacheManager {
       await parsers.storage.assetRegistry.getAssetsAll(currentBlockHeader)
     ).filter((res) => !!res.data);
 
+    // TODO should be optimised with direct query via pg and efficient sql
     const latestEntities = await Promise.all(
       storageDataAllAssets.map((assetData): AssetHistoricalData | undefined => {
         // @ts-ignore

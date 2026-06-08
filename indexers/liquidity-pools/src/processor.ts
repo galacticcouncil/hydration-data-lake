@@ -81,7 +81,11 @@ if (appConfig.BLOCKS_FINALITY_OFFSET && appConfig.BLOCKS_FINALITY_OFFSET > 0)
     appConfig.BLOCKS_FINALITY_OFFSET
   );
 
-if (appConfig.GATEWAY_HYDRATION_HTTPS && !appConfig.IGNORE_ARCHIVE_DATA_SOURCE)
+if (
+  appConfig.GATEWAY_HYDRATION_HTTPS &&
+  appConfig.GATEWAY_HYDRATION_API_KEY &&
+  !appConfig.IGNORE_ARCHIVE_DATA_SOURCE
+)
   // Lookup archive by the network name in Subsquid registry
   // See https://docs.subsquid.io/substrate-indexing/supported-networks/
   // SQD Network v2 gateways require an API key — https://docs.sqd.dev/v2-keys

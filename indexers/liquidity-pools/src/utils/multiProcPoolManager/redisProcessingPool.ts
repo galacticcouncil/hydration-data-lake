@@ -35,9 +35,9 @@ export class ProcessingPoolManagerRedis {
   constructor() {
     this.processingPoolQueue = new Queue(this.queueName, {
       redis: {
-        port: appConfig.ORCHESTRATOR_QUEUE_REDIS_PORT,
-        host: appConfig.ORCHESTRATOR_QUEUE_REDIS_HOST,
-        password: appConfig.ORCHESTRATOR_QUEUE_REDIS_PASS,
+        port: appConfig.TS_REDIS_PORT,
+        host: appConfig.TS_REDIS_HOST,
+        password: appConfig.TS_REDIS_PASS,
       },
     });
   }
