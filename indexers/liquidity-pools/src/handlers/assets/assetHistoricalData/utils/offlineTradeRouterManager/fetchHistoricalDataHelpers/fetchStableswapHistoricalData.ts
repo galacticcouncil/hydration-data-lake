@@ -79,6 +79,7 @@ export async function fetchStableswapHistoricalData({
   ].filter(
     (histData) =>
       histData.paraBlockHeight === blockNumber &&
+      histData.pool != null &&
       allActiveStablewaps.has(histData.pool.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
@@ -253,6 +254,7 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
     (histData) =>
       histData.paraBlockHeight > blockFromNumber - 1 &&
       histData.paraBlockHeight < blockToNumber + 1 &&
+      histData.pool != null &&
       allActiveStablewaps.has(histData.pool.id) // TODO check this condition item.paraBlockHeight === blockNumber
   );
 
@@ -261,8 +263,8 @@ export async function fetchStableswapHistoricalDataForBlocksRangeResolver({
   ].filter(
     (histData) => {
       return (
-        histData.paraBlockHeight > blockFromNumber - 1 &&
-        histData.paraBlockHeight < blockToNumber + 1 &&
+      histData.paraBlockHeight > blockFromNumber - 1 &&
+      histData.paraBlockHeight < blockToNumber + 1 &&
         allStablewapAssets.has(
           histData.stableswapAsset?.id ||
             `${histData.id.split('-')[0]}-${histData.id.split('-')[1]}`

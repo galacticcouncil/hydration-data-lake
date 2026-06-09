@@ -1,10 +1,17 @@
 import type * as pg from 'pg';
 import { GalacticCouncilSdkManager } from '../../../../../../../utils/galacticCouncilSdkManager';
 import { getOmnipoolAssetsAll } from '../../../../../../sql/omnipool/omnipoolAssets.sql';
-import { AppConfig } from '../../../../../../../appConfig';
+import { farm } from '@galacticcouncil/sdk-next';
 import { AssetFarmsYieldMetrics } from './resolvers';
 
-const appConfig = AppConfig.getInstance();
+const isolatedPoolIds: string[] = [
+  '15L6BQ1sMd9pESapK13dHaXBPPtBYnDnKTVhb2gBeGrrJNBx',
+  '15nzS2D2wJdh52tqZdUJVMeDQqQe7wJfo5NZKL7pUxhwYgwq',
+];
+
+function sumFarmApr(farms: (farm.Farm | undefined)[]): number {
+  return farms.reduce((sum, f) => (f ? sum + parseFloat(f.apr) : sum), 0);
+}
 
 export async function handleAllAssetsFarmsYieldMetrics({
   pgClient,
@@ -12,9 +19,7 @@ export async function handleAllAssetsFarmsYieldMetrics({
   pgClient: pg.Client;
 }): Promise<AssetFarmsYieldMetrics[]> {
   const sdkManager = new GalacticCouncilSdkManager();
-
-  const farmClientInstance = await sdkManager.getFarmClient();
-  const polkadotApiInstance = await sdkManager.getPolkadotApi();
+  const lmApi = await sdkManager.getLiquidityMiningApi();
 
   const allOmnipoolAssetAssetRegistryIds = (
     await pgClient.query<{
@@ -27,53 +32,29 @@ export async function handleAllAssetsFarmsYieldMetrics({
     .map((a) => a.asset_registry_id)
     .filter((a) => a !== undefined);
 
-  const isolatedPoolIds: string[] = [
-    '15L6BQ1sMd9pESapK13dHaXBPPtBYnDnKTVhb2gBeGrrJNBx',
-    '15nzS2D2wJdh52tqZdUJVMeDQqQe7wJfo5NZKL7pUxhwYgwq',
-  ];
-
   const resultList: AssetFarmsYieldMetrics[] = [];
 
   await Promise.all(
     allOmnipoolAssetAssetRegistryIds.map(async (assetId: string) => {
-      let farmApy = null;
+      let farms: (farm.Farm | undefined)[] = [];
       try {
-        farmApy = await farmClientInstance.getFarmApr(assetId, 'omnipool');
+        farms = await lmApi.getOmnipoolFarms(assetId);
       } catch (e) {
         console.log(e);
       }
 
-      if (!farmApy || farmApy === '0') return null;
+      const activeFarms = farms.filter((f): f is farm.Farm => f !== undefined);
+      const totalApr = sumFarmApr(activeFarms);
+      if (totalApr === 0) return null;
 
-      const activeYieldFarmIds =
-        await polkadotApiInstance.query.omnipoolWarehouseLM.activeYieldFarm.entries(
-          assetId
-        );
-
-      const rewardCurrencyIds = await Promise.all(
-        activeYieldFarmIds.map(async ([storageKey, option]) => {
-          const [, globalFarmIdRaw] = storageKey.args;
-
-          const globalFarmId = globalFarmIdRaw.toString();
-
-          const globalFarm = (
-            await polkadotApiInstance.query.omnipoolWarehouseLM.globalFarm(
-              globalFarmId
-            )
-          )
-            // @ts-ignore
-            .unwrap();
-
-          const rewardCurrency = globalFarm.rewardCurrency.toString();
-
-          return rewardCurrency;
-        })
-      );
+      const rewardCurrencyIds = [
+        ...new Set(activeFarms.map((f) => f.rewardCurrency.toString())),
+      ];
 
       resultList.push({
         id: assetId,
         poolType: 'omnipool',
-        farmApy,
+        farmApy: totalApr.toString(),
         incentivesTokens: rewardCurrencyIds,
       });
     })
@@ -81,44 +62,25 @@ export async function handleAllAssetsFarmsYieldMetrics({
 
   await Promise.all(
     isolatedPoolIds.map(async (poolId: string) => {
-      let farmApy = null;
+      let farms: (farm.Farm | undefined)[] = [];
       try {
-        farmApy = await farmClientInstance.getFarmApr(poolId, 'isolatedpool');
+        farms = await lmApi.getIsolatedFarms(poolId);
       } catch (e) {
         console.log(e);
       }
 
-      if (!farmApy || farmApy === '0') return null;
+      const activeFarms = farms.filter((f): f is farm.Farm => f !== undefined);
+      const totalApr = sumFarmApr(activeFarms);
+      if (totalApr === 0) return null;
 
-      const activeYieldFarmIds =
-        await polkadotApiInstance.query.xykWarehouseLM.activeYieldFarm.entries(
-          poolId
-        );
-
-      const rewardCurrencyIds = await Promise.all(
-        activeYieldFarmIds.map(async ([storageKey, option]) => {
-          const [, globalFarmIdRaw] = storageKey.args;
-
-          const globalFarmId = globalFarmIdRaw.toString();
-
-          const globalFarm = (
-            await polkadotApiInstance.query.xykWarehouseLM.globalFarm(
-              globalFarmId
-            )
-          )
-            // @ts-ignore
-            .unwrap();
-
-          const rewardCurrency = globalFarm!.rewardCurrency.toString();
-
-          return rewardCurrency;
-        })
-      );
+      const rewardCurrencyIds = [
+        ...new Set(activeFarms.map((f) => f.rewardCurrency.toString())),
+      ];
 
       resultList.push({
         id: poolId,
         poolType: 'isolatedpool',
-        farmApy,
+        farmApy: totalApr.toString(),
         incentivesTokens: rewardCurrencyIds,
       });
     })

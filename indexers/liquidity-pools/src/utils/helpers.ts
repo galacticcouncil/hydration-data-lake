@@ -6,7 +6,9 @@ import { join } from 'path';
 import { hexToString, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import v8 from 'v8';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { HYDRADX_SS58_PREFIX, Hop } from '@galacticcouncil/sdk';
+import { pool } from '@galacticcouncil/sdk-next';
+type Hop = pool.Hop;
+import { HYDRADX_SS58_PREFIX } from './consts';
 import { BigNumber, toFixedTrimmed } from './bignumber';
 import crypto from 'node:crypto';
 import { performance, monitorEventLoopDelay } from 'perf_hooks';
@@ -249,8 +251,8 @@ export function getPriceRouteDecorated(route: Hop[]): string[][] {
   return route.map((hop) => [
     hop.poolAddress,
     hop.pool,
-    hop.assetIn,
-    hop.assetOut,
+    String(hop.assetIn),
+    String(hop.assetOut),
   ]);
 }
 

@@ -1,51 +1,39 @@
-import { createSdkContext } from '@galacticcouncil/sdk';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { SdkCtx, FarmClient } from '@galacticcouncil/sdk';
+import { createWsClient } from 'polkadot-api/ws';
+import { farm, client as sdkClient } from '@galacticcouncil/sdk-next';
 import { AppConfig } from '../appConfig';
 
 const appConfig = AppConfig.getInstance();
 
 export class GalacticCouncilSdkManager {
-  private pdApi: ApiPromise | null = null;
-  private sdkCtx: SdkCtx | null = null;
-  private farmClient: FarmClient | null = null;
+  private pdClient: ReturnType<typeof createWsClient> | null = null;
+  private _liquidityMiningApi: farm.LiquidityMiningApi | null = null;
 
-  async getPolkadotApi() {
-    if (this.pdApi) return this.pdApi;
+  private async getPolkadotClient() {
+    if (this.pdClient) return this.pdClient;
 
     if (!appConfig.RPC_URL)
       throw new Error(
         'RPC_URL must be defined for GalacticCouncil SDK Context'
       );
-    const wsProvider = new WsProvider(
-      appConfig.RPC_URL,
-      2_500,
-      {},
-      60_000,
-      102400,
-      10 * 60_000
-    );
 
-    this.pdApi = await ApiPromise.create({
-      provider: wsProvider,
+    this.pdClient = createWsClient(appConfig.RPC_URL);
+    return this.pdClient;
+  }
+
+  async getLiquidityMiningApi(): Promise<farm.LiquidityMiningApi> {
+    if (this._liquidityMiningApi) return this._liquidityMiningApi;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const client = (await this.getPolkadotClient()) as any;
+
+    const params = new sdkClient.ChainParams(client);
+    const blockTime = await params.getBlockTime();
+    const farmClient = new farm.LiquidityMiningClient(client);
+    const balance = new sdkClient.BalanceClient(client);
+
+    this._liquidityMiningApi = new farm.LiquidityMiningApi(farmClient, balance, {
+      blockTime,
     });
-
-    return this.pdApi;
-  }
-
-  async getSdkCtx() {
-    if (this.sdkCtx) return this.sdkCtx;
-
-    this.sdkCtx = createSdkContext(await this.getPolkadotApi());
-
-    return this.sdkCtx;
-  }
-
-  async getFarmClient() {
-    if (this.farmClient) return this.farmClient;
-
-    this.farmClient = new FarmClient(await this.getPolkadotApi());
-
-    return this.farmClient;
+    return this._liquidityMiningApi;
   }
 }
