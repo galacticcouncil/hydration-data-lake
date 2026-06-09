@@ -59,10 +59,21 @@ try {
   }
 
   console.log(`[sync-standalone-lock] resolving ${memberRel} in ${tmpDir} ...`);
+  // Disable engine-strict for this child install. We only resolve the dependency
+  // tree to produce a lockfile — the host's node version is irrelevant. Without
+  // this, `npm run` propagates the repo .npmrc `engine-strict=true` via
+  // npm_config_engine_strict, which turns the normal EBADENGINE *warning* (e.g.
+  // deps requiring node>=22 while CI/Docker run node 20) into a fatal error.
+  // The real Docker build does not enforce engines (it never COPYs .npmrc), so
+  // matching that behaviour here keeps the generated lock faithful.
   execFileSync(
     'npm',
-    ['install', '--package-lock-only', '--no-audit', '--no-fund'],
-    { cwd: tmpDir, stdio: 'inherit' }
+    ['install', '--package-lock-only', '--no-audit', '--no-fund', '--engine-strict=false'],
+    {
+      cwd: tmpDir,
+      stdio: 'inherit',
+      env: { ...process.env, npm_config_engine_strict: 'false' },
+    }
   );
 
   fs.copyFileSync(path.join(tmpDir, 'package-lock.json'), memberLock);
