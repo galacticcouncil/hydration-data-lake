@@ -44,6 +44,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify liquidity-pools standalone lockfile is in sync
+        run: |
+          npm run sync:lock:liquidity-pools
+          if ! git diff --quiet indexers/liquidity-pools/package-lock.json; then
+            echo "::error::indexers/liquidity-pools/package-lock.json is out of sync with its package.json. Run 'npm run sync:lock:liquidity-pools' locally and commit the result."
+            git --no-pager diff --stat indexers/liquidity-pools/package-lock.json
+            exit 1
+          fi
+          echo "liquidity-pools standalone lockfile is in sync ✓"
+
       - name: set up docker qemu
         uses: docker/setup-qemu-action@v2
 
