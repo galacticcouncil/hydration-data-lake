@@ -16,8 +16,8 @@ x-dict-pg-bouncer-host: &dict-pg-bouncer-host "dict-db-pgbouncer-gen-h-d"
 
 x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/network/hydradx"
 
-x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-owl-5.owl.shadow-senate.com"
-x-dict-rpc-url-https: &dict-rpc-url-https "https://node-owl-5.owl.shadow-senate.com"
+x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-catfish-2.catfish.hydration.cloud"
+x-dict-rpc-url-https: &dict-rpc-url-https "https://node-catfish-2.catfish.hydration.cloud"
 
 x-dict-indexer-image: &dict-indexer-image "ghcr.io/galacticcouncil/data-lake-storage-dictionary-indexer:43186c9547d76eea2d5528cdd91cbde294390f7a"
 
@@ -274,8 +274,6 @@ services:
           *dict-db-pgbouncer-creds,
           *dict-proc-default-envs,
         ]
-      RPC_URL: wss://node-owl-5.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-5.owl.shadow-senate.com
       PROCESS_FROM_BLOCK: 1439857
       PROCESS_TO_BLOCK: 4000000
 
@@ -291,8 +289,6 @@ services:
           *dict-db-pgbouncer-creds,
           *dict-proc-default-envs,
         ]
-      RPC_URL: wss://node-orca-3.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-3.orca.hydration.cloud
       PROCESS_FROM_BLOCK: 4000001
       PROCESS_TO_BLOCK: 5500000
 
@@ -308,8 +304,6 @@ services:
           *dict-db-pgbouncer-creds,
           *dict-proc-default-envs,
         ]
-      RPC_URL: wss://node-orca-4.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-4.orca.hydration.cloud
       PROCESS_FROM_BLOCK: 5500001
       PROCESS_TO_BLOCK: 7000000
 
@@ -325,8 +319,6 @@ services:
           *dict-db-pgbouncer-creds,
           *dict-proc-default-envs,
         ]
-      RPC_URL: wss://node-orca-3.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-3.orca.hydration.cloud
       PROCESS_FROM_BLOCK: 7000001
       PROCESS_TO_BLOCK: 8500000
 
@@ -342,8 +334,6 @@ services:
           *dict-db-pgbouncer-creds,
           *dict-proc-default-envs,
         ]
-      RPC_URL: wss://node-owl-5.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-5.owl.shadow-senate.com
       PROCESS_FROM_BLOCK: 8500001
       PROCESS_TO_BLOCK: 10000000
 
@@ -359,8 +349,6 @@ services:
           *dict-db-pgbouncer-creds,
           *dict-proc-default-envs,
         ]
-      RPC_URL: wss://node-owl-5.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-5.owl.shadow-senate.com
       PROCESS_FROM_BLOCK: 10000001
       PROCESS_TO_BLOCK: 11000000
 
@@ -376,8 +364,6 @@ services:
           *dict-db-pgbouncer-creds,
           *dict-proc-default-envs,
         ]
-      RPC_URL: wss://node-owl-5.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-5.owl.shadow-senate.com
       PROCESS_FROM_BLOCK: 11000001
       PROCESS_TO_BLOCK: -1
       ASYNC_OPERATIONS_CONCURRENCY_COMMON: 9

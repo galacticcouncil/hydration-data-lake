@@ -17,8 +17,8 @@ x-dict-pg-bouncer-host: &dict-pg-bouncer-host "dict-db-pgbouncer-omni-h-d"
 
 x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/network/hydradx"
 
-x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-owl-3.owl.shadow-senate.com"
-x-dict-rpc-url-https: &dict-rpc-url-https "https://node-owl-3.owl.shadow-senate.com"
+x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-catfish-3.catfish.hydration.cloud"
+x-dict-rpc-url-https: &dict-rpc-url-https "https://node-catfish-3.catfish.hydration.cloud"
 
 x-dict-indexer-image: &dict-indexer-image "ghcr.io/galacticcouncil/data-lake-storage-dictionary-indexer:43186c9547d76eea2d5528cdd91cbde294390f7a"
 
@@ -278,8 +278,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 1708100
       PROCESS_TO_BLOCK: 3500000
-      RPC_URL: wss://node-owl-3.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-3.owl.shadow-senate.com
       IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
 
       STATE_SCHEMA_NAME: omni_hist_data__batch_proc_1
@@ -296,8 +294,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 3500001
       PROCESS_TO_BLOCK: 5500000
-      RPC_URL: wss://node-owl-3.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-3.owl.shadow-senate.com
       IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
 
       STATE_SCHEMA_NAME: omni_hist_data__batch_proc_2
@@ -314,8 +310,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 5500001
       PROCESS_TO_BLOCK: 7500000
-      RPC_URL: wss://node-owl-3.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-3.owl.shadow-senate.com
       IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
 
       STATE_SCHEMA_NAME: omni_hist_data__batch_proc_3
@@ -332,8 +326,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 7500001
       PROCESS_TO_BLOCK: 9500000
-      RPC_URL: wss://node-owl-3.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-3.owl.shadow-senate.com
       IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
 
       STATE_SCHEMA_NAME: omni_hist_data__batch_proc_4
@@ -350,8 +342,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 9500001
       PROCESS_TO_BLOCK: 10500000
-      RPC_URL: wss://node-owl-3.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-3.owl.shadow-senate.com
       IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
 
       STATE_SCHEMA_NAME: omni_hist_data__batch_proc_5
@@ -368,8 +358,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 10500000
       PROCESS_TO_BLOCK: 11500000
-      RPC_URL: wss://node-owl-3.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-3.owl.shadow-senate.com
       IS_CUSTOM_DB_MIGRATIONS_RUNNER: 'false'
       STATE_SCHEMA_NAME: omni_hist_data__batch_proc_6
       ASSETS_TRACKER_PROCESSOR: 'false'
@@ -383,8 +371,6 @@ services:
           *dict-db-pgbouncer-creds,
           *dict-proc-default-envs,
         ]
-      RPC_URL: wss://node-owl-3.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-3.owl.shadow-senate.com
       PROCESS_FROM_BLOCK: 11500001
       PROCESS_TO_BLOCK: -1
       INDEXING_IS_PAUSED: 'false'

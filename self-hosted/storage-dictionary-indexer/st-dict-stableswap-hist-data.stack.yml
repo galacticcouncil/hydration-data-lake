@@ -17,8 +17,8 @@ x-dict-pg-bouncer-host: &dict-pg-bouncer-host "dict-db-pgbouncer-stable-h-d"
 
 x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/network/hydradx"
 
-x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-owl-3.owl.shadow-senate.com"
-x-dict-rpc-url-https: &dict-rpc-url-https "https://node-owl-3.owl.shadow-senate.com"
+x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-catfish-3.catfish.hydration.cloud"
+x-dict-rpc-url-https: &dict-rpc-url-https "https://node-catfish-3.catfish.hydration.cloud"
 
 x-dict-indexer-image: &dict-indexer-image "ghcr.io/galacticcouncil/data-lake-storage-dictionary-indexer:43186c9547d76eea2d5528cdd91cbde294390f7a"
 
@@ -278,8 +278,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 3640100
       PROCESS_TO_BLOCK: 5500000
-      RPC_URL: wss://node-owl-2.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-2.owl.shadow-senate.com
 
       STATE_SCHEMA_NAME: stable_hist_data__batch_proc_1
       ASSETS_TRACKER_PROCESSOR: 'false'
@@ -295,8 +293,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 5500001
       PROCESS_TO_BLOCK: 7500000
-      RPC_URL: wss://node-owl-2.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-2.owl.shadow-senate.com
 
       STATE_SCHEMA_NAME: stable_hist_data__batch_proc_2
       ASSETS_TRACKER_PROCESSOR: 'false'
@@ -312,8 +308,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 7500001
       PROCESS_TO_BLOCK: 8500000
-      RPC_URL: wss://node-owl-2.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-2.owl.shadow-senate.com
 
       STATE_SCHEMA_NAME: stable_hist_data__batch_proc_3
       ASSETS_TRACKER_PROCESSOR: 'false'
@@ -329,8 +323,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 8500001
       PROCESS_TO_BLOCK: 9500000
-      RPC_URL: wss://node-sparrow-2.sparrow.shadow-senate.com
-      RPC_URL_HTTPS: https://node-sparrow-2.sparrow.shadow-senate.com
 
       STATE_SCHEMA_NAME: stable_hist_data__batch_proc_4
       ASSETS_TRACKER_PROCESSOR: 'false'
@@ -346,8 +338,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 9500001
       PROCESS_TO_BLOCK: 10500000
-      RPC_URL: wss://node-owl-2.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-2.owl.shadow-senate.com
 
       STATE_SCHEMA_NAME: stable_hist_data__batch_proc_5
       ASSETS_TRACKER_PROCESSOR: 'false'
@@ -363,8 +353,6 @@ services:
         ]
       PROCESS_FROM_BLOCK: 10500001
       PROCESS_TO_BLOCK: 11500000
-      RPC_URL: wss://node-owl-2.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-2.owl.shadow-senate.com
 
       STATE_SCHEMA_NAME: stable_hist_data__batch_proc_6
       ASSETS_TRACKER_PROCESSOR: 'false'
@@ -378,8 +366,6 @@ services:
           *dict-db-pgbouncer-creds,
           *dict-proc-default-envs,
         ]
-      RPC_URL: wss://node-owl-2.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-2.owl.shadow-senate.com
       PROCESS_FROM_BLOCK: 11500001
       PROCESS_TO_BLOCK: -1
       INDEXING_IS_PAUSED: 'false'

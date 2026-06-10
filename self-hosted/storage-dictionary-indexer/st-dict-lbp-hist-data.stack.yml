@@ -17,8 +17,8 @@ x-dict-pg-bouncer-host: &dict-pg-bouncer-host "dict-db-pgbouncer-lbp-h-d-22"
 
 x-gateway-hydration-url: &gateway-hydration-url "https://v2.archive.subsquid.io/network/hydradx"
 
-x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-owl-5.owl.shadow-senate.com"
-x-dict-rpc-url-https: &dict-rpc-url-https "https://node-owl-5.owl.shadow-senate.com"
+x-dict-rpc-url-wss: &dict-rpc-url-wss "wss://node-catfish-2.catfish.hydration.cloud"
+x-dict-rpc-url-https: &dict-rpc-url-https "https://node-catfish-2.catfish.hydration.cloud"
 
 x-dict-indexer-image: &dict-indexer-image "ghcr.io/galacticcouncil/data-lake-storage-dictionary-indexer:43186c9547d76eea2d5528cdd91cbde294390f7a"
 

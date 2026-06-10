@@ -16,8 +16,8 @@ x-dict-pg-bouncer-host: &dict-pg-bouncer-host 'dict-db-pgbouncer-acc-h-d'
 
 x-gateway-hydration-url: &gateway-hydration-url 'https://v2.archive.subsquid.io/network/hydradx'
 
-x-dict-rpc-url-wss: &dict-rpc-url-wss 'wss://node-owl-4.owl.shadow-senate.com'
-x-dict-rpc-url-https: &dict-rpc-url-https 'https://node-owl-4.owl.shadow-senate.com'
+x-dict-rpc-url-wss: &dict-rpc-url-wss 'wss://node-catfish-3.catfish.hydration.cloud'
+x-dict-rpc-url-https: &dict-rpc-url-https 'https://node-catfish-3.catfish.hydration.cloud'
 
 x-dict-indexer-image: &dict-indexer-image 'ghcr.io/galacticcouncil/data-lake-storage-dictionary-indexer:43186c9547d76eea2d5528cdd91cbde294390f7a'
 
@@ -372,8 +372,6 @@ services:
     <<: *dict-proc-default-config
     environment:
       <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-orca-5.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-5.orca.hydration.cloud
       PROCESS_FROM_BLOCK: 9500001
       PROCESS_TO_BLOCK: 9800000
 
@@ -402,8 +400,6 @@ services:
     <<: *dict-proc-default-config
     environment:
       <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-orca-5.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-5.orca.hydration.cloud
       PROCESS_FROM_BLOCK: 10000001
       PROCESS_TO_BLOCK: 10350000
 
@@ -432,8 +428,6 @@ services:
     <<: *dict-proc-default-config
     environment:
       <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-orca-4.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-4.orca.hydration.cloud
       PROCESS_FROM_BLOCK: 10400001
       PROCESS_TO_BLOCK: 10700000
 
@@ -450,8 +444,6 @@ services:
     <<: *dict-proc-default-config
     environment:
       <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-orca-5.orca.hydration.cloud
-      RPC_URL_HTTPS: https://node-orca-5.orca.hydration.cloud
       PROCESS_FROM_BLOCK: 10700001
       PROCESS_TO_BLOCK: 11000000
 
@@ -468,8 +460,6 @@ services:
     <<: *dict-proc-default-config
     environment:
       <<: [*dict-db-pgbouncer-creds, *dict-proc-default-envs]
-      RPC_URL: wss://node-owl-1.owl.shadow-senate.com
-      RPC_URL_HTTPS: https://node-owl-1.owl.shadow-senate.com
       PROCESS_FROM_BLOCK: 11000001
       PROCESS_TO_BLOCK: -1
 
