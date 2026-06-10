@@ -170,7 +170,7 @@ export async function handleDcaScheduleCreated(
     }),
   };
 
-  if (!callArgs) return;
+  if (!callArgs || !callArgs.scheduleData) return;
 
   const newSchedule = await createDcaSchedule({
     ctx,
