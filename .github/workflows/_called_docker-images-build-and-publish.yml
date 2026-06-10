@@ -44,6 +44,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify liquidity-pools standalone lockfile is in sync
+        # Validate the committed lock against package.json the same way the
+        # Docker builder does: a standalone `npm ci` in isolation (temp dir, so
+        # npm doesn't treat it as a workspace member). This catches the real
+        # failure mode (lock missing/unsatisfiable deps -> Docker `npm ci` aborts)
+        # without demanding byte-identical regeneration, which differs harmlessly
+        # across npm versions (CI npm 10 vs a dev's npm 11). engine-strict is off
+        # to match the Docker build (which never copies .npmrc).
+        run: |
+          tmp="$(mktemp -d)"
+          cp indexers/liquidity-pools/package.json indexers/liquidity-pools/package-lock.json "$tmp/"
+          if ! ( cd "$tmp" && npm ci --dry-run --no-audit --no-fund --engine-strict=false ); then
+            echo "::error::indexers/liquidity-pools/package-lock.json is out of sync with its package.json. Run 'npm run sync:lock:liquidity-pools' locally and commit the result."
+            exit 1
+          fi
+          echo "liquidity-pools standalone lockfile is in sync ✓"
+
       - name: set up docker qemu
         uses: docker/setup-qemu-action@v2
 

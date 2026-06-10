@@ -8,11 +8,13 @@ import {
   Call as _Call,
   Extrinsic as _Extrinsic,
 } from '@subsquid/substrate-processor';
+import { PrometheusServer } from '@subsquid/util-internal-processor-tools';
 
 import { BatchState } from './utils/batchState';
 import { AppConfig } from './appConfig';
 import { TypeormDatabaseUtils } from './utils/typeormDatabaseUtils';
 import { HydratedLogger } from './utils/hydratedLogger';
+import { sqdRegistry } from './utils/prometheusMetrics/registry';
 const appConfig = AppConfig.getInstance();
 
 console.log('appConfig.RPC_URL', appConfig.RPC_URL);
@@ -86,10 +88,27 @@ if (
 )
   // Lookup archive by the network name in Subsquid registry
   // See https://docs.subsquid.io/substrate-indexing/supported-networks/
+  // SQD Network v2 gateways require an API key — https://docs.sqd.dev/v2-keys
   processor = processor.setGateway({
     url: appConfig.GATEWAY_HYDRATION_HTTPS,
-    apiKey: appConfig.GATEWAY_HYDRATION_API_KEY,
+    apiKey: appConfig.GATEWAY_HYDRATION_API_KEY ?? undefined,
   });
+
+// Custom prometheus metrics register onto `sqdRegistry`. SQD's PrometheusServer
+// keeps its own private registry with no public getter, so we attach a
+// MetricsSink: when the metrics server starts, SQD invokes register() with its
+// internal registry and we copy our metrics in — exposing them on the same
+// /metrics endpoint as SQD built-ins (sqd_processor_last_block, etc.).
+const prometheusServer = new PrometheusServer();
+prometheusServer.addMetricsSink({
+  register(sqdInternalRegistry) {
+    for (const { name } of sqdRegistry.getMetricsAsArray()) {
+      const metric = sqdRegistry.getSingleMetric(name);
+      if (metric) sqdInternalRegistry.registerMetric(metric);
+    }
+  },
+});
+processor.setPrometheusServer(prometheusServer);
 
 export { processor };
 
