@@ -704,6 +704,7 @@ export class AppConfig {
   @Transform(({ value }: { value: string }) => value)
   readonly ASSET_PRICE_BASE_ASSET_ID: string = '10';
 
+  // TODO should be reviewed as legacy redundant config
   @Transform(
     ({ value }: { value: string }) =>
       new Set(value.split(',').filter((id) => !Number.isNaN(+id) || isHex(id)))
@@ -807,6 +808,20 @@ export class AppConfig {
    * ===========================================================================
    * ===========================================================================
    */
+
+  /**
+   * Enable/Disable any aggregation of Account MoneyMarket position historical data
+   */
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_ACCOUNT_MM_POSITION_HIST_DATA_AGGREGATION: boolean = true;
+
+  /**
+   * Enable/Disable aggregation of Account MoneyMarket position historical data
+   * on Oracle update
+   */
+  @Transform(({ value }: { value: string }) => value === 'true')
+  readonly ENABLE_ACCOUNT_MM_POSITION_HIST_DATA_AGGREGATION_ON_ORACLE_UPDATE: boolean =
+    true;
 
   @Transform(({ value }: { value: string }) => value === 'true')
   readonly ENABLE_ASSET_SWAP_FEE_AGGREGATION: boolean = true;

@@ -2,10 +2,7 @@ import { SqdProcessorContext } from '../../../processor';
 import { Store } from '@subsquid/typeorm-store';
 import { EvmLogData } from '../../../parsers/batchBlocksParser/types/evm';
 import { EvmLogDecoder } from '../../../utils/evmTools/evmLogDecoder';
-import { EvmEventName, MmUserEModeSet } from '../../../model';
-import {
-  handleAllAccountsMmPositionDataUpdate,
-} from '../../accounts/moneyMarketPosition';
+import { EvmEventName } from '../../../model';
 
 export async function handleOracleUpdatedEvent(
   ctx: SqdProcessorContext<Store>,

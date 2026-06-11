@@ -37,6 +37,8 @@ export async function handleAccountMmPositionData(
   ctx: SqdProcessorContext<Store>,
   parsedEvents: BatchBlocksParsedDataManager
 ) {
+  if (!ctx.appConfig.ENABLE_ACCOUNT_MM_POSITION_HIST_DATA_AGGREGATION) return;
+
   const accountsToProcessPerBlock: Map<
     number,
     { blockHeader: SqdBlock; evmAddresses: Set<string> }
@@ -114,11 +116,12 @@ export async function handleAccountMmPositionData(
    * Process accounts on Oracle update
    */
 
-  if (blocksWithOracleUpdate.size === 0) return;
-
-  // const latestBlockWithOracleUpdate = Array.from(
-  //   blocksWithOracleUpdate.keys()
-  // ).sort((a, b) => b - a)[0];
+  if (
+    blocksWithOracleUpdate.size === 0 ||
+    !ctx.appConfig
+      .ENABLE_ACCOUNT_MM_POSITION_HIST_DATA_AGGREGATION_ON_ORACLE_UPDATE
+  )
+    return;
 
   let allEvmAccounts =
     await AccountEvmExtensionsCacheManager.getInstance().getAllBoundedAccountsList(
