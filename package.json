@@ -6,8 +6,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "sync:lock:liquidity-pools": "node scripts/sync-standalone-lock.js indexers/liquidity-pools",
-    "postinstall": "cpx 'package-lock.json' indexers/storage-dictionary/"
+    "postinstall": "cpx 'package-lock.json' indexers/liquidity-pools/ && cpx 'package-lock.json' indexers/storage-dictionary/",
+    "sync:lock:liquidity-pools": "node scripts/sync-standalone-lock.js indexers/liquidity-pools"
   },
   "engines": {
     "node": ">=20"
