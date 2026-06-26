@@ -47,7 +47,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Verify liquidity-pools standalone lockfile is in sync
         # Validate the committed lock against package.json the same way the
