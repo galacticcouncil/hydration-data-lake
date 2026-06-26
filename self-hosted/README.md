@@ -12,6 +12,7 @@ This section provides an alternative Docker-based approach for deploying **Subsq
 
 :book: [Storage-Dictionary Indexer Documentation](../indexers/storage-dictionary/README.md).
 
+
 ---
 
 ## Deployment Workflow
