@@ -19,6 +19,17 @@ export function createDatabasePool(): Pool {
     max: 20, // Maximum number of clients in the pool
     min: 2, // Minimum number of clients in the pool
 
+    // Fail fast instead of queueing forever when every client is checked out —
+    // a leaked checkout must degrade single requests, not wedge the whole API
+    // (2026-07-14 prod incident: pool drained under load, all later requests
+    // hung indefinitely until the task was restarted by hand).
+    connectionTimeoutMillis: 15_000,
+    // No query may outlive the client that asked for it; a killed query
+    // returns its pool client instead of holding it while the requester is gone.
+    statement_timeout: 120_000,
+    query_timeout: 125_000,
+    idleTimeoutMillis: 30_000,
+
     // Application name for monitoring
     application_name: 'postgraphile-api',
   };
@@ -27,7 +38,10 @@ export function createDatabasePool(): Pool {
 
   // Handle pool errors globally
   pool.on('error', (err, client) => {
-    console.error('PostgreSQL pool error:', err.message);
+    console.error(
+      `PostgreSQL pool error: ${err.message} ` +
+        `(total=${pool.totalCount} idle=${pool.idleCount} waiting=${pool.waitingCount})`
+    );
     // Don't exit on pool errors - the pool will handle reconnection
   });
 
