@@ -566,10 +566,15 @@ export class ChainActivityTraceManager {
         id: callId,
       },
     });
-    if (!savedCall)
-      throw Error(
-        `Call with ID ${callId} has not been found neither in batch state or DB.`
+    if (!savedCall) {
+      // Calls dispatched outside the regular extrinsic flow (e.g. scheduler /
+      // dispatchAs) can be missing from batch state on the RPC data path; a
+      // missing trace link must not kill the processor.
+      ctx.log.warn(
+        `Call with ID ${callId} has not been found neither in batch state or DB. Related chain activity trace will not reference this call.`
       );
+      return undefined;
+    }
 
     return savedCall.traceId;
   }
