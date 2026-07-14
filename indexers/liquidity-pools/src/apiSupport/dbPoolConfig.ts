@@ -26,8 +26,9 @@ export function createDatabasePool(): Pool {
     connectionTimeoutMillis: 15_000,
     // No query may outlive the client that asked for it; a killed query
     // returns its pool client instead of holding it while the requester is gone.
-    statement_timeout: 120_000,
-    query_timeout: 125_000,
+    // Client-side (node-pg) timeout only: the API connects via pgbouncer, which
+    // rejects `statement_timeout` as a startup parameter.
+    query_timeout: 120_000,
     idleTimeoutMillis: 30_000,
 
     // Application name for monitoring
