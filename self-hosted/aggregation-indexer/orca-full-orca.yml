@@ -391,7 +391,7 @@ services:
       TIME_SERIES_DATA_COMMIT_SUB_BATCH_MAX_SIZE: 1500
       ASSET_HIST_DATA_TS_PULLING_BATCH_SIZE: 600
       TIME_SERIES_DATA_SCRAPPER_TIMEOUT_MS: 2000
-      DB_POOL_MAX_SIZE: 1
+      DB_POOL_MAX_SIZE: 10
       SUBSCAN_PROXY_API_CORS_ALLOWED_SUFFIXES: hydration.net::-hydra-app.netlify.app::-hydration.netlify.app
     #    ports:
     #      - "8094:8080"
@@ -408,7 +408,16 @@ services:
       - sh
       - -c
       - 'export SUBSCAN_PRO_API_SECRET=$$(cat /run/secrets/SUBSCAN_PRO_API_SECRET) && export DB_PASS=$$(cat /run/secrets/AGGREGATION_INDEXER_PG_PASSWORD) && export TS_REDIS_PASS=$$(cat /run/secrets/AGGREGATION_INDEXER_REDIS_PASSWORD) && sqd api:prod'
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'wget -q -T 9 -O /dev/null --header="Content-Type: application/json" --post-data="{\"query\":\"{ blocks(first:1) { nodes { id } } }\"}" http://127.0.0.1:8080/graphql'
+      interval: 30s
+      timeout: 12s
+      retries: 4
+      start_period: 120s
     deploy:
+      replicas: 3
       labels:
         traefik.http.routers.orca-sh-p1-101.entrypoints: websecure
         traefik.http.routers.orca-sh-p1-101-http.middlewares: https-redirect
