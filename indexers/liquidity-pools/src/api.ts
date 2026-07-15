@@ -150,6 +150,30 @@ async function initializeServer() {
 
     app.use(express.json());
 
+    // Same shape as the develop-orca lineage's /rest/service/metadata —
+    // hydration-ui's indexer picker requires this endpoint next to /graphql.
+    app.get('/rest/service/metadata', (req: Request, res: Response) => {
+      res.json({
+        metadataVersion: 1,
+        indexer: {
+          id: 'orca-aggregator-mainnet',
+          version: process.env.INDEXER_VERSION ?? 'unknown',
+          network: appConfig.CHAIN,
+          master: process.env.IS_MASTER_INSTANCE === 'true',
+        },
+        coverage: {
+          timeBounds: {
+            minTime: '2023-01-01T00:00:00Z',
+            maxTime: '2026-01-29T01:15:00Z',
+          },
+          blockBounds: {
+            minBlockHeight: appConfig.PROCESS_FROM_BLOCK,
+            maxBlockHeight: -1,
+          },
+        },
+      });
+    });
+
     app.post(
       `${ProxyApiRoute.subscan}/*all`,
       cors(corsOptions),
