@@ -49,6 +49,15 @@ export function createDatabasePool(): Pool {
   // Log when clients are connected
   pool.on('connect', (client) => {
     console.log('PostgreSQL pool: New client connected');
+    // The pool only guards IDLE clients; a checked-out client whose connection
+    // drops (e.g. pgbouncer killing over-budget sessions, 2026-07-15 incident)
+    // emits 'error' with no listener and crashes the whole process.
+    client.on('error', (err) => {
+      console.error(
+        `PostgreSQL client error (checked-out): ${err.message} ` +
+          `(total=${pool.totalCount} idle=${pool.idleCount} waiting=${pool.waitingCount})`
+      );
+    });
   });
 
   // Log when clients are removed
