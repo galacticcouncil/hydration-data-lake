@@ -37,6 +37,18 @@ export class CommonPgPool {
       ...(readOnly ? { options: '-c default_transaction_read_only=on' } : {}),
       max: maxPoolSize,
     });
+
+    // Without these listeners a dropped connection — idle ('error' on the pool)
+    // or checked-out ('error' on the client) — is an unhandled event that
+    // crashes the whole process.
+    this.pool.on('error', (err) => {
+      console.error(`[CommonPgPool] pool error: ${err.message}`);
+    });
+    this.pool.on('connect', (client) => {
+      client.on('error', (err) => {
+        console.error(`[CommonPgPool] client error: ${err.message}`);
+      });
+    });
   }
 
   async query<T extends QueryResultRow = any>(
