@@ -583,10 +583,16 @@ export class ChainActivityTraceManager {
       },
       { className: 'Call', originCallFn: 'getTraceIdByCallId' }
     );
-    if (!savedCall)
-      throw Error(
-        `Call with ID ${callId} has not been found neither in batch state or DB.`
+    if (!savedCall) {
+      // Calls dispatched outside the regular extrinsic flow (e.g. scheduler /
+      // dispatchAs) can be missing from batch state on the RPC data path; a
+      // missing trace link must not kill the processor. Block 13062341 froze
+      // the unified-sh-100 deployment for 5 days exactly this way (2026-07-09).
+      ctx.log.warn(
+        `Call with ID ${callId} has not been found neither in batch state or DB. Related chain activity trace will not reference this call.`
       );
+      return undefined;
+    }
 
     return savedCall.traceId;
   }
