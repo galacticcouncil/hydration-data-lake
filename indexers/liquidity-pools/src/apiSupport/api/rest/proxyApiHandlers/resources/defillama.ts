@@ -12,16 +12,32 @@ const appConfig = AppConfig.getInstance();
 export async function handleProxyReqDefillama(req: Request, res: Response) {
   try {
     const requestPath = req.params.all || [];
-    const [apiName, section, query] = requestPath;
+    const [apiName, section, query, ...rest] = requestPath;
 
-    if (
-      !allowedQueriesDefillama.has(apiName) ||
-      !allowedQueriesDefillama.get(apiName)!.has(section)
-    ) {
+    const allowedQueries = allowedQueriesDefillama
+      .get(apiName)
+      ?.get(section);
+
+    if (!allowedQueries) {
       return res.status(403).send('Forbidden');
     }
 
-    const reqUrl = `https://${apiName}.llama.fi/${section}/${query}`;
+    if (!allowedQueries.has('##any##')) {
+      if (!allowedQueries.has(query)) {
+        return res.status(403).send('Forbidden');
+      }
+
+      const queryAllow = allowedQueries.get(query)!;
+      if (queryAllow instanceof Map) {
+        const param = rest[0];
+        if (!queryAllow.has('##any##') && !queryAllow.has(param)) {
+          return res.status(403).send('Forbidden');
+        }
+      }
+    }
+
+    const path = [section, query, ...rest].filter(Boolean).join('/');
+    const reqUrl = `https://${apiName}.llama.fi/${path}`;
 
     return handleProxyReqDefillamaAny(reqUrl, req, res);
   } catch (error) {
